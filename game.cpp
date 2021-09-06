@@ -144,7 +144,7 @@ public:
 
 					for(int col = 0; col < this->board_side; col++){
 
-						if (this->board[row][col].getFillColor() == sf::Color::Green){
+						if (this->board[row][col].getFillColor() == sf::Color::Red){
 
 							this->board[row][col].setFillColor(sf::Color::White);
 						}
@@ -203,10 +203,10 @@ public:
 
 		this->update_board();
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+		// if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
 			
-			find_path();
-		}
+		// 	find_path();
+		// }
 	}
 
 	void render(){
