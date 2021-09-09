@@ -260,27 +260,23 @@ public:
 			}
 		}
 
-		std::cout << "begin\n";
-
-		for (int i = 0; i < adjs.size(); i++){
-
-			std::cout << adjs[i][0] << ", " << adjs[i][1] << "\n";
-		}
-
-		std::cout << "end\n";
-
 		return adjs;
 	}
 
-	void path_finding( std::vector<int> pos, std::vector<std::vector<int>> path, std::vector<std::vector<int>> visited, int found){
+	void draw_path(std::vector<std::vector<int>> path){
 
-		std::cout << "pos: " << pos[0] << ", " << pos[1] << "\n";
+		
+	}
+
+	int path_finding( std::vector<int> pos, std::vector<std::vector<int>> path, std::vector<std::vector<int>> visited, int found){
+
+		visited.push_back(pos);
 
 		if (this->board[pos[0]][pos[1]].getFillColor() == sf::Color::Red){
 
 			found = 1;
 			std::cout << "Found it!\n";
-			// paint_path(path);
+			draw_path(path);
 		}
 
 		else{
@@ -289,16 +285,16 @@ public:
 
 			for (int i = 0; i < adjs.size() && !found; i++){
 
-				if (std::find(visited.begin(), visited.end(), adjs[i]) != visited.end()){
+				if (!(std::find(visited.begin(), visited.end(), adjs[i]) != visited.end())){
 
 					path.push_back(adjs[i]);
-
-					visited.push_back(adjs[i]);
 
 					path_finding(adjs[i], path, visited, found);
 				}
 			}
 		}
+
+		return found;
 	}
 
 	int find_path(){
@@ -306,7 +302,6 @@ public:
 		std::vector<std::vector<int>> path;
 		std::vector<std::vector<int>> visited;
 		this->path_finding(this->start, path, visited, 0);
-		std::cout << "End path_finding";
 		return 0;
 	}
 
