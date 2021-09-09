@@ -25,6 +25,8 @@ private:
 	int square_size;
 	std::vector<std::vector<sf::RectangleShape>> board;
 
+	std::vector<int> start;
+
 	// Mouse vars
 
 	sf::Vector2i mouse_pos;
@@ -127,7 +129,11 @@ public:
 
 						if (this->board[row][col].getGlobalBounds().contains(this->mouse_pos_view)){
 
+							this->start.clear();
+							this->start.push_back(row);
+							this->start.push_back(col);
 							this->board[row][col].setFillColor(sf::Color::Green);
+							std::cout << "pos: " << this->start[0] << ", " << this->start[1] << "\n";
 						}
 					}
 				}
@@ -195,6 +201,33 @@ public:
 		}
 	}
 
+	void get_adj(){
+
+		
+	}
+
+	void path_finding(std::vector<std::vector<sf::RectangleShape>> table, std::vector<int> pos, std::vector<std::vector<int>> path){
+
+		if (table[pos[0]][pos[1]].getFillColor() == sf::Color::Red){
+
+			std::cout << "Found it!";
+			paint_path(path);
+		}
+
+		else{
+
+			for (int i = 0; i < ; ++i)
+			{
+				/* code */
+			}
+		}
+	}
+
+	int find_path(){
+
+		path_finding();
+	}
+
 	void update(){
 
 		this->poll_events();
@@ -203,10 +236,10 @@ public:
 
 		this->update_board();
 
-		// if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
 			
-		// 	find_path();
-		// }
+			find_path();
+		}
 	}
 
 	void render(){
