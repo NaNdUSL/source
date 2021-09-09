@@ -38,7 +38,7 @@ private:
 	void init_vars(){
 
 		this->window = nullptr;
-		this->board_side = 50;
+		this->board_side = 6;
 		this->square_size = 10;
 		this->mouse_held = false;
 	}
@@ -133,7 +133,7 @@ public:
 							this->start.push_back(row);
 							this->start.push_back(col);
 							this->board[row][col].setFillColor(sf::Color::Green);
-							std::cout << "pos: " << this->start[0] << ", " << this->start[1] << "\n";
+							// std::cout << "pos: " << this->start[0] << ", " << this->start[1] << "\n";
 						}
 					}
 				}
@@ -178,6 +178,17 @@ public:
 			}
 		}
 
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Backspace)){
+
+			for(int row = 0; row < this->board_side; row++){
+
+				for(int col = 0; col < this->board_side; col++){
+
+					this->board[row][col].setFillColor(sf::Color::White);
+				}
+			}
+		}
+
 		else{
 
 			this->mouse_held = false;
@@ -201,31 +212,102 @@ public:
 		}
 	}
 
-	void get_adj(){
+	std::vector<std::vector<int>> get_adj(std::vector<int> pos){
 
-		
+		std::vector<std::vector<int>> adjs;
+
+		if (pos[0] + 1 < this->board.size()){
+
+			if (this->board[pos[0] + 1][pos[1]].getFillColor() != sf::Color::Black){
+
+				std::vector<int> adj;
+				adj.push_back(pos[0] + 1);
+				adj.push_back(pos[1]);
+				adjs.push_back(adj);
+			}
+		}
+
+		if (pos[0] - 1 >= 0){
+
+			if (this->board[pos[0] - 1][pos[1]].getFillColor() != sf::Color::Black){
+
+				std::vector<int> adj;
+				adj.push_back(pos[0] - 1);
+				adj.push_back(pos[1]);
+				adjs.push_back(adj);
+			}
+		}
+
+		if (pos[1] + 1 < this->board[0].size()){
+
+			if (this->board[pos[0]][pos[1] + 1].getFillColor() != sf::Color::Black){
+
+				std::vector<int> adj;
+				adj.push_back(pos[0]);
+				adj.push_back(pos[1] + 1);
+				adjs.push_back(adj);
+			}
+		}
+
+		if (pos[1] - 1 >= 0){
+
+			if (this->board[pos[0]][pos[1] - 1].getFillColor() != sf::Color::Black){
+
+				std::vector<int> adj;
+				adj.push_back(pos[0]);
+				adj.push_back(pos[1] - 1);
+				adjs.push_back(adj);
+			}
+		}
+
+		std::cout << "begin\n";
+
+		for (int i = 0; i < adjs.size(); i++){
+
+			std::cout << adjs[i][0] << ", " << adjs[i][1] << "\n";
+		}
+
+		std::cout << "end\n";
+
+		return adjs;
 	}
 
-	void path_finding(std::vector<std::vector<sf::RectangleShape>> table, std::vector<int> pos, std::vector<std::vector<int>> path){
+	void path_finding( std::vector<int> pos, std::vector<std::vector<int>> path, std::vector<std::vector<int>> visited, int found){
 
-		if (table[pos[0]][pos[1]].getFillColor() == sf::Color::Red){
+		std::cout << "pos: " << pos[0] << ", " << pos[1] << "\n";
 
-			std::cout << "Found it!";
-			paint_path(path);
+		if (this->board[pos[0]][pos[1]].getFillColor() == sf::Color::Red){
+
+			found = 1;
+			std::cout << "Found it!\n";
+			// paint_path(path);
 		}
 
 		else{
 
-			for (int i = 0; i < ; ++i)
-			{
-				/* code */
+			std::vector<std::vector<int>> adjs = get_adj(pos);
+
+			for (int i = 0; i < adjs.size() && !found; i++){
+
+				if (std::find(visited.begin(), visited.end(), adjs[i]) != visited.end()){
+
+					path.push_back(adjs[i]);
+
+					visited.push_back(adjs[i]);
+
+					path_finding(adjs[i], path, visited, found);
+				}
 			}
 		}
 	}
 
 	int find_path(){
 
-		path_finding();
+		std::vector<std::vector<int>> path;
+		std::vector<std::vector<int>> visited;
+		this->path_finding(this->start, path, visited, 0);
+		std::cout << "End path_finding";
+		return 0;
 	}
 
 	void update(){
