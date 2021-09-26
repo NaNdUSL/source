@@ -26,6 +26,7 @@ private:
 	sf::Event event;
 
 	std::vector<std::vector<int>> board;
+	int square_size;
 
 	// Mouse vars
 
@@ -39,6 +40,7 @@ private:
 
 		this->window = nullptr;
 		this->fill_board("RCBQKBCRPPPPPPPP8888PPPPPPPPRCBKQBCR");
+		this->square_size = 8;
 		this->mouse_held = false;
 	}
 
@@ -169,9 +171,9 @@ public:
 
 				this->mouse_held = true;
 
-				for(int row = 0; row < this->board_side; row++){
+				for(int row = 0; row < this->square_size; row++){
 
-					for(int col = 0; col < this->board_side; col++){
+					for(int col = 0; col < this->square_size; col++){
 
 						if (this->board[row][col].getFillColor() == sf::Color::Green){
 
@@ -197,9 +199,9 @@ public:
 
 				this->mouse_held = true;
 
-				for(int row = 0; row < this->board_side; row++){
+				for(int row = 0; row < this->square_size; row++){
 
-					for(int col = 0; col < this->board_side; col++){
+					for(int col = 0; col < this->square_size; col++){
 
 						if (this->board[row][col].getFillColor() == sf::Color::Red){
 
@@ -217,9 +219,9 @@ public:
 
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
 
-			for(int row = 0; row < this->board_side; row++){
+			for(int row = 0; row < this->square_size; row++){
 
-				for(int col = 0; col < this->board_side; col++){
+				for(int col = 0; col < this->square_size; col++){
 
 					if (this->board[row][col].getGlobalBounds().contains(this->mouse_pos_view)){
 
@@ -231,9 +233,9 @@ public:
 
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Backspace)){
 
-			for(int row = 0; row < this->board_side; row++){
+			for(int row = 0; row < this->square_size; row++){
 
-				for(int col = 0; col < this->board_side; col++){
+				for(int col = 0; col < this->square_size; col++){
 
 					this->board[row][col].setFillColor(sf::Color::White);
 				}
@@ -252,16 +254,50 @@ public:
 		this->mouse_pos_view = this->window->mapPixelToCoords(this->mouse_pos);
 	}
 
-	/*void render_board(sf::RenderTarget &target){
+	void render_board(sf::RenderTarget &target){
 
-		for (auto &e: this->board){
+		bool color;
+
+		for (int row = 0; row < 8; row++){
+
+			if (row % 2 == 0){
+
+				color = true;
+			}
+			else{
+
+				color = false;
+			}
+
+			for (int col = 0; col < 8; col++){
+
+				sf::RectangleShape square;
+				square.setSize(sf::Vector2f(static_cast<int> (800 / this->square_size), static_cast<int> (800 / this->square_size)));
+				square.setPosition(static_cast<float> (col*static_cast<int> (800 / this->square_size)), static_cast<float> (row*static_cast<int> (800 / this->square_size)));
+
+				if (color == true){
+
+					square.setFillColor(sf::Color::White);
+					color = false;
+				}
+				else{
+
+					square.setFillColor(sf::Color::Black);
+					color = true;
+				}
+
+				target.draw(square);
+			}
+		}
+
+		/*for (auto &e: this->board){
 
 			for (auto &d: e){
 
 				target.draw(d);
 			}
-		}
-	}*/
+		}*/
+	}
 
 	void update(){
 
@@ -281,7 +317,7 @@ public:
 
 		this->window->clear(sf::Color(0,0,0,255));
 
-		// this->render_board(*this->window);
+		this->render_board(*this->window);
 
 		this->window->display();
 	}
