@@ -38,6 +38,7 @@ private:
 	void init_vars(){
 
 		this->window = nullptr;
+		this->fill_board("RCBQKBCRPPPPPPPP8888PPPPPPPPRCBKQBCR");
 		this->mouse_held = false;
 	}
 
@@ -49,50 +50,78 @@ private:
 		this->window->setFramerateLimit(60);
 	}
 
-	// void fill_board(std::string input){
+	void fill_board(std::string input){
 
-	// 	// "RCBQKBCNPPPPPPPP8888PPPPPPPPNCBKQBCR" parseInt
+		// "RCBQKBCNPPPPPPPP8888PPPPPPPPNCBKQBCR" parseInt
 
-	// 	int row = 0;
+		int row = 0;
+		int col = 0;
+		std::vector<int> aux;
 
-	// 	for (int i = 0; i < input.size(); i++){
+		for (int i = 0; i < input.length(); i++){
 
-	// 		if (!input[i].isdigit()){
+			if (col == 8){
 
-	// 			switch (input[i]){
+				// std::cout << "\n";
+				this->board.push_back(aux);
+				aux.clear();
+				col = 0;
+				row++;
+			}
 
-	// 				case "R":
-	// 				this->board.push_back(ROOK);
-	// 				break;
+			if (!std::isdigit(static_cast<unsigned char>(input[i]))){
 
-	// 				case "C":
-	// 				this->board.push_back(KNIGHT);
-	// 				break;
+				switch (input[i]){
+
+					case 'R':
+					// std::cout << "3";
+					aux.push_back(3);
+					break;
+
+					case 'C':
+					// std::cout << "4";
+					aux.push_back(4);
+					break;
 					
-	// 				case "B":
-	// 				this->board.push_back(BISHOP);
-	// 				break;
+					case 'B':
+					// std::cout << "5";
+					aux.push_back(5);
+					break;
 					
-	// 				case "Q":
-	// 				this->board.push_back(QUEEN);
-	// 				break;
+					case 'Q':
+					// std::cout << "2";
+					aux.push_back(2);
+					break;
 					
-	// 				case "K":
-	// 				this->board.push_back(KING);
-	// 				break;
+					case 'K':
+					// std::cout << "1";
+					aux.push_back(1);
+					break;
 
-	// 				case "P":
-	// 				this->board.push_back(PAWN);
-	// 				break;
-	// 			}
-	// 		}
+					case 'P':
+					// std::cout << "6";
+					aux.push_back(6);
+					break;
+				}
 
-	// 		else{
+				col++;
+			}
 
+			else{
 
-	// 		}
-	// 	}
-	// }
+				std::string str(1,input[i]);
+				int num = std::stoi(str);
+
+				while (num > 0){
+
+					// std::cout << "0";
+					aux.push_back(0);
+					num--;
+					col++;
+				}
+			}
+		}
+	}
 
 public:
 
