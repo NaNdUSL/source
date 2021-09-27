@@ -284,7 +284,7 @@ public:
 				}
 				else{
 
-					square.setFillColor(sf::Color::Green);
+					square.setFillColor(sf::Color::Red);
 					color = true;
 				}
 
