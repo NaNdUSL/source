@@ -3,6 +3,7 @@
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
 #include <iostream>
+#include <stdlib.h>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -40,7 +41,7 @@ private:
 	void init_vars(){
 
 		this->window = nullptr;
-		this->fill_board("RCBQKBCRPPPPPPPP8888PPPPPPPPRCBKQBCR");
+		this->fill_board("RCBQKBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_K_Q_B_C_R");
 		this->square_size = 8;
 		this->mouse_held = false;
 	}
@@ -55,58 +56,51 @@ private:
 
 	void fill_board(std::string input){
 
-		// "RCBQKBCNPPPPPPPP8888PPPPPPPPNCBKQBCR" parseInt
+		// "RCBQKBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_K_Q_B_C_R"
 
 		int row = 0;
 		int col = 0;
 		std::vector<int> aux;
+		int is_black = 1;
 
 		for (int i = 0; i < input.length(); i++){
 
-			if (col == 8){
-
-				// std::cout << "\n";
-				this->board.push_back(aux);
-				aux.clear();
-				col = 0;
-				row++;
-			}
-
 			if (!std::isdigit(static_cast<unsigned char>(input[i]))){
+
+				if (input[i] == '_'){
+
+					is_black = -1;
+					i++;
+				}
 
 				switch (input[i]){
 
 					case 'R':
-					// std::cout << "5";
-					aux.push_back(5);
+					aux.push_back(5 * is_black);
 					break;
 
 					case 'C':
-					// std::cout << "4";
-					aux.push_back(4);
+					aux.push_back(4 * is_black);
 					break;
 					
 					case 'B':
-					// std::cout << "3";
-					aux.push_back(3);
+					aux.push_back(3 * is_black);
 					break;
 					
 					case 'Q':
-					// std::cout << "2";
-					aux.push_back(2);
+					aux.push_back(2 * is_black);
 					break;
 					
 					case 'K':
-					// std::cout << "1";
-					aux.push_back(1);
+					aux.push_back(1 * is_black);
 					break;
 
 					case 'P':
-					// std::cout << "6";
-					aux.push_back(6);
+					aux.push_back(6 * is_black);
 					break;
 				}
 
+				is_black = 1;
 				col++;
 			}
 
@@ -117,11 +111,18 @@ private:
 
 				while (num > 0){
 
-					// std::cout << "0";
 					aux.push_back(0);
 					num--;
 					col++;
 				}
+			}
+
+			if (col == 8){
+
+				this->board.push_back(aux);
+				aux.clear();
+				col = 0;
+				row++;
 			}
 		}
 	}
@@ -283,7 +284,7 @@ public:
 				}
 				else{
 
-					square.setFillColor(sf::Color::Black);
+					square.setFillColor(sf::Color::Green);
 					color = true;
 				}
 
@@ -298,53 +299,66 @@ public:
 		texture_size.x /= 6;
 		texture_size.y /= 2;
 		sprite.setTexture(texture);
+		int draw_it = 1;
 
-		for (auto &e: this->board){
+		int color_piece = 0;
 
-			for (auto &d: e){
+		for (int i = 0; i < 8; i++){
 
-				// sprite.setTexture(texture);
+			for (int j = 0; j < 8; j++){
 
-				switch (d){
+				if (this->board[i][j] < 0){
+
+					color_piece = 1;
+				}
+
+				switch (std::abs(this->board[i][j])){
 
 					case ROOK:
 					// std::cout << "3";
-					sprite.setTextureRect(sf::IntRect(texture_size.x * 4, texture_size.y + 1 * 0, texture_size.x, texture_size.y));
+					sprite.setTextureRect(sf::IntRect(texture_size.x * 4, texture_size.y * (0 + color_piece), texture_size.x, texture_size.y));
 					break;
 
 					case KNIGHT:
-					sprite.setTextureRect(sf::IntRect(texture_size.x * 3, texture_size.y + 1 * 0, texture_size.x, texture_size.y));
+					sprite.setTextureRect(sf::IntRect(texture_size.x * 3, texture_size.y * (0 + color_piece), texture_size.x, texture_size.y));
 					// std::cout << "4";
 					break;
-					
+
 					case BISHOP:
-					sprite.setTextureRect(sf::IntRect(texture_size.x * 2, texture_size.y + 1 * 0, texture_size.x, texture_size.y));
+					sprite.setTextureRect(sf::IntRect(texture_size.x * 2, texture_size.y * (0 + color_piece), texture_size.x, texture_size.y));
 					// std::cout << "5";
 					break;
-					
+
 					case QUEEN:
-					sprite.setTextureRect(sf::IntRect(texture_size.x, texture_size.y + 1 * 0, texture_size.x, texture_size.y));
+					sprite.setTextureRect(sf::IntRect(texture_size.x, texture_size.y * (0 + color_piece), texture_size.x, texture_size.y));
 					// std::cout << "2";
 					break;
-					
+
 					case KING:
-					sprite.setTextureRect(sf::IntRect(texture_size.x * 0, texture_size.y + 1 * 0, texture_size.x, texture_size.y));
+					sprite.setTextureRect(sf::IntRect(texture_size.x * 0, texture_size.y * (0 + color_piece), texture_size.x, texture_size.y));
 					// std::cout << "1";
 					break;
 
 					case PAWN:
-					sprite.setTextureRect(sf::IntRect(texture_size.x * 5, texture_size.y + 1 * 0, texture_size.x, texture_size.y));
+					sprite.setTextureRect(sf::IntRect(texture_size.x * 5, texture_size.y * (0 + color_piece), texture_size.x, texture_size.y));
 					// std::cout << "6";
 					break;
 
 					case EMPTY:
-					// std::cout << "0";
+					draw_it = 0;
 					break;
 				}
 
-				// square.setSize(sf::Vector2f(static_cast<int> (800 / this->square_size), static_cast<int> (800 / this->square_size)));
-				// square.setPosition(static_cast<float> (col*static_cast<int> (800 / this->square_size)), static_cast<float> (row*static_cast<int> (800 / this->square_size)));
-				target.draw(sprite);
+				color_piece = 0;
+
+				if (draw_it){
+
+					sprite.setScale(sf::Vector2f(this->square_size * 0.035, this->square_size * 0.035));
+					sprite.setPosition(static_cast<float> (j*static_cast<int> (800 / this->square_size)), static_cast<float> (i*static_cast<int> (800 / this->square_size)));
+					target.draw(sprite);
+				}
+
+				draw_it = 1;
 			}
 		}
 	}
