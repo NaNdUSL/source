@@ -8,6 +8,7 @@
 #include <vector>
 #include <ctime>
 
+#define EMPTY 0
 #define KING 1
 #define QUEEN 2
 #define BISHOP 3
@@ -76,8 +77,8 @@ private:
 				switch (input[i]){
 
 					case 'R':
-					// std::cout << "3";
-					aux.push_back(3);
+					// std::cout << "5";
+					aux.push_back(5);
 					break;
 
 					case 'C':
@@ -86,8 +87,8 @@ private:
 					break;
 					
 					case 'B':
-					// std::cout << "5";
-					aux.push_back(5);
+					// std::cout << "3";
+					aux.push_back(3);
 					break;
 					
 					case 'Q':
@@ -272,7 +273,7 @@ public:
 			for (int col = 0; col < 8; col++){
 
 				sf::RectangleShape square;
-				square.setSize(sf::Vector2f(static_cast<int> (800 / this->square_size), static_cast<int> (800 / this->square_size)));
+				square.setSize(sf::Vector2f(static_cast<int> (800 / 4), static_cast<int> (800 / 4)));
 				square.setPosition(static_cast<float> (col*static_cast<int> (800 / this->square_size)), static_cast<float> (row*static_cast<int> (800 / this->square_size)));
 
 				if (color == true){
@@ -290,13 +291,62 @@ public:
 			}
 		}
 
-		/*for (auto &e: this->board){
+		sf::Sprite sprite;
+		sf::Texture texture;
+		texture.loadFromFile("Pieces.png");
+		sf::Vector2u texture_size = texture.getSize();
+		texture_size.x /= 6;
+		texture_size.y /= 2;
+		sprite.setTexture(texture);
+
+		for (auto &e: this->board){
 
 			for (auto &d: e){
 
-				target.draw(d);
+				// sprite.setTexture(texture);
+
+				switch (d){
+
+					case ROOK:
+					// std::cout << "3";
+					sprite.setTextureRect(sf::IntRect(texture_size.x * 4, texture_size.y + 1 * 0, texture_size.x, texture_size.y));
+					break;
+
+					case KNIGHT:
+					sprite.setTextureRect(sf::IntRect(texture_size.x * 3, texture_size.y + 1 * 0, texture_size.x, texture_size.y));
+					// std::cout << "4";
+					break;
+					
+					case BISHOP:
+					sprite.setTextureRect(sf::IntRect(texture_size.x * 2, texture_size.y + 1 * 0, texture_size.x, texture_size.y));
+					// std::cout << "5";
+					break;
+					
+					case QUEEN:
+					sprite.setTextureRect(sf::IntRect(texture_size.x, texture_size.y + 1 * 0, texture_size.x, texture_size.y));
+					// std::cout << "2";
+					break;
+					
+					case KING:
+					sprite.setTextureRect(sf::IntRect(texture_size.x * 0, texture_size.y + 1 * 0, texture_size.x, texture_size.y));
+					// std::cout << "1";
+					break;
+
+					case PAWN:
+					sprite.setTextureRect(sf::IntRect(texture_size.x * 5, texture_size.y + 1 * 0, texture_size.x, texture_size.y));
+					// std::cout << "6";
+					break;
+
+					case EMPTY:
+					// std::cout << "0";
+					break;
+				}
+
+				// square.setSize(sf::Vector2f(static_cast<int> (800 / this->square_size), static_cast<int> (800 / this->square_size)));
+				// square.setPosition(static_cast<float> (col*static_cast<int> (800 / this->square_size)), static_cast<float> (row*static_cast<int> (800 / this->square_size)));
+				target.draw(sprite);
 			}
-		}*/
+		}
 	}
 
 	void update(){
