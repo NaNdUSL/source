@@ -28,6 +28,7 @@ private:
 	sf::Event event;
 
 	std::vector<std::vector<int>> board;
+	std::vector<std::vector<sf::RectangleShape>> board_image;
 	int square_size;
 
 	// Mouse vars
@@ -41,7 +42,7 @@ private:
 	void init_vars(){
 
 		this->window = nullptr;
-		this->fill_board("RCBQKBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_K_Q_B_C_R");
+		this->fill_board("RCBQKBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_Q_K_B_C_R");
 		this->square_size = 8;
 		this->mouse_held = false;
 	}
@@ -52,6 +53,19 @@ private:
 		this->video_mode.width = 800;
 		this->window = new sf::RenderWindow(this->video_mode, "Default", sf::Style::Titlebar | sf::Style::Close);
 		this->window->setFramerateLimit(60);
+	}
+
+	void fill_helping_board(){
+
+		for (int row = 0; row < 8; row++){
+
+			for (int col = 0; col < 8; col++){
+
+				sf::RectangleShape square;
+				square.setSize(sf::Vector2f(static_cast<int> (800 / 4), static_cast<int> (800 / 4)));
+				square.setPosition(static_cast<float> (col*static_cast<int> (800 / this->square_size)), static_cast<float> (row*static_cast<int> (800 / this->square_size)));
+			}
+		}
 	}
 
 	void fill_board(std::string input){
@@ -165,8 +179,20 @@ public:
 		}
 	}
 
-/*	void update_board(){
+/*
+3 4 5 2 1 5 4 3
+6 6 6 6 6 6 6 6
+0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0
+6 6 6 6 6 6 6 6
+3 4 5 1 2 5 4 3
+*/
 
+	void update_board(){
+
+/*
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)){
 
 			if (this->mouse_held == false){
@@ -194,31 +220,31 @@ public:
 				}
 			}
 		}
+*/
+		// if (sf::Mouse::isButtonPressed(sf::Mouse::Right)){
 
-		else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)){
+		// 	if (this->mouse_held == false){
 
-			if (this->mouse_held == false){
+		// 		this->mouse_held = true;
 
-				this->mouse_held = true;
+		// 		for(int row = 0; row < this->square_size; row++){
 
-				for(int row = 0; row < this->square_size; row++){
+		// 			for(int col = 0; col < this->square_size; col++){
 
-					for(int col = 0; col < this->square_size; col++){
+		// 				if (this->board[row][col].getFillColor() == sf::Color::Red){
 
-						if (this->board[row][col].getFillColor() == sf::Color::Red){
+		// 					this->board[row][col].setFillColor(sf::Color::White);
+		// 				}
 
-							this->board[row][col].setFillColor(sf::Color::White);
-						}
+		// 				if (this->board[row][col].getGlobalBounds().contains(this->mouse_pos_view)){
 
-						if (this->board[row][col].getGlobalBounds().contains(this->mouse_pos_view)){
-
-							this->board[row][col].setFillColor(sf::Color::Red);
-						}
-					}
-				}
-			}
-		}
-
+		// 					this->board[row][col].setFillColor(sf::Color::Red);
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// }
+/*
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
 
 			for(int row = 0; row < this->square_size; row++){
@@ -248,8 +274,9 @@ public:
 
 			this->mouse_held = false;
 		}
-	}
 */
+	}
+
 	void update_mouse_pos(){
 
 		this->mouse_pos = sf::Mouse::getPosition(*this->window);
@@ -284,7 +311,7 @@ public:
 				}
 				else{
 
-					square.setFillColor(sf::Color::Red);
+					square.setFillColor(sf::Color(60, 60, 60, 255));
 					color = true;
 				}
 
@@ -304,6 +331,8 @@ public:
 		int color_piece = 0;
 
 		for (int i = 0; i < 8; i++){
+
+			// std::cout << "\n";
 
 			for (int j = 0; j < 8; j++){
 
@@ -346,6 +375,7 @@ public:
 
 					case EMPTY:
 					draw_it = 0;
+					// std::cout << "0";
 					break;
 				}
 
@@ -354,7 +384,7 @@ public:
 				if (draw_it){
 
 					sprite.setScale(sf::Vector2f(this->square_size * 0.035, this->square_size * 0.035));
-					sprite.setPosition(static_cast<float> (j*static_cast<int> (800 / this->square_size)), static_cast<float> (i*static_cast<int> (800 / this->square_size)));
+					sprite.setPosition(static_cast<float> (j * static_cast<int> (800 / this->square_size)), static_cast<float> (i * static_cast<int> (800 / this->square_size)));
 					target.draw(sprite);
 				}
 
