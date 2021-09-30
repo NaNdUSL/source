@@ -41,12 +41,14 @@ private:
 	sf::Vector2f mouse_pos_view;
 	bool mouse_held;
 
+	// Helping vars
+	sf::Sprite piece_hold;
+
 	// Private methods
 
 	void init_vars(){
 
 		this->window = nullptr;
-		this->fill_board("RCBQKBCRPPPPPPP17P888_P_P_P_P_P_P_P_P_R_C_B_Q_K_B_C_R");
 		if(!this->texture.loadFromFile("Pieces.png")){
 			std::cout << "Error loading texture!";
 		}
@@ -54,8 +56,6 @@ private:
 		this->texture_size.x /= 6;
 		this->texture_size.y /= 2;
 		this->square_size = 8;
-		this->fill_helping_board();
-		this->load_pieces();
 		this->mouse_held = false;
 	}
 
@@ -120,6 +120,7 @@ private:
 					sf::Sprite sprite;
 					sprite.setScale(sf::Vector2f(this->square_size * 0.035, this->square_size * 0.035));
 					sprite.setPosition(static_cast<float> (j * static_cast<int> (800 / this->square_size)), static_cast<float> (i * static_cast<int> (800 / this->square_size)));
+				// std::cout << "element: " << sprite.getPosition().x << ", " << sprite.getPosition().y  << "\n";
 					this->pieces.insert({this->board[i][j], sprite});
 				}
 			}
@@ -152,23 +153,17 @@ private:
 				switch (input[i]){
 
 					case 'R':
-					if (rook > 2){
-						rook = 0;
-					}
+					if (rook > 2) rook = 0;
 					aux.push_back((50 + rook++) * is_black);
 					break;
 
 					case 'C':
-					if (knight > 2){
-						knight = 0;
-					}
+					if (knight > 2) knight = 0;
 					aux.push_back((40 + knight++) * is_black);
 					break;
 
 					case 'B':
-					if (bishop > 2){
-						bishop = 0;
-					}
+					if (bishop > 2) bishop = 0;
 					aux.push_back((30 + bishop++) * is_black);
 					break;
 
@@ -181,9 +176,7 @@ private:
 					break;
 
 					case 'P':
-					if (pawn > 6){
-						pawn = 0;
-					}
+					if (pawn > 8) pawn = 0;
 					aux.push_back((60 + pawn++) * is_black);
 					break;
 				}
@@ -222,7 +215,9 @@ public:
 	Game(){
 
 		this->init_vars();
-		// this->fill_board();
+		this->fill_board("RCBQKBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_Q_K_B_C_R");
+		this->fill_helping_board();
+		this->load_pieces();
 		this->init_window();
 	}
 
@@ -264,10 +259,19 @@ public:
 -50 -40 -30 -20 -10 -31 -41 -51
 */
 
-// 	void update_board(){
+	void update_board(){
 
-// /*
-// 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+
+			for (std::pair<int, sf::Sprite> element : this->pieces){
+
+				std::cout << "mouse: " << this->mouse_pos_view.x << ", " << this->mouse_pos_view.y  << "\n";
+				std::cout << "element: " << element.second.getPosition().x << ", " << element.second.getPosition().y  << "\n";
+				if (element.second.getGlobalBounds().contains(this->mouse_pos_view)){
+					std::cout << "DOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOONE\n";
+
+				}
+			}
 
 // 			if (this->mouse_held == false){
 
@@ -293,7 +297,8 @@ public:
 // 					}
 // 				}
 // 			}
-// 		}
+		}
+	}
 // */
 // 		// if (sf::Mouse::isButtonPressed(sf::Mouse::Right)){
 
@@ -370,7 +375,6 @@ public:
 		}
 
 		int set_it = 1;
-		sf::Sprite sprite;
 		int color_piece = 0;
 		int color_sprite = 0;
 
@@ -388,9 +392,9 @@ public:
 					color_sprite = 2;
 				}
 
+				sf::Sprite sprite;
 				sprite = this->pieces.find(this->board[i][j])->second;
 				sprite.setTexture(this->texture);
-
 				// std::cout << (std::abs(this->board[i][j]) / 10) << "\n";
 				// std::cout << this->board[i][j] << "\n";
 				switch (std::abs(this->board[i][j]) / 10) {
@@ -434,12 +438,7 @@ public:
 
 				color_piece = 0;
 
-				if (set_it){
-
-					sprite.setScale(sf::Vector2f(this->square_size * 0.035, this->square_size * 0.035));
-					sprite.setPosition(static_cast<float> (j * static_cast<int> (800 / this->square_size)), static_cast<float> (i * static_cast<int> (800 / this->square_size)));
-					target.draw(sprite);
-				}
+				if (set_it) target.draw(sprite);
 
 				set_it = 1;
 			}
@@ -450,9 +449,9 @@ public:
 
 		this->poll_events();
 
-		// this->update_mouse_pos();
+		this->update_mouse_pos();
 
-		// this->update_board();
+		this->update_board();
 
 		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
 			
