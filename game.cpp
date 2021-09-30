@@ -2,6 +2,7 @@
 #include <SFML/Network.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
+#include <unordered_map>
 #include <iostream>
 #include <stdlib.h>
 #include <sstream>
@@ -12,10 +13,20 @@
 #define EMPTY 0
 #define KING 1
 #define QUEEN 2
-#define BISHOP 3
-#define KNIGHT 4
-#define ROOK 5
-#define PAWN 6
+#define BISHOP1 31
+#define BISHOP2 32
+#define KNIGHT1 41
+#define KNIGHT2 42
+#define ROOK1 51
+#define ROOK2 52
+#define PAWN1 61
+#define PAWN2 62
+#define PAWN3 63
+#define PAWN4 64
+#define PAWN5 65
+#define PAWN6 66
+#define PAWN7 67
+#define PAWN8 68
 
 class Game{
 
@@ -27,8 +38,11 @@ private:
 	sf::VideoMode video_mode;
 	sf::Event event;
 
-	std::vector<std::vector<int>> board;
 	std::vector<std::vector<sf::RectangleShape>> board_image;
+	std::vector<std::vector<int>> board;
+	std::map<int, sf::Sprite> pieces;
+	sf::Texture texture;
+	sf::Vector2u texture_size;
 	int square_size;
 
 	// Mouse vars
@@ -43,7 +57,13 @@ private:
 
 		this->window = nullptr;
 		this->fill_board("RCBQKBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_Q_K_B_C_R");
+		this->texture.loadFromFile("Pieces.png");
+		this->texture_size = texture.getSize();
+		this->texture_size.x /= 6;
+		this->texture_size.y /= 2;
 		this->square_size = 8;
+		this->fill_helping_board();
+		this->load_pieces();
 		this->mouse_held = false;
 	}
 
@@ -57,20 +77,66 @@ private:
 
 	void fill_helping_board(){
 
+		std::vector<sf::RectangleShape> aux;
+		bool color;
+
 		for (int row = 0; row < 8; row++){
+
+			if (row % 2 == 0){
+
+				color = true;
+			}
+			else{
+
+				color = false;
+			}
+
+			aux.clear();
 
 			for (int col = 0; col < 8; col++){
 
 				sf::RectangleShape square;
-				square.setSize(sf::Vector2f(static_cast<int> (800 / 4), static_cast<int> (800 / 4)));
-				square.setPosition(static_cast<float> (col*static_cast<int> (800 / this->square_size)), static_cast<float> (row*static_cast<int> (800 / this->square_size)));
+				square.setSize(sf::Vector2f(static_cast<int> (800 / this->square_size), static_cast<int> (800 / this->square_size)));
+				square.setPosition(static_cast<float> (col * static_cast<int> (800 / this->square_size)), static_cast<float> (row * static_cast<int> (800 / this->square_size)));
+
+				if (color == true){
+
+					square.setFillColor(sf::Color::White);
+					color = false;
+				}
+				else{
+
+					square.setFillColor(sf::Color(60, 60, 60, 255));
+					color = true;
+				}
+
+				aux.push_back(square);
+			}
+
+			this->board_image.push_back(aux);
+		}
+	}
+
+	void load_pieces(){
+
+		for (int i = 0; i < 8; i++){
+
+			for (int j = 0; j < 8; j++){
+
+				if (this->board[i][j] != EMPTY){
+
+					sf::Sprite sprite;
+					sprite.setScale(sf::Vector2f(this->square_size * 0.035, this->square_size * 0.035));
+					sprite.setPosition(static_cast<float> (j * static_cast<int> (800 / this->square_size)), static_cast<float> (i * static_cast<int> (800 / this->square_size)));
+					this->pieces.insert({this->board[i][j], sprite});
+				}
 			}
 		}
 	}
 
 	void fill_board(std::string input){
 
-		// "RCBQKBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_K_Q_B_C_R"
+		// "*R*C*B*Q*K*B*C*R*P*P*P*P*P*P*P*P8888_P_P_P_P_P_P_P_P_R_C_B_K_Q_B_C_R"
 
 		int row = 0;
 		int col = 0;
@@ -96,15 +162,15 @@ private:
 					case 'C':
 					aux.push_back(4 * is_black);
 					break;
-					
+
 					case 'B':
 					aux.push_back(3 * is_black);
 					break;
-					
+
 					case 'Q':
 					aux.push_back(2 * is_black);
 					break;
-					
+
 					case 'K':
 					aux.push_back(1 * is_black);
 					break;
@@ -190,92 +256,92 @@ public:
 3 4 5 1 2 5 4 3
 */
 
-	void update_board(){
+// 	void update_board(){
 
-/*
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+// /*
+// 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)){
 
-			if (this->mouse_held == false){
+// 			if (this->mouse_held == false){
 
-				this->mouse_held = true;
+// 				this->mouse_held = true;
 
-				for(int row = 0; row < this->square_size; row++){
+// 				for(int row = 0; row < this->square_size; row++){
 
-					for(int col = 0; col < this->square_size; col++){
+// 					for(int col = 0; col < this->square_size; col++){
 
-						if (this->board[row][col].getFillColor() == sf::Color::Green){
+// 						if (this->board[row][col].getFillColor() == sf::Color::Green){
 
-							this->board[row][col].setFillColor(sf::Color::White);
-						}
+// 							this->board[row][col].setFillColor(sf::Color::White);
+// 						}
 
-						if (this->board[row][col].getGlobalBounds().contains(this->mouse_pos_view)){
+// 						if (this->board[row][col].getGlobalBounds().contains(this->mouse_pos_view)){
 
-							this->start.clear();
-							this->start.push_back(row);
-							this->start.push_back(col);
-							this->board[row][col].setFillColor(sf::Color::Green);
-							// std::cout << "pos: " << this->start[0] << ", " << this->start[1] << "\n";
-						}
-					}
-				}
-			}
-		}
-*/
-		// if (sf::Mouse::isButtonPressed(sf::Mouse::Right)){
+// 							this->start.clear();
+// 							this->start.push_back(row);
+// 							this->start.push_back(col);
+// 							this->board[row][col].setFillColor(sf::Color::Green);
+// 							// std::cout << "pos: " << this->start[0] << ", " << this->start[1] << "\n";
+// 						}
+// 					}
+// 				}
+// 			}
+// 		}
+// */
+// 		// if (sf::Mouse::isButtonPressed(sf::Mouse::Right)){
 
-		// 	if (this->mouse_held == false){
+// 		// 	if (this->mouse_held == false){
 
-		// 		this->mouse_held = true;
+// 		// 		this->mouse_held = true;
 
-		// 		for(int row = 0; row < this->square_size; row++){
+// 		// 		for(int row = 0; row < this->square_size; row++){
 
-		// 			for(int col = 0; col < this->square_size; col++){
+// 		// 			for(int col = 0; col < this->square_size; col++){
 
-		// 				if (this->board[row][col].getFillColor() == sf::Color::Red){
+// 		// 				if (this->board[row][col].getFillColor() == sf::Color::Red){
 
-		// 					this->board[row][col].setFillColor(sf::Color::White);
-		// 				}
+// 		// 					this->board[row][col].setFillColor(sf::Color::White);
+// 		// 				}
 
-		// 				if (this->board[row][col].getGlobalBounds().contains(this->mouse_pos_view)){
+// 		// 				if (this->board[row][col].getGlobalBounds().contains(this->mouse_pos_view)){
 
-		// 					this->board[row][col].setFillColor(sf::Color::Red);
-		// 				}
-		// 			}
-		// 		}
-		// 	}
-		// }
-/*
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
+// 		// 					this->board[row][col].setFillColor(sf::Color::Red);
+// 		// 				}
+// 		// 			}
+// 		// 		}
+// 		// 	}
+// 		// }
+// /*
+// 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
 
-			for(int row = 0; row < this->square_size; row++){
+// 			for(int row = 0; row < this->square_size; row++){
 
-				for(int col = 0; col < this->square_size; col++){
+// 				for(int col = 0; col < this->square_size; col++){
 
-					if (this->board[row][col].getGlobalBounds().contains(this->mouse_pos_view)){
+// 					if (this->board[row][col].getGlobalBounds().contains(this->mouse_pos_view)){
 
-						this->board[row][col].setFillColor(sf::Color::Black);
-					}
-				}
-			}
-		}
+// 						this->board[row][col].setFillColor(sf::Color::Black);
+// 					}
+// 				}
+// 			}
+// 		}
 
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Backspace)){
+// 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Backspace)){
 
-			for(int row = 0; row < this->square_size; row++){
+// 			for(int row = 0; row < this->square_size; row++){
 
-				for(int col = 0; col < this->square_size; col++){
+// 				for(int col = 0; col < this->square_size; col++){
 
-					this->board[row][col].setFillColor(sf::Color::White);
-				}
-			}
-		}
+// 					this->board[row][col].setFillColor(sf::Color::White);
+// 				}
+// 			}
+// 		}
 
-		else{
+// 		else{
 
-			this->mouse_held = false;
-		}
-*/
-	}
+// 			this->mouse_held = false;
+// 		}
+// */
+// 	}
 
 	void update_mouse_pos(){
 
@@ -287,73 +353,45 @@ public:
 
 		bool color;
 
-		for (int row = 0; row < 8; row++){
+		for (auto &e: this->board_image){
 
-			if (row % 2 == 0){
+			for (auto &d: e){
 
-				color = true;
-			}
-			else{
-
-				color = false;
-			}
-
-			for (int col = 0; col < 8; col++){
-
-				sf::RectangleShape square;
-				square.setSize(sf::Vector2f(static_cast<int> (800 / 4), static_cast<int> (800 / 4)));
-				square.setPosition(static_cast<float> (col*static_cast<int> (800 / this->square_size)), static_cast<float> (row*static_cast<int> (800 / this->square_size)));
-
-				if (color == true){
-
-					square.setFillColor(sf::Color::White);
-					color = false;
-				}
-				else{
-
-					square.setFillColor(sf::Color(60, 60, 60, 255));
-					color = true;
-				}
-
-				target.draw(square);
+				target.draw(d);
 			}
 		}
 
-		sf::Sprite sprite;
-		sf::Texture texture;
-		texture.loadFromFile("Pieces.png");
-		sf::Vector2u texture_size = texture.getSize();
-		texture_size.x /= 6;
-		texture_size.y /= 2;
-		sprite.setTexture(texture);
-		int draw_it = 1;
+		int set_it = 1;
 
 		int color_piece = 0;
+		int color_sprite = 0;
 
 		for (int i = 0; i < 8; i++){
-
-			// std::cout << "\n";
 
 			for (int j = 0; j < 8; j++){
 
 				if (this->board[i][j] < 0){
 
 					color_piece = 1;
+					color_sprite = 2;
 				}
+
+				sprite.setTexture(texture);
 
 				switch (std::abs(this->board[i][j])){
 
-					case ROOK:
+					case ROOK1:
 					// std::cout << "3";
+
 					sprite.setTextureRect(sf::IntRect(texture_size.x * 4, texture_size.y * (0 + color_piece), texture_size.x, texture_size.y));
 					break;
 
-					case KNIGHT:
+					case KNIGHT1:
 					sprite.setTextureRect(sf::IntRect(texture_size.x * 3, texture_size.y * (0 + color_piece), texture_size.x, texture_size.y));
 					// std::cout << "4";
 					break;
 
-					case BISHOP:
+					case BISHOP1:
 					sprite.setTextureRect(sf::IntRect(texture_size.x * 2, texture_size.y * (0 + color_piece), texture_size.x, texture_size.y));
 					// std::cout << "5";
 					break;
@@ -368,27 +406,27 @@ public:
 					// std::cout << "1";
 					break;
 
-					case PAWN:
+					case PAWN1:
 					sprite.setTextureRect(sf::IntRect(texture_size.x * 5, texture_size.y * (0 + color_piece), texture_size.x, texture_size.y));
 					// std::cout << "6";
 					break;
 
 					case EMPTY:
-					draw_it = 0;
+					set_it = 0;
 					// std::cout << "0";
 					break;
 				}
 
 				color_piece = 0;
 
-				if (draw_it){
+				if (set_it){
 
 					sprite.setScale(sf::Vector2f(this->square_size * 0.035, this->square_size * 0.035));
 					sprite.setPosition(static_cast<float> (j * static_cast<int> (800 / this->square_size)), static_cast<float> (i * static_cast<int> (800 / this->square_size)));
 					target.draw(sprite);
 				}
 
-				draw_it = 1;
+				set_it = 1;
 			}
 		}
 	}
