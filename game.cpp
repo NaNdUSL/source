@@ -13,20 +13,10 @@
 #define EMPTY 0
 #define KING 1
 #define QUEEN 2
-#define BISHOP1 31
-#define BISHOP2 32
-#define KNIGHT1 41
-#define KNIGHT2 42
-#define ROOK1 51
-#define ROOK2 52
-#define PAWN1 61
-#define PAWN2 62
-#define PAWN3 63
-#define PAWN4 64
-#define PAWN5 65
-#define PAWN6 66
-#define PAWN7 67
-#define PAWN8 68
+#define BISHOP 3
+#define KNIGHT 4
+#define ROOK 5
+#define PAWN 6
 
 class Game{
 
@@ -57,7 +47,9 @@ private:
 
 		this->window = nullptr;
 		this->fill_board("RCBQKBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_Q_K_B_C_R");
-		this->texture.loadFromFile("Pieces.png");
+		if(!this->texture.loadFromFile("Pieces.png")){
+			std::cout << "Error loading texture!";
+		}
 		this->texture_size = texture.getSize();
 		this->texture_size.x /= 6;
 		this->texture_size.y /= 2;
@@ -136,12 +128,16 @@ private:
 
 	void fill_board(std::string input){
 
-		// "*R*C*B*Q*K*B*C*R*P*P*P*P*P*P*P*P8888_P_P_P_P_P_P_P_P_R_C_B_K_Q_B_C_R"
+		// "RCBQKBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_K_Q_B_C_R"
 
 		int row = 0;
 		int col = 0;
 		std::vector<int> aux;
 		int is_black = 1;
+		int pawn = 1;
+		int bishop = 1;
+		int rook = 1;
+		int knight = 1;
 
 		for (int i = 0; i < input.length(); i++){
 
@@ -156,27 +152,39 @@ private:
 				switch (input[i]){
 
 					case 'R':
-					aux.push_back(5 * is_black);
+					if (rook > 2){
+						rook = 0;
+					}
+					aux.push_back((50 + rook++) * is_black);
 					break;
 
 					case 'C':
-					aux.push_back(4 * is_black);
+					if (knight > 2){
+						knight = 0;
+					}
+					aux.push_back((40 + knight++) * is_black);
 					break;
 
 					case 'B':
-					aux.push_back(3 * is_black);
+					if (bishop > 2){
+						bishop = 0;
+					}
+					aux.push_back((30 + bishop++) * is_black);
 					break;
 
 					case 'Q':
-					aux.push_back(2 * is_black);
+					aux.push_back(20 * is_black);
 					break;
 
 					case 'K':
-					aux.push_back(1 * is_black);
+					aux.push_back(10 * is_black);
 					break;
 
 					case 'P':
-					aux.push_back(6 * is_black);
+					if (pawn > 6){
+						pawn = 0;
+					}
+					aux.push_back((60 + pawn++) * is_black);
 					break;
 				}
 
@@ -362,13 +370,17 @@ public:
 		}
 
 		int set_it = 1;
-
+		sf::Sprite sprite;
 		int color_piece = 0;
 		int color_sprite = 0;
 
 		for (int i = 0; i < 8; i++){
 
+			std::cout << "\n";
+
 			for (int j = 0; j < 8; j++){
+
+				std::cout << this->board[i][j];
 
 				if (this->board[i][j] < 0){
 
@@ -376,38 +388,41 @@ public:
 					color_sprite = 2;
 				}
 
-				sprite.setTexture(texture);
+				sprite.setTexture(this->texture);
+				sprite = this->pieces.find(this->board[i][j])->second;
 
-				switch (std::abs(this->board[i][j])){
+				// std::cout << (std::abs(this->board[i][j]) / 10) << "\n";
+				// std::cout << this->board[i][j] << "\n";
+				switch (std::abs(this->board[i][j]) / 10) {
 
-					case ROOK1:
+					case ROOK:
 					// std::cout << "3";
 
-					sprite.setTextureRect(sf::IntRect(texture_size.x * 4, texture_size.y * (0 + color_piece), texture_size.x, texture_size.y));
+					sprite.setTextureRect(sf::IntRect(this->texture_size.x * 4, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
 					break;
 
-					case KNIGHT1:
-					sprite.setTextureRect(sf::IntRect(texture_size.x * 3, texture_size.y * (0 + color_piece), texture_size.x, texture_size.y));
+					case KNIGHT:
+					sprite.setTextureRect(sf::IntRect(this->texture_size.x * 3, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
 					// std::cout << "4";
 					break;
 
-					case BISHOP1:
-					sprite.setTextureRect(sf::IntRect(texture_size.x * 2, texture_size.y * (0 + color_piece), texture_size.x, texture_size.y));
+					case BISHOP:
+					sprite.setTextureRect(sf::IntRect(this->texture_size.x * 2, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
 					// std::cout << "5";
 					break;
 
 					case QUEEN:
-					sprite.setTextureRect(sf::IntRect(texture_size.x, texture_size.y * (0 + color_piece), texture_size.x, texture_size.y));
+					sprite.setTextureRect(sf::IntRect(this->texture_size.x, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
 					// std::cout << "2";
 					break;
 
 					case KING:
-					sprite.setTextureRect(sf::IntRect(texture_size.x * 0, texture_size.y * (0 + color_piece), texture_size.x, texture_size.y));
+					sprite.setTextureRect(sf::IntRect(this->texture_size.x * 0, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
 					// std::cout << "1";
 					break;
 
-					case PAWN1:
-					sprite.setTextureRect(sf::IntRect(texture_size.x * 5, texture_size.y * (0 + color_piece), texture_size.x, texture_size.y));
+					case PAWN:
+					sprite.setTextureRect(sf::IntRect(this->texture_size.x * 5, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
 					// std::cout << "6";
 					break;
 
