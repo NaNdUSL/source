@@ -46,7 +46,7 @@ private:
 	void init_vars(){
 
 		this->window = nullptr;
-		this->fill_board("RCBQKBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_Q_K_B_C_R");
+		this->fill_board("RCBQKBCRPPPPPPP17P888_P_P_P_P_P_P_P_P_R_C_B_Q_K_B_C_R");
 		if(!this->texture.loadFromFile("Pieces.png")){
 			std::cout << "Error loading texture!";
 		}
@@ -254,14 +254,14 @@ public:
 	}
 
 /*
-3 4 5 2 1 5 4 3
-6 6 6 6 6 6 6 6
-0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0
-0 0 0 0 0 0 0 0
-6 6 6 6 6 6 6 6
-3 4 5 1 2 5 4 3
+ 51  41  31  20  10  32  42  52
+ 61  62  63  64  65  66  60  61
+  0   0   0   0   0   0   0   0
+  0   0   0   0   0   0   0   0
+  0   0   0   0   0   0   0   0
+  0   0   0   0   0   0   0   0
+-62 -63 -64 -65 -66 -60 -61 -62
+-50 -40 -30 -20 -10 -31 -41 -51
 */
 
 // 	void update_board(){
@@ -376,11 +376,11 @@ public:
 
 		for (int i = 0; i < 8; i++){
 
-			std::cout << "\n";
+			// std::cout << "\n";
 
 			for (int j = 0; j < 8; j++){
 
-				std::cout << this->board[i][j];
+				// std::cout << this->board[i][j];
 
 				if (this->board[i][j] < 0){
 
@@ -388,8 +388,8 @@ public:
 					color_sprite = 2;
 				}
 
-				sprite.setTexture(this->texture);
 				sprite = this->pieces.find(this->board[i][j])->second;
+				sprite.setTexture(this->texture);
 
 				// std::cout << (std::abs(this->board[i][j]) / 10) << "\n";
 				// std::cout << this->board[i][j] << "\n";
