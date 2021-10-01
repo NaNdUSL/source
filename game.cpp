@@ -64,7 +64,7 @@ private:
 		this->video_mode.height = 800;
 		this->video_mode.width = 800;
 		this->window = new sf::RenderWindow(this->video_mode, "Default", sf::Style::Titlebar | sf::Style::Close);
-		this->window->setFramerateLimit(60);
+		this->window->setFramerateLimit(144);
 	}
 
 	void fill_helping_board(){
@@ -111,16 +111,60 @@ private:
 
 	void load_pieces(){
 
+		int color_piece = 0;
+		int color_sprite = 0;
+
 		for (int i = 0; i < 8; i++){
 
 			for (int j = 0; j < 8; j++){
 
 				if (this->board[i][j] != EMPTY){
 
+					if (this->board[i][j] < 0){
+
+						color_piece = 1;
+						color_sprite = 2;
+					}
+
 					sf::Sprite sprite;
 					sprite.setScale(sf::Vector2f(this->square_size * 0.035, this->square_size * 0.035));
 					sprite.setPosition(static_cast<float> (j * static_cast<int> (800 / this->square_size)), static_cast<float> (i * static_cast<int> (800 / this->square_size)));
-				// std::cout << "element: " << sprite.getPosition().x << ", " << sprite.getPosition().y  << "\n";
+
+					switch (std::abs(this->board[i][j]) / 10) {
+
+						case ROOK:
+					// std::cout << "3";
+
+						sprite.setTextureRect(sf::IntRect(this->texture_size.x * 4, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
+						break;
+
+						case KNIGHT:
+						sprite.setTextureRect(sf::IntRect(this->texture_size.x * 3, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
+					// std::cout << "4";
+						break;
+
+						case BISHOP:
+						sprite.setTextureRect(sf::IntRect(this->texture_size.x * 2, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
+					// std::cout << "5";
+						break;
+
+						case QUEEN:
+						sprite.setTextureRect(sf::IntRect(this->texture_size.x, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
+					// std::cout << "2";
+						break;
+
+						case KING:
+						sprite.setTextureRect(sf::IntRect(this->texture_size.x * 0, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
+					// std::cout << "1";
+						break;
+
+						case PAWN:
+						sprite.setTextureRect(sf::IntRect(this->texture_size.x * 5, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
+					// std::cout << "6";
+						break;
+					}
+
+					color_piece = 0;
 					this->pieces.insert({this->board[i][j], sprite});
 				}
 			}
@@ -265,11 +309,12 @@ public:
 
 			for (std::pair<int, sf::Sprite> element : this->pieces){
 
-				std::cout << "mouse: " << this->mouse_pos_view.x << ", " << this->mouse_pos_view.y  << "\n";
-				std::cout << "element: " << element.second.getPosition().x << ", " << element.second.getPosition().y  << "\n";
+				// std::cout << "mouse: " << this->mouse_pos_view.x << ", " << this->mouse_pos_view.y  << "\n";
 				if (element.second.getGlobalBounds().contains(this->mouse_pos_view)){
-					std::cout << "DOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOONE\n";
-
+					this->piece_hold = element.second;
+					// std::cout << "element: " << element.second.getPosition().x << ", " << element.second.getPosition().y  << "\n";
+					// std::cout << "size: " << this->texture_size.x << ", " << this->texture_size.y  << "\n";
+					this->pieces.find(element.first)->second.setPosition(static_cast<float> (this->mouse_pos_view.x - static_cast<float> (this->texture_size.x) / this->square_size), static_cast<float> (this->mouse_pos_view.y - static_cast<float> (this->texture_size.y) / this->square_size));
 				}
 			}
 
@@ -374,73 +419,15 @@ public:
 			}
 		}
 
-		int set_it = 1;
-		int color_piece = 0;
-		int color_sprite = 0;
-
 		for (int i = 0; i < 8; i++){
 
-			// std::cout << "\n";
-
 			for (int j = 0; j < 8; j++){
-
-				// std::cout << this->board[i][j];
-
-				if (this->board[i][j] < 0){
-
-					color_piece = 1;
-					color_sprite = 2;
-				}
 
 				sf::Sprite sprite;
 				sprite = this->pieces.find(this->board[i][j])->second;
 				sprite.setTexture(this->texture);
-				// std::cout << (std::abs(this->board[i][j]) / 10) << "\n";
-				// std::cout << this->board[i][j] << "\n";
-				switch (std::abs(this->board[i][j]) / 10) {
 
-					case ROOK:
-					// std::cout << "3";
-
-					sprite.setTextureRect(sf::IntRect(this->texture_size.x * 4, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
-					break;
-
-					case KNIGHT:
-					sprite.setTextureRect(sf::IntRect(this->texture_size.x * 3, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
-					// std::cout << "4";
-					break;
-
-					case BISHOP:
-					sprite.setTextureRect(sf::IntRect(this->texture_size.x * 2, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
-					// std::cout << "5";
-					break;
-
-					case QUEEN:
-					sprite.setTextureRect(sf::IntRect(this->texture_size.x, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
-					// std::cout << "2";
-					break;
-
-					case KING:
-					sprite.setTextureRect(sf::IntRect(this->texture_size.x * 0, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
-					// std::cout << "1";
-					break;
-
-					case PAWN:
-					sprite.setTextureRect(sf::IntRect(this->texture_size.x * 5, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
-					// std::cout << "6";
-					break;
-
-					case EMPTY:
-					set_it = 0;
-					// std::cout << "0";
-					break;
-				}
-
-				color_piece = 0;
-
-				if (set_it) target.draw(sprite);
-
-				set_it = 1;
+				if (this->board[i][j] != EMPTY) target.draw(sprite);
 			}
 		}
 	}
