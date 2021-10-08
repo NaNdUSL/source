@@ -18,6 +18,116 @@
 #define ROOK 5
 #define PAWN 6
 
+// Piece class
+
+class Piece{
+
+private:
+
+	int id;
+	sf::Sprite piece;
+	sf::Vector2u texture_size;
+
+public:
+
+	Piece(){
+
+		this->id = EMPTY;
+		sf::Sprite sprite;
+		this->piece = sprite;
+		sf::Vector2u texture_size;
+		this->texture_size = texture_size;
+	}
+
+	Piece(int id, sf::Sprite sprite){
+
+		this->id = id;
+		this->piece = sprite;
+	}
+
+	void set_id(int id){
+
+		this->id = id;
+	}
+
+	void set_piece(sf::Sprite sprite){
+
+		this->piece = sprite;
+	}
+
+	void set_texture_size(sf::Vector2u texture_size){
+
+		this->texture_size = texture_size;
+	}
+
+	int get_id(){
+
+		int id = this->id;
+		return id;
+	}
+
+	sf::Sprite get_piece(){
+
+		sf::Sprite sprite;
+		sprite = this->piece;
+		return sprite;
+	}
+
+	sf::Vector2u get_texture_size(){
+
+		sf::Vector2u texture_size;
+		texture_size = this->texture_size;
+		return texture_size;
+	}
+};
+
+// Pieces class
+
+class Pieces{
+
+private:
+
+	std::map<int, Piece> pieces;
+
+public:
+
+	Pieces(){
+
+		std::map<int, Piece> pieces;
+		this->pieces = pieces;
+	}
+
+	Pieces(std::map<int, Piece> pieces){
+
+		this->pieces = pieces;
+	}
+
+	void set_id(std::map<int, Piece> pieces){
+
+		this->pieces = pieces;
+	}
+
+	std::map<int, Piece> get_id(){
+
+		std::map<int, Piece> pieces;
+		pieces = this->pieces;
+		return pieces;
+	}
+};
+
+
+// Board class
+
+class Boards{
+
+private:
+
+	std::map<int, Piece> pieces;
+};
+
+
+// Game class
+
 class Game{
 
 private:
@@ -31,6 +141,7 @@ private:
 	std::vector<std::vector<sf::RectangleShape>> board_image;
 	std::vector<std::vector<int>> board;
 	std::map<int, sf::Sprite> pieces;
+
 	sf::Texture texture;
 	sf::Vector2u texture_size;
 	int square_size;
@@ -42,7 +153,9 @@ private:
 	bool mouse_held;
 
 	// Helping vars
-	sf::Sprite piece_hold;
+	bool holding;
+	bool dragging;
+	int piece_held;
 
 	// Private methods
 
@@ -56,7 +169,9 @@ private:
 		this->texture_size.x /= 6;
 		this->texture_size.y /= 2;
 		this->square_size = 8;
-		this->mouse_held = false;
+		this->holding = false;
+		this->dragging = false;
+		this->piece_held = 0;
 	}
 
 	void init_window(){
@@ -303,21 +418,51 @@ public:
 -50 -40 -30 -20 -10 -31 -41 -51
 */
 
-	void update_board(){
+	// void update_board(){
 
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+	// 	if(this->dragging){
 
-			for (std::pair<int, sf::Sprite> element : this->pieces){
+ //            this->setPosition(mousePosition.x - this->sprite.getGlobalBounds().width/2,mousePosition.y - this->sprite.getGlobalBounds().height/2);
+ //            if(!sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+ //            {
+ //                this->moving = false;
+ //                movingAPiece = false;
+ //            }
+ //        }
+ //        else
+ //        {
+ //            if(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && mousePosition.x > this->getPosition().x &&
+ //               mousePosition.y > this->getPosition().y && mousePosition.x < this->getPosition().x + this->sprite.getGlobalBounds().width &&
+ //               mousePosition.y < this->getPosition().y + this->sprite.getGlobalBounds().height && !movingAPiece)
+ //            {
+ //                this->moving = true;
+ //                movingAPiece = true;
+ //            }
+ //        }
 
-				// std::cout << "mouse: " << this->mouse_pos_view.x << ", " << this->mouse_pos_view.y  << "\n";
-				if (element.second.getGlobalBounds().contains(this->mouse_pos_view)){
-					this->piece_hold = element.second;
-					// std::cout << "element: " << element.second.getPosition().x << ", " << element.second.getPosition().y  << "\n";
-					// std::cout << "size: " << this->texture_size.x << ", " << this->texture_size.y  << "\n";
-					this->pieces.find(element.first)->second.setPosition(static_cast<float> (this->mouse_pos_view.x - static_cast<float> (this->texture_size.x) / this->square_size), static_cast<float> (this->mouse_pos_view.y - static_cast<float> (this->texture_size.y) / this->square_size));
-				}
-			}
+	// 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)){
 
+	// 			if (!this->piece_held){
+
+	// 				for (std::pair<int, sf::Sprite> element : this->pieces){
+
+	// 					if (element.second.getGlobalBounds().contains(this->mouse_pos_view)){
+
+	// 						this->holding = true;
+	// 						this->piece_held = element.first;
+	// 					}
+	// 				}
+	// 			}
+
+	// 			this->pieces.find(this->piece_held)->second.setPosition(static_cast<float> (this->mouse_pos_view.x - static_cast<float> (this->texture_size.x) / this->square_size), static_cast<float> (this->mouse_pos_view.y - static_cast<float> (this->texture_size.y) / this->square_size));
+	// 		}
+	// 	else if (sf::Event::MouseButtonReleased(sf::Mouse::Left)){
+
+	// 		this->holding = false;
+	// 	}
+
+
+		
 // 			if (this->mouse_held == false){
 
 // 				this->mouse_held = true;
@@ -342,8 +487,6 @@ public:
 // 					}
 // 				}
 // 			}
-		}
-	}
 // */
 // 		// if (sf::Mouse::isButtonPressed(sf::Mouse::Right)){
 
@@ -394,12 +537,7 @@ public:
 // 			}
 // 		}
 
-// 		else{
-
-// 			this->mouse_held = false;
-// 		}
-// */
-// 	}
+	// }
 
 	void update_mouse_pos(){
 
@@ -438,7 +576,7 @@ public:
 
 		this->update_mouse_pos();
 
-		this->update_board();
+		// this->update_board();
 
 		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
 			
@@ -450,7 +588,7 @@ public:
 
 		this->window->clear(sf::Color(0,0,0,255));
 
-		this->render_board(*this->window);
+		// this->render_board(*this->window);
 
 		this->window->display();
 	}
