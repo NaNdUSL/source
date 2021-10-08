@@ -122,7 +122,62 @@ class Boards{
 
 private:
 
-	std::map<int, Piece> pieces;
+	std::vector<std::vector<sf::RectangleShape>> board_image;
+	std::vector<std::vector<int>> board;
+	int square_size;
+
+public:
+
+	Boards(){
+
+		std::vector<std::vector<sf::RectangleShape>> board_image;
+		this->board_image = board_image;
+		std::vector<std::vector<int>> board;
+		this->board = board;
+		this->square_size = 8;
+	}
+
+	Boards(std::vector<std::vector<sf::RectangleShape>> board_image, std::vector<std::vector<int>> board, int square_size){
+
+		this->board_image = board_image;
+		this->board = board;
+		this->square_size = square_size;
+	}
+
+	void set_board(std::vector<std::vector<int>> board){
+
+		this->board = board;
+	}
+
+	void set_board_image(std::vector<std::vector<sf::RectangleShape>> board_image){
+
+		this->board_image = board_image;
+	}
+
+	void set_square_size(int square_size){
+
+		this->square_size = square_size;
+	}
+
+	std::vector<std::vector<int>> get_board(){
+
+		std::vector<std::vector<int>> board;
+		board = this->board;
+		return board;
+	}
+
+	std::vector<std::vector<sf::RectangleShape>> get_board_image(){
+
+		std::vector<std::vector<sf::RectangleShape>> board_image;
+		board_image = this->board_image;
+		return board_image;
+	}
+
+	int get_square_size(){
+
+		int size = this->square_size;
+		return size;
+	}
 };
 
 
@@ -137,25 +192,31 @@ private:
 	sf::RenderWindow* window;
 	sf::VideoMode video_mode;
 	sf::Event event;
-
-	std::vector<std::vector<sf::RectangleShape>> board_image;
-	std::vector<std::vector<int>> board;
-	std::map<int, sf::Sprite> pieces;
-
-	sf::Texture texture;
-	sf::Vector2u texture_size;
-	int square_size;
-
-	// Mouse vars
-
 	sf::Vector2i mouse_pos;
 	sf::Vector2f mouse_pos_view;
 	bool mouse_held;
-
-	// Helping vars
+	sf::Texture texture;
 	bool holding;
 	bool dragging;
 	int piece_held;
+	
+
+
+
+
+
+
+	// std::vector<std::vector<sf::RectangleShape>> board_image;
+	// std::vector<std::vector<int>> board;
+	// std::map<int, sf::Sprite> pieces;
+
+	// sf::Vector2u texture_size;
+	// int square_size;
+
+	// Mouse vars
+
+
+	// Helping vars
 
 	// Private methods
 
@@ -462,7 +523,7 @@ public:
 	// 	}
 
 
-		
+
 // 			if (this->mouse_held == false){
 
 // 				this->mouse_held = true;
