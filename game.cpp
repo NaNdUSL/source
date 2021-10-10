@@ -26,7 +26,6 @@ private:
 
 	int id;
 	sf::Sprite piece;
-	sf::Vector2u texture_size;
 
 public:
 
@@ -35,8 +34,6 @@ public:
 		this->id = EMPTY;
 		sf::Sprite sprite;
 		this->piece = sprite;
-		sf::Vector2u texture_size;
-		this->texture_size = texture_size;
 	}
 
 	Piece(int id, sf::Sprite sprite){
@@ -55,11 +52,6 @@ public:
 		this->piece = sprite;
 	}
 
-	void set_texture_size(sf::Vector2u texture_size){
-
-		this->texture_size = texture_size;
-	}
-
 	int get_id(){
 
 		int id = this->id;
@@ -72,13 +64,6 @@ public:
 		sprite = this->piece;
 		return sprite;
 	}
-
-	sf::Vector2u get_texture_size(){
-
-		sf::Vector2u texture_size;
-		texture_size = this->texture_size;
-		return texture_size;
-	}
 };
 
 // Pieces class
@@ -88,30 +73,66 @@ class Pieces{
 private:
 
 	std::map<int, Piece> pieces;
+	std::string texture;
+	sf::Vector2u texture_size;
 
 public:
+
 
 	Pieces(){
 
 		std::map<int, Piece> pieces;
 		this->pieces = pieces;
+		this->texture = "default.png";
+		sf::Vector2u texture_size(0.0f, 0.0f);
+		this->texture_size = texture_size;
 	}
 
-	Pieces(std::map<int, Piece> pieces){
+	Pieces(std::map<int, Piece> pieces, char str[], sf::Vector2u texture_size){
+
+		this->pieces = pieces;
+		this->texture = str;
+		this->texture_size = texture_size;
+	}
+
+	void set_pieces(std::map<int, Piece> pieces){
 
 		this->pieces = pieces;
 	}
 
-	void set_id(std::map<int, Piece> pieces){
+	void set_texture(std::string str){
 
-		this->pieces = pieces;
+		this->texture = str;
 	}
 
-	std::map<int, Piece> get_id(){
+	void set_texture_size(sf::Vector2u texture_size){
+
+		this->texture_size = texture_size;
+	}
+
+	std::map<int, Piece> get_pieces(){
 
 		std::map<int, Piece> pieces;
 		pieces = this->pieces;
 		return pieces;
+	}
+
+	std::string get_texture(){
+
+		std::string str = this->texture;
+		return str;
+	}
+
+	sf::Vector2u get_texture_size(){
+
+		sf::Vector2u texture_size;
+		texture_size = this->texture_size;
+		return texture_size;
+	}
+
+	void insert_elem(int num, Piece piece){
+
+		this->pieces.insert({num, piece});
 	}
 };
 
@@ -125,15 +146,16 @@ private:
 	std::vector<std::vector<sf::RectangleShape>> board_image;
 	std::vector<std::vector<int>> board;
 	int square_size;
+	Pieces pieces;
 
 public:
 
 	Boards(){
 
-		std::vector<std::vector<sf::RectangleShape>> board_image;
-		this->board_image = board_image;
 		std::vector<std::vector<int>> board;
 		this->board = board;
+		std::vector<std::vector<sf::RectangleShape>> board_image;
+		this->board_image = board_image;
 		this->square_size = 8;
 	}
 
@@ -178,174 +200,14 @@ public:
 		int size = this->square_size;
 		return size;
 	}
-};
 
+	Pieces get_pieces(){
 
-// Game class
-
-class Game{
-
-private:
-
-	// Window vars
-
-	sf::RenderWindow* window;
-	sf::VideoMode video_mode;
-	sf::Event event;
-	sf::Vector2i mouse_pos;
-	sf::Vector2f mouse_pos_view;
-	bool mouse_held;
-	sf::Texture texture;
-	bool holding;
-	bool dragging;
-	int piece_held;
-	
-
-
-
-
-
-
-	// std::vector<std::vector<sf::RectangleShape>> board_image;
-	// std::vector<std::vector<int>> board;
-	// std::map<int, sf::Sprite> pieces;
-
-	// sf::Vector2u texture_size;
-	// int square_size;
-
-	// Mouse vars
-
-
-	// Helping vars
-
-	// Private methods
-
-	void init_vars(){
-
-		this->window = nullptr;
-		if(!this->texture.loadFromFile("Pieces.png")){
-			std::cout << "Error loading texture!";
-		}
-		this->texture_size = texture.getSize();
-		this->texture_size.x /= 6;
-		this->texture_size.y /= 2;
-		this->square_size = 8;
-		this->holding = false;
-		this->dragging = false;
-		this->piece_held = 0;
+		Pieces pieces = this->pieces;
+		return pieces;
 	}
 
-	void init_window(){
-
-		this->video_mode.height = 800;
-		this->video_mode.width = 800;
-		this->window = new sf::RenderWindow(this->video_mode, "Default", sf::Style::Titlebar | sf::Style::Close);
-		this->window->setFramerateLimit(144);
-	}
-
-	void fill_helping_board(){
-
-		std::vector<sf::RectangleShape> aux;
-		bool color;
-
-		for (int row = 0; row < 8; row++){
-
-			if (row % 2 == 0){
-
-				color = true;
-			}
-			else{
-
-				color = false;
-			}
-
-			aux.clear();
-
-			for (int col = 0; col < 8; col++){
-
-				sf::RectangleShape square;
-				square.setSize(sf::Vector2f(static_cast<int> (800 / this->square_size), static_cast<int> (800 / this->square_size)));
-				square.setPosition(static_cast<float> (col * static_cast<int> (800 / this->square_size)), static_cast<float> (row * static_cast<int> (800 / this->square_size)));
-
-				if (color == true){
-
-					square.setFillColor(sf::Color::White);
-					color = false;
-				}
-				else{
-
-					square.setFillColor(sf::Color(60, 60, 60, 255));
-					color = true;
-				}
-
-				aux.push_back(square);
-			}
-
-			this->board_image.push_back(aux);
-		}
-	}
-
-	void load_pieces(){
-
-		int color_piece = 0;
-		int color_sprite = 0;
-
-		for (int i = 0; i < 8; i++){
-
-			for (int j = 0; j < 8; j++){
-
-				if (this->board[i][j] != EMPTY){
-
-					if (this->board[i][j] < 0){
-
-						color_piece = 1;
-						color_sprite = 2;
-					}
-
-					sf::Sprite sprite;
-					sprite.setScale(sf::Vector2f(this->square_size * 0.035, this->square_size * 0.035));
-					sprite.setPosition(static_cast<float> (j * static_cast<int> (800 / this->square_size)), static_cast<float> (i * static_cast<int> (800 / this->square_size)));
-
-					switch (std::abs(this->board[i][j]) / 10) {
-
-						case ROOK:
-					// std::cout << "3";
-
-						sprite.setTextureRect(sf::IntRect(this->texture_size.x * 4, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
-						break;
-
-						case KNIGHT:
-						sprite.setTextureRect(sf::IntRect(this->texture_size.x * 3, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
-					// std::cout << "4";
-						break;
-
-						case BISHOP:
-						sprite.setTextureRect(sf::IntRect(this->texture_size.x * 2, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
-					// std::cout << "5";
-						break;
-
-						case QUEEN:
-						sprite.setTextureRect(sf::IntRect(this->texture_size.x, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
-					// std::cout << "2";
-						break;
-
-						case KING:
-						sprite.setTextureRect(sf::IntRect(this->texture_size.x * 0, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
-					// std::cout << "1";
-						break;
-
-						case PAWN:
-						sprite.setTextureRect(sf::IntRect(this->texture_size.x * 5, this->texture_size.y * color_piece, this->texture_size.x, this->texture_size.y));
-					// std::cout << "6";
-						break;
-					}
-
-					color_piece = 0;
-					this->pieces.insert({this->board[i][j], sprite});
-				}
-			}
-		}
-	}
+	// read from string input
 
 	void fill_board(std::string input){
 
@@ -428,6 +290,171 @@ private:
 		}
 	}
 
+	void fill_helping_board(){
+
+		std::vector<sf::RectangleShape> aux;
+		bool color;
+
+		for (int row = 0; row < 8; row++){
+
+			if (row % 2 == 0){
+
+				color = true;
+			}
+			else{
+
+				color = false;
+			}
+
+			aux.clear();
+
+			for (int col = 0; col < 8; col++){
+
+				sf::RectangleShape square;
+				square.setSize(sf::Vector2f(static_cast<int> (800 / this->square_size), static_cast<int> (800 / this->square_size)));
+				square.setPosition(static_cast<float> (col * static_cast<int> (800 / this->square_size)), static_cast<float> (row * static_cast<int> (800 / this->square_size)));
+
+				if (color == true){
+
+					square.setFillColor(sf::Color::White);
+					color = false;
+				}
+				else{
+
+					square.setFillColor(sf::Color(60, 60, 60, 255));
+					color = true;
+				}
+
+				aux.push_back(square);
+			}
+
+			this->board_image.push_back(aux);
+		}
+	}
+
+	void load_pieces(){
+
+		int color_piece = 0;
+		int color_sprite = 0;
+
+		for (int i = 0; i < 8; i++){
+
+			for (int j = 0; j < 8; j++){
+
+				if (this->board[i][j] != EMPTY){
+
+					if (this->board[i][j] < 0){
+
+						color_piece = 1;
+						color_sprite = 2;
+					}
+
+					sf::Sprite sprite;
+					sprite.setScale(sf::Vector2f(this->square_size * 0.035, this->square_size * 0.035));
+					sprite.setPosition(static_cast<float> (j * static_cast<int> (800 / this->square_size)), static_cast<float> (i * static_cast<int> (800 / this->square_size)));
+					Piece result(this->board[i][j], sprite);
+					sf::Vector2u texture_size = this->pieces.get_texture_size();
+					
+					switch (std::abs(this->board[i][j]) / 10) {
+
+						case ROOK:
+					// std::cout << "3";
+
+						sprite.setTextureRect(sf::IntRect(texture_size.x * 4, texture_size.y * color_piece, texture_size.x, texture_size.y));
+						break;
+
+						case KNIGHT:
+						sprite.setTextureRect(sf::IntRect(texture_size.x * 3, texture_size.y * color_piece, texture_size.x, texture_size.y));
+					// std::cout << "4";
+						break;
+
+						case BISHOP:
+						sprite.setTextureRect(sf::IntRect(texture_size.x * 2, texture_size.y * color_piece, texture_size.x, texture_size.y));
+					// std::cout << "5";
+						break;
+
+						case QUEEN:
+						sprite.setTextureRect(sf::IntRect(texture_size.x, texture_size.y * color_piece, texture_size.x, texture_size.y));
+					// std::cout << "2";
+						break;
+
+						case KING:
+						sprite.setTextureRect(sf::IntRect(texture_size.x * 0, texture_size.y * color_piece, texture_size.x, texture_size.y));
+					// std::cout << "1";
+						break;
+
+						case PAWN:
+						sprite.setTextureRect(sf::IntRect(texture_size.x * 5, texture_size.y * color_piece, texture_size.x, texture_size.y));
+					// std::cout << "6";
+						break;
+					}
+
+					color_piece = 0;
+					this->pieces.insert_elem(this->board[i][j], result);
+				}
+			}
+		}
+	}
+
+	void set_texture_size(sf::Vector2u size, int x, int y){
+
+		sf::Vector2u aux(size.x / x, size.y / y);
+		this->pieces.set_texture_size(aux);
+	}
+};
+
+
+// Game class
+
+class Game{
+
+private:
+
+	// Window vars
+
+	sf::RenderWindow* window;
+	sf::VideoMode video_mode;
+	sf::Event event;
+
+	// Mouse vars
+
+	sf::Vector2i mouse_pos;
+	sf::Vector2f mouse_pos_view;
+
+	// Other classes
+
+	Boards boards;
+	sf::Texture texture;
+
+	// Helping vars
+
+	bool mouse_held;
+	bool holding;
+	bool dragging;
+	int piece_held;
+	
+	// Private methods
+
+	void init_vars(){
+
+		this->window = nullptr;
+		if(!this->texture.loadFromFile("Pieces.png")){
+
+			std::cout << "Problem loading textures\n";
+		}
+		this->holding = false;
+		this->dragging = false;
+		this->piece_held = 0;
+	}
+
+	void init_window(){
+
+		this->video_mode.height = 800;
+		this->video_mode.width = 800;
+		this->window = new sf::RenderWindow(this->video_mode, "Default", sf::Style::Titlebar | sf::Style::Close);
+		this->window->setFramerateLimit(144);
+	}
+
 public:
 
 	// Constructors / Destructors
@@ -435,9 +462,10 @@ public:
 	Game(){
 
 		this->init_vars();
-		this->fill_board("RCBQKBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_Q_K_B_C_R");
-		this->fill_helping_board();
-		this->load_pieces();
+		this->boards.set_texture_size(this->texture.getSize(), 6, 2);
+		this->boards.fill_board("RCBQKBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_Q_K_B_C_R");
+		this->boards.fill_helping_board();
+		this->boards.load_pieces();
 		this->init_window();
 	}
 
@@ -610,7 +638,7 @@ public:
 
 		bool color;
 
-		for (auto &e: this->board_image){
+		for (auto &e: this->boards.get_board_image()){
 
 			for (auto &d: e){
 
@@ -618,15 +646,15 @@ public:
 			}
 		}
 
-		for (int i = 0; i < 8; i++){
+		for (int i = 1; i < 2; i++){
 
-			for (int j = 0; j < 8; j++){
+			for (int j = 2; j < 3; j++){
 
 				sf::Sprite sprite;
-				sprite = this->pieces.find(this->board[i][j])->second;
+				sprite = this->boards.get_pieces().get_pieces().find(this->boards.get_board()[i][j])->second.get_piece();
 				sprite.setTexture(this->texture);
 
-				if (this->board[i][j] != EMPTY) target.draw(sprite);
+				if (this->boards.get_board()[i][j] != EMPTY) target.draw(sprite);
 			}
 		}
 	}
@@ -649,7 +677,7 @@ public:
 
 		this->window->clear(sf::Color(0,0,0,255));
 
-		// this->render_board(*this->window);
+		this->render_board(*this->window);
 
 		this->window->display();
 	}
