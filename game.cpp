@@ -524,139 +524,33 @@ public:
 
 	void update_board(){
 
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)){
+		if (this->mouse_pos_view.x <= this->window->getSize().x && this->mouse_pos_view.y <= this->window->getSize().y && this->mouse_pos_view.x >= 0 && this->mouse_pos_view.y >= 0){
 
-			if (!this->holding){
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)){
 
-				for (std::pair<int, Piece> element : this->boards.get_pieces().get_pieces()){
+				if (!this->holding){
 
-					if (element.second.get_piece().getGlobalBounds().contains(this->mouse_pos_view)){
+					for (std::pair<int, Piece> element : this->boards.get_pieces().get_pieces()){
 
-						std::cout << "nigga";
-						this->piece_held = element.first;
-						this->holding = true;
+						if (element.second.get_piece().getGlobalBounds().contains(this->mouse_pos_view)){
+
+							this->piece_held = element.first;
+							this->holding = true;
+						}
 					}
 				}
+				else{
+
+					this->boards.set_pieces_pos(this->piece_held, this->mouse_pos_view.x - (this->boards.get_pieces().get_texture_size().x / 6), this->mouse_pos_view.y - (this->boards.get_pieces().get_texture_size().y) / 5);
+				}
 			}
-			else{
 
-				std::cout << "BLACK";
-				this->boards.set_pieces_pos(this->piece_held, this->mouse_pos_view.x - (this->boards.get_pieces().get_texture_size().x / 6), this->mouse_pos_view.y - (this->boards.get_pieces().get_texture_size().y) / 5);
-				// this->boards.set_pieces_pos(this->piece_held, static_cast<float> (this->mouse_pos_view.x - static_cast<float> (this->texture.getSize().x) / this->boards.get_square_size()), static_cast<float> (this->mouse_pos_view.y - static_cast<float> (this->texture.getSize().y) / this->boards.get_square_size()));
+			else if(sf::Event::MouseButtonReleased && this->event.mouseButton.button == sf::Mouse::Left){
+
+				this->holding = false;
 			}
-		}
-
-		if(sf::Event::MouseButtonReleased && this->event.mouseButton.button == sf::Mouse::Left){
-
-			std::cout << "WHITE";
-			this->holding = false;
 		}
 	}
-		// else{
-
-		// 	this->dragging = false;
-		// 	this->holding = false;
-		// }
-
-	// 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)){
-
-	// 		if (!this->piece_held){
-
-	// 			for (std::pair<int, sf::Sprite> element : this->pieces){
-
-	// 				if (element.second.getGlobalBounds().contains(this->mouse_pos_view)){
-
-	// 					this->holding = true;
-	// 					this->piece_held = element.first;
-	// 				}
-	// 			}
-	// 		}
-
-	// 		this->pieces.find(this->piece_held)->second.setPosition(static_cast<float> (this->mouse_pos_view.x - static_cast<float> (this->texture_size.x) / this->square_size), static_cast<float> (this->mouse_pos_view.y - static_cast<float> (this->texture_size.y) / this->square_size));
-	// 	}
-	// 	else if (sf::Event::MouseButtonReleased(sf::Mouse::Left)){
-
-	// 		this->holding = false;
-	// 	}
-	// }
-
-
-
-// 			if (this->mouse_held == false){
-
-// 				this->mouse_held = true;
-
-// 				for(int row = 0; row < this->square_size; row++){
-
-// 					for(int col = 0; col < this->square_size; col++){
-
-// 						if (this->board[row][col].getFillColor() == sf::Color::Green){
-
-// 							this->board[row][col].setFillColor(sf::Color::White);
-// 						}
-
-// 						if (this->board[row][col].getGlobalBounds().contains(this->mouse_pos_view)){
-
-// 							this->start.clear();
-// 							this->start.push_back(row);
-// 							this->start.push_back(col);
-// 							this->board[row][col].setFillColor(sf::Color::Green);
-// 							// std::cout << "pos: " << this->start[0] << ", " << this->start[1] << "\n";
-// 						}
-// 					}
-// 				}
-// 			}
-// */
-// 		// if (sf::Mouse::isButtonPressed(sf::Mouse::Right)){
-
-// 		// 	if (this->mouse_held == false){
-
-// 		// 		this->mouse_held = true;
-
-// 		// 		for(int row = 0; row < this->square_size; row++){
-
-// 		// 			for(int col = 0; col < this->square_size; col++){
-
-// 		// 				if (this->board[row][col].getFillColor() == sf::Color::Red){
-
-// 		// 					this->board[row][col].setFillColor(sf::Color::White);
-// 		// 				}
-
-// 		// 				if (this->board[row][col].getGlobalBounds().contains(this->mouse_pos_view)){
-
-// 		// 					this->board[row][col].setFillColor(sf::Color::Red);
-// 		// 				}
-// 		// 			}
-// 		// 		}
-// 		// 	}
-// 		// }
-// /*
-// 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
-
-// 			for(int row = 0; row < this->square_size; row++){
-
-// 				for(int col = 0; col < this->square_size; col++){
-
-// 					if (this->board[row][col].getGlobalBounds().contains(this->mouse_pos_view)){
-
-// 						this->board[row][col].setFillColor(sf::Color::Black);
-// 					}
-// 				}
-// 			}
-// 		}
-
-// 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Backspace)){
-
-// 			for(int row = 0; row < this->square_size; row++){
-
-// 				for(int col = 0; col < this->square_size; col++){
-
-// 					this->board[row][col].setFillColor(sf::Color::White);
-// 				}
-// 			}
-// 		}
-
-	// }
 
 	void update_mouse_pos(){
 
