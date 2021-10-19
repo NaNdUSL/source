@@ -352,7 +352,6 @@ public:
 					sf::Sprite sprite;
 					sprite.setScale(sf::Vector2f(this->square_size * 0.035, this->square_size * 0.035));
 					sprite.setPosition(static_cast<float> (j * static_cast<int> (800 / this->square_size)), static_cast<float> (i * static_cast<int> (800 / this->square_size)));
-					Piece result(this->board[i][j], sprite);
 					sf::Vector2u texture_size = this->pieces.get_texture_size();
 					
 					switch (std::abs(this->board[i][j]) / 10) {
@@ -390,6 +389,7 @@ public:
 					}
 
 					color_piece = 0;
+					Piece result(this->board[i][j], sprite);
 					this->pieces.insert_elem(this->board[i][j], result);
 				}
 			}
@@ -507,48 +507,55 @@ public:
 -50 -40 -30 -20 -10 -31 -41 -51
 */
 
-	// void update_board(){
+	void update_board(){
 
-	// 	if(this->dragging){
+		if(!this->dragging){
 
- //            this->setPosition(mousePosition.x - this->sprite.getGlobalBounds().width/2,mousePosition.y - this->sprite.getGlobalBounds().height/2);
- //            if(!sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
- //            {
- //                this->moving = false;
- //                movingAPiece = false;
- //            }
- //        }
- //        else
- //        {
- //            if(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && mousePosition.x > this->getPosition().x &&
- //               mousePosition.y > this->getPosition().y && mousePosition.x < this->getPosition().x + this->sprite.getGlobalBounds().width &&
- //               mousePosition.y < this->getPosition().y + this->sprite.getGlobalBounds().height && !movingAPiece)
- //            {
- //                this->moving = true;
- //                movingAPiece = true;
- //            }
- //        }
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)){
 
-	// 		if (sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+				this->dragging = true;
 
-	// 			if (!this->piece_held){
+				for (std::pair<int, sf::Sprite> element : this->boards.get_pieces()){
 
-	// 				for (std::pair<int, sf::Sprite> element : this->pieces){
+					if (element.second.getGlobalBounds().contains(this->mouse_pos_view)){
 
-	// 					if (element.second.getGlobalBounds().contains(this->mouse_pos_view)){
+						this->piece_held = element.first;
+					}
+				}
 
-	// 						this->holding = true;
-	// 						this->piece_held = element.first;
-	// 					}
-	// 				}
-	// 			}
+			}
+            this->setPosition(mousePosition.x - this->sprite.getGlobalBounds().width/2,mousePosition.y - this->sprite.getGlobalBounds().height/2);
+        }
+        else{
 
-	// 			this->pieces.find(this->piece_held)->second.setPosition(static_cast<float> (this->mouse_pos_view.x - static_cast<float> (this->texture_size.x) / this->square_size), static_cast<float> (this->mouse_pos_view.y - static_cast<float> (this->texture_size.y) / this->square_size));
-	// 		}
-	// 	else if (sf::Event::MouseButtonReleased(sf::Mouse::Left)){
+            if(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+            {
+                this->moving = true;
+                movingAPiece = true;
+            }
+        }
 
-	// 		this->holding = false;
-	// 	}
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+
+				if (!this->piece_held){
+
+					for (std::pair<int, sf::Sprite> element : this->pieces){
+
+						if (element.second.getGlobalBounds().contains(this->mouse_pos_view)){
+
+							this->holding = true;
+							this->piece_held = element.first;
+						}
+					}
+				}
+
+				this->pieces.find(this->piece_held)->second.setPosition(static_cast<float> (this->mouse_pos_view.x - static_cast<float> (this->texture_size.x) / this->square_size), static_cast<float> (this->mouse_pos_view.y - static_cast<float> (this->texture_size.y) / this->square_size));
+			}
+		else if (sf::Event::MouseButtonReleased(sf::Mouse::Left)){
+
+			this->holding = false;
+		}
+	}
 
 
 
@@ -646,15 +653,14 @@ public:
 			}
 		}
 
-		for (int i = 1; i < 2; i++){
+		for (int i = 0; i < 8; i++){
 
-			for (int j = 2; j < 3; j++){
+			for (int j = 0; j < 8; j++){
 
 				sf::Sprite sprite;
 				sprite = this->boards.get_pieces().get_pieces().find(this->boards.get_board()[i][j])->second.get_piece();
 				sprite.setTexture(this->texture);
-
-				if (this->boards.get_board()[i][j] != EMPTY) target.draw(sprite);
+				target.draw(sprite);
 			}
 		}
 	}
@@ -665,7 +671,7 @@ public:
 
 		this->update_mouse_pos();
 
-		// this->update_board();
+		this->update_board();
 
 		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
 			
