@@ -417,16 +417,58 @@ public:
 		this->pieces.set_piece_pos(num, x, y);
 	}
 
+
+	int countDigit(long long n){
+
+		int count = 0;
+
+		while (n != 0){
+
+			n = n / 10;
+			count++;
+		}
+
+		return count;
+	}
+
 	void display_board(){
 
 		for (int i = 0; i < 8; i++){
 
 			for (int j = 0; j < 8; j++){
 
+				int var = countDigit(this->board[i][j]);
+
+				if (this->board[i][j] > 0){
+
+					var--;
+				}
+
+				while(3 - var > 0){
+
+					std::cout << " ";
+					var++;
+				}
+
 				std::cout << this->board[i][j];
 			}
 
-			std::cout << "\n\n\n";
+			std::cout << "\n";
+		}
+
+		std::cout << "\n\n\n";
+	}
+
+	void new_pos(int prev_x, int prev_y, int new_x, int new_y){
+
+		if (prev_x != new_x || prev_y != new_y){
+
+			int prev_piece;
+
+			prev_piece = this->board[prev_x][prev_y];
+
+			this->board[new_x][new_y] = prev_piece;
+			this->board[prev_x][prev_y] = 0;
 		}
 	}
 };
@@ -571,12 +613,16 @@ public:
 							if (element.getGlobalBounds().contains(this->mouse_pos_view)){
 
 								this->boards.set_pieces_pos(this->piece_held, element.getPosition().x, element.getPosition().y);
+								
+								this->boards.new_pos(static_cast<int> (this->prev_place.y * this->boards.get_square_size() / 800), static_cast<int> (this->prev_place.x * this->boards.get_square_size() / 800), static_cast<int> (element.getPosition().y * this->boards.get_square_size() / 800), static_cast<int> (element.getPosition().x * this->boards.get_square_size() / 800));
+
+								this->boards.display_board();
 							}
 						}
 					}
-				}
 
-				this->holding = false;
+					this->holding = false;
+				}
 			}
 		}
 	}
@@ -619,7 +665,7 @@ public:
 
 		this->update_board();
 
-		this->boards.display_board();
+		// this->boards.display_board();
 
 		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
 			
