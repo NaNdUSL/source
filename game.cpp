@@ -416,6 +416,19 @@ public:
 
 		this->pieces.set_piece_pos(num, x, y);
 	}
+
+	void display_board(){
+
+		for (int i = 0; i < 8; i++){
+
+			for (int j = 0; j < 8; j++){
+
+				std::cout << this->board[i][j];
+			}
+
+			std::cout << "\n\n\n";
+		}
+	}
 };
 
 
@@ -447,6 +460,7 @@ private:
 	bool holding;
 	bool dragging;
 	int piece_held;
+	sf::Vector2f prev_place;
 	
 	// Private methods
 
@@ -534,6 +548,7 @@ public:
 
 						if (element.second.get_piece().getGlobalBounds().contains(this->mouse_pos_view)){
 
+							this->prev_place = element.second.get_piece().getPosition();
 							this->piece_held = element.first;
 							this->holding = true;
 						}
@@ -546,6 +561,20 @@ public:
 			}
 
 			else if(sf::Event::MouseButtonReleased && this->event.mouseButton.button == sf::Mouse::Left){
+
+				if (this->holding){
+
+					for (std::vector<sf::RectangleShape> vec : this->boards.get_board_image()){
+
+						for (sf::RectangleShape element : vec){
+
+							if (element.getGlobalBounds().contains(this->mouse_pos_view)){
+
+								this->boards.set_pieces_pos(this->piece_held, element.getPosition().x, element.getPosition().y);
+							}
+						}
+					}
+				}
 
 				this->holding = false;
 			}
@@ -589,6 +618,8 @@ public:
 		this->update_mouse_pos();
 
 		this->update_board();
+
+		this->boards.display_board();
 
 		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
 			
