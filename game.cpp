@@ -495,6 +495,7 @@ private:
 
 	Boards boards;
 	sf::Texture texture;
+	int player;
 
 	// Helping vars
 
@@ -506,8 +507,9 @@ private:
 	
 	// Private methods
 
-	void init_vars(){
+	void init_vars(int player){
 
+		this->player = player;
 		this->window = nullptr;
 		if(!this->texture.loadFromFile("Pieces.png")){
 
@@ -523,18 +525,19 @@ private:
 		this->video_mode.height = 800;
 		this->video_mode.width = 800;
 		this->window = new sf::RenderWindow(this->video_mode, "Default", sf::Style::Titlebar | sf::Style::Close);
-		this->window->setFramerateLimit(144);
+		this->window->setFramerateLimit(60);
 	}
 
 public:
 
 	// Constructors / Destructors
 
-	Game(){
+	Game(int player){
 
-		this->init_vars();
+		this->init_vars(player);
 		this->boards.set_texture_size(this->texture.getSize(), 6, 2);
-		this->boards.fill_board("RCBQKBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_Q_K_B_C_R");
+		if (this->player == -1) this->boards.fill_board("RCBQKBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_Q_K_B_C_R");
+		else this->boards.fill_board("_R_C_B_K_Q_B_C_R_P_P_P_P_P_P_P_P8888PPPPPPPPRCBKQBCR");
 		this->boards.fill_helping_board();
 		this->boards.load_pieces();
 		this->init_window();
@@ -586,9 +589,24 @@ public:
 
 				if (!this->holding){
 
+					int board_pos_x;
+					int board_pos_y;
+
+					for (std::vector<sf::RectangleShape> vec : this->boards.get_board_image()){
+
+						for (sf::RectangleShape element : vec){
+
+							if (element.getGlobalBounds().contains(this->mouse_pos_view)){
+
+								board_pos_x = static_cast<int> (element.getPosition().y * this->boards.get_square_size() / 800);
+								board_pos_y = static_cast<int> (element.getPosition().x * this->boards.get_square_size() / 800);
+							}
+						}
+					}
+
 					for (std::pair<int, Piece> element : this->boards.get_pieces().get_pieces()){
 
-						if (element.second.get_piece().getGlobalBounds().contains(this->mouse_pos_view)){
+						if (this->boards.get_board()[board_pos_x][board_pos_y] * this->player > 0 && element.second.get_piece().getGlobalBounds().contains(this->mouse_pos_view)){
 
 							this->prev_place = element.second.get_piece().getPosition();
 							this->piece_held = element.first;
@@ -613,10 +631,20 @@ public:
 							if (element.getGlobalBounds().contains(this->mouse_pos_view)){
 
 								this->boards.set_pieces_pos(this->piece_held, element.getPosition().x, element.getPosition().y);
+
+								int prev_x = static_cast<int> (this->prev_place.y * this->boards.get_square_size() / 800);
+								int prev_y = static_cast<int> (this->prev_place.x * this->boards.get_square_size() / 800);
+								int new_x = static_cast<int> (element.getPosition().y * this->boards.get_square_size() / 800);
+								int new_y = static_cast<int> (element.getPosition().x * this->boards.get_square_size() / 800);
 								
-								this->boards.new_pos(static_cast<int> (this->prev_place.y * this->boards.get_square_size() / 800), static_cast<int> (this->prev_place.x * this->boards.get_square_size() / 800), static_cast<int> (element.getPosition().y * this->boards.get_square_size() / 800), static_cast<int> (element.getPosition().x * this->boards.get_square_size() / 800));
+								this->boards.new_pos(prev_x, prev_y, new_x, new_y);
 
 								this->boards.display_board();
+
+								if (prev_x != new_x || prev_y != new_y){
+
+									this->player *= -1;
+								}
 							}
 						}
 					}
@@ -664,8 +692,6 @@ public:
 		this->update_mouse_pos();
 
 		this->update_board();
-
-		// this->boards.display_board();
 
 		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
 			

@@ -8,7 +8,13 @@ int main(int argc, char const *argv[]){
 
     // init game engine
 
-    Game game;
+    int player;
+
+    std::cout << "white: 1, black: -1\n";
+    std::cin >> player;
+    std::cout << "\n";
+
+    Game game(player);
 
     while(game.running()){
 
