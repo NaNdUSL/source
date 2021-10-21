@@ -8,7 +8,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <ctime>
+#include <cmath>
 
 #define EMPTY 0
 #define KING 1
@@ -144,6 +144,12 @@ public:
 
 		this->pieces.find(num)->second.set_pos(x, y);
 	}
+
+	void delete_piece(int num){
+
+		std::map<int, Piece>::iterator piece = this->pieces.find(num);
+		this->pieces.erase(piece); 
+	}
 };
 
 
@@ -245,17 +251,17 @@ public:
 				switch (input[i]){
 
 					case 'R':
-					if (rook > 2) rook = 0;
+					if (rook > 2) rook = 1;
 					aux.push_back((50 + rook++) * is_black);
 					break;
 
 					case 'C':
-					if (knight > 2) knight = 0;
+					if (knight > 2) knight = 1;
 					aux.push_back((40 + knight++) * is_black);
 					break;
 
 					case 'B':
-					if (bishop > 2) bishop = 0;
+					if (bishop > 2) bishop = 1;
 					aux.push_back((30 + bishop++) * is_black);
 					break;
 
@@ -268,7 +274,7 @@ public:
 					break;
 
 					case 'P':
-					if (pawn > 8) pawn = 0;
+					if (pawn > 8) pawn = 1;
 					aux.push_back((60 + pawn++) * is_black);
 					break;
 				}
@@ -331,7 +337,7 @@ public:
 				}
 				else{
 
-					square.setFillColor(sf::Color(60, 60, 60, 255));
+					square.setFillColor(sf::Color(100, 100, 100, 255));
 					color = true;
 				}
 
@@ -461,15 +467,95 @@ public:
 
 	void new_pos(int prev_x, int prev_y, int new_x, int new_y){
 
+		int prev_piece = this->board[prev_x][prev_y];
+		int res = this->board[new_x][new_y];
+
 		if (prev_x != new_x || prev_y != new_y){
-
-			int prev_piece;
-
-			prev_piece = this->board[prev_x][prev_y];
 
 			this->board[new_x][new_y] = prev_piece;
 			this->board[prev_x][prev_y] = 0;
+
+			if (res != 0){
+
+				this->pieces.delete_piece(res);
+			}
 		}
+	}
+
+	/*
+	 51  41  31  20  10  32  42  52
+	 61  62  63  64  65  66  60  61
+	  0   0   0   0   0   0   0   0
+	  0   0   0   0   0   0   0   0
+	  0   0   0   0   0   0   0   0
+	  0   0   0   0   0   0   0   0
+	-62 -63 -64 -65 -66 -60 -61 -62
+	-50 -40 -30 -20 -10 -31 -41 -51
+	*/
+
+	bool legal_move(int prev_x, int prev_y, int new_x, int new_y){
+
+		bool legal = true;
+
+		if (prev_x != new_x || prev_y != new_y){
+
+			int prev_piece = this->board[prev_x][prev_y];
+			int i;
+			int vec_x = (new_x - prev_x) / sqrt((new_x - prev_x) * (new_x - prev_x) + (new_y - prev_y) * (new_y - prev_y));
+			int vec_y = (new_y - prev_y) / sqrt((new_x - prev_x) * (new_x - prev_x) + (new_y - prev_y) * (new_y - prev_y));			
+
+			// std::cout << "vector " << vec_x << ", " << vec_y  << "\n";
+			// std::cout << "piece " << this->board[prev_x][prev_y]  << "\n";
+			// std::cout << "prev_pos " << prev_x << ", " << prev_y  << "\n";
+			// std::cout << "new pos " << new_x << ", " << new_y  << "\n\n\n";
+
+			switch (std::abs(prev_piece) / 10) {
+
+				case ROOK:
+
+				if (vec_x * vec_y != 0){
+					
+					legal = false;
+				}
+				else{
+
+					while (std::abs(prev_x) < std::abs(new_x) || std::abs(prev_y) < std::abs(new_y)){
+
+						prev_x += vec_x;
+						prev_y += vec_y;
+
+						if (this->board[prev_x][prev_y] != 0){
+
+							legal = false;
+							std::cout << "rook ilegal\n";
+						}
+					}
+				}
+				break;
+
+				case KNIGHT:
+					// std::cout << "4";
+				break;
+
+				case BISHOP:
+					// std::cout << "5";
+				break;
+
+				case QUEEN:
+					// std::cout << "2";
+				break;
+
+				case KING:
+					// std::cout << "1";
+				break;
+
+				case PAWN:
+					// std::cout << "6";
+				break;
+			}
+		}
+
+		return legal;
 	}
 };
 
@@ -504,7 +590,7 @@ private:
 	bool dragging;
 	int piece_held;
 	sf::Vector2f prev_place;
-	
+
 	// Private methods
 
 	void init_vars(int player){
@@ -538,6 +624,7 @@ public:
 		this->boards.set_texture_size(this->texture.getSize(), 6, 2);
 		if (this->player == -1) this->boards.fill_board("RCBQKBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_Q_K_B_C_R");
 		else this->boards.fill_board("_R_C_B_K_Q_B_C_R_P_P_P_P_P_P_P_P8888PPPPPPPPRCBKQBCR");
+		if (this->player = -1) this->player *= -1;
 		this->boards.fill_helping_board();
 		this->boards.load_pieces();
 		this->init_window();
@@ -581,6 +668,8 @@ public:
 -50 -40 -30 -20 -10 -31 -41 -51
 */
 
+// se calhar pegar na peça que tou a segurar e desenhar depois de todas as outras
+
 	void update_board(){
 
 		if (this->mouse_pos_view.x <= this->window->getSize().x && this->mouse_pos_view.y <= this->window->getSize().y && this->mouse_pos_view.x >= 0 && this->mouse_pos_view.y >= 0){
@@ -598,113 +687,123 @@ public:
 
 							if (element.getGlobalBounds().contains(this->mouse_pos_view)){
 
-								board_pos_x = static_cast<int> (element.getPosition().y * this->boards.get_square_size() / 800);
-								board_pos_y = static_cast<int> (element.getPosition().x * this->boards.get_square_size() / 800);
+							board_pos_x = static_cast<int> (element.getPosition().y * this->boards.get_square_size() / 800);
+							board_pos_y = static_cast<int> (element.getPosition().x * this->boards.get_square_size() / 800);
+						}
+					}
+				}
+
+				for (std::pair<int, Piece> element : this->boards.get_pieces().get_pieces()){
+
+					if (this->boards.get_board()[board_pos_x][board_pos_y] * this->player > 0 && element.second.get_piece().getGlobalBounds().contains(this->mouse_pos_view)){
+
+						this->prev_place = element.second.get_piece().getPosition();
+						this->piece_held = element.first;
+						this->holding = true;
+					}
+				}
+			}
+			else{
+
+				this->boards.set_pieces_pos(this->piece_held, this->mouse_pos_view.x - (this->boards.get_pieces().get_texture_size().x / 6), this->mouse_pos_view.y - (this->boards.get_pieces().get_texture_size().y) / 5);
+			}
+		}
+
+		else if(sf::Event::MouseButtonReleased && this->event.mouseButton.button == sf::Mouse::Left){
+
+			if (this->holding){
+
+				for (std::vector<sf::RectangleShape> vec : this->boards.get_board_image()){
+
+					for (sf::RectangleShape element : vec){
+
+						if (element.getGlobalBounds().contains(this->mouse_pos_view)){
+
+// check if it's legal move
+
+						int prev_x = static_cast<int> (this->prev_place.y * this->boards.get_square_size() / 800);
+						int prev_y = static_cast<int> (this->prev_place.x * this->boards.get_square_size() / 800);
+						int new_x = static_cast<int> (element.getPosition().y * this->boards.get_square_size() / 800);
+						int new_y = static_cast<int> (element.getPosition().x * this->boards.get_square_size() / 800);
+
+						if (this->boards.get_board()[new_x][new_y] * this->boards.get_board()[prev_x][prev_y] <= 0 && this->boards.legal_move(prev_x, prev_y, new_x, new_y)){
+
+							this->boards.set_pieces_pos(this->piece_held, element.getPosition().x, element.getPosition().y);
+
+							this->boards.new_pos(prev_x, prev_y, new_x, new_y);
+
+							this->boards.display_board();
+
+							if (prev_x != new_x || prev_y != new_y){
+
+								this->player *= -1;
 							}
 						}
-					}
+						else{
 
-					for (std::pair<int, Piece> element : this->boards.get_pieces().get_pieces()){
+							this->boards.set_pieces_pos(this->piece_held, this->prev_place.x, this->prev_place.y);
 
-						if (this->boards.get_board()[board_pos_x][board_pos_y] * this->player > 0 && element.second.get_piece().getGlobalBounds().contains(this->mouse_pos_view)){
-
-							this->prev_place = element.second.get_piece().getPosition();
-							this->piece_held = element.first;
-							this->holding = true;
 						}
 					}
 				}
-				else{
-
-					this->boards.set_pieces_pos(this->piece_held, this->mouse_pos_view.x - (this->boards.get_pieces().get_texture_size().x / 6), this->mouse_pos_view.y - (this->boards.get_pieces().get_texture_size().y) / 5);
-				}
 			}
 
-			else if(sf::Event::MouseButtonReleased && this->event.mouseButton.button == sf::Mouse::Left){
+			this->holding = false;
+		}
+	}
+}
+}
 
-				if (this->holding){
+void update_mouse_pos(){
 
-					for (std::vector<sf::RectangleShape> vec : this->boards.get_board_image()){
+	this->mouse_pos = sf::Mouse::getPosition(*this->window);
+	this->mouse_pos_view = this->window->mapPixelToCoords(this->mouse_pos);
+}
 
-						for (sf::RectangleShape element : vec){
+void render_board(sf::RenderTarget &target){
 
-							if (element.getGlobalBounds().contains(this->mouse_pos_view)){
+	bool color;
 
-								this->boards.set_pieces_pos(this->piece_held, element.getPosition().x, element.getPosition().y);
+	for (auto &e: this->boards.get_board_image()){
 
-								int prev_x = static_cast<int> (this->prev_place.y * this->boards.get_square_size() / 800);
-								int prev_y = static_cast<int> (this->prev_place.x * this->boards.get_square_size() / 800);
-								int new_x = static_cast<int> (element.getPosition().y * this->boards.get_square_size() / 800);
-								int new_y = static_cast<int> (element.getPosition().x * this->boards.get_square_size() / 800);
-								
-								this->boards.new_pos(prev_x, prev_y, new_x, new_y);
+		for (auto &d: e){
 
-								this->boards.display_board();
-
-								if (prev_x != new_x || prev_y != new_y){
-
-									this->player *= -1;
-								}
-							}
-						}
-					}
-
-					this->holding = false;
-				}
-			}
+			target.draw(d);
 		}
 	}
 
-	void update_mouse_pos(){
+	for (int i = 0; i < 8; i++){
 
-		this->mouse_pos = sf::Mouse::getPosition(*this->window);
-		this->mouse_pos_view = this->window->mapPixelToCoords(this->mouse_pos);
-	}
+		for (int j = 0; j < 8; j++){
 
-	void render_board(sf::RenderTarget &target){
-
-		bool color;
-
-		for (auto &e: this->boards.get_board_image()){
-
-			for (auto &d: e){
-
-				target.draw(d);
-			}
-		}
-
-		for (int i = 0; i < 8; i++){
-
-			for (int j = 0; j < 8; j++){
-
-				sf::Sprite sprite;
-				sprite = this->boards.get_pieces().get_pieces().find(this->boards.get_board()[i][j])->second.get_piece();
-				sprite.setTexture(this->texture);
-				target.draw(sprite);
-			}
+			sf::Sprite sprite;
+			sprite = this->boards.get_pieces().get_pieces().find(this->boards.get_board()[i][j])->second.get_piece();
+			sprite.setTexture(this->texture);
+			target.draw(sprite);
 		}
 	}
+}
 
-	void update(){
+void update(){
 
-		this->poll_events();
+	this->poll_events();
 
-		this->update_mouse_pos();
+	this->update_mouse_pos();
 
-		this->update_board();
+	this->update_board();
 
 		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
 			
 			find_path();
 		}*/
-	}
+}
 
-	void render(){
+void render(){
 
-		this->window->clear(sf::Color(0,0,0,255));
+	this->window->clear(sf::Color(0,0,0,255));
 
-		this->render_board(*this->window);
+	this->render_board(*this->window);
 
-		this->window->display();
-	}
+	this->window->display();
+}
 };
