@@ -501,8 +501,8 @@ public:
 
 			int prev_piece = this->board[prev_x][prev_y];
 			int i;
-			int vec_x = (new_x - prev_x) / sqrt((new_x - prev_x) * (new_x - prev_x) + (new_y - prev_y) * (new_y - prev_y));
-			int vec_y = (new_y - prev_y) / sqrt((new_x - prev_x) * (new_x - prev_x) + (new_y - prev_y) * (new_y - prev_y));			
+			float vector_x = (new_x - prev_x) / sqrt((new_x - prev_x) * (new_x - prev_x) + (new_y - prev_y) * (new_y - prev_y));
+			float vector_y = (new_y - prev_y) / sqrt((new_x - prev_x) * (new_x - prev_x) + (new_y - prev_y) * (new_y - prev_y));			
 
 			// std::cout << "vector " << vec_x << ", " << vec_y  << "\n";
 			// std::cout << "piece " << this->board[prev_x][prev_y]  << "\n";
@@ -513,13 +513,46 @@ public:
 
 				case ROOK:
 
-				if (vec_x * vec_y != 0){
+				if (vector_x * vector_y != 0.0f){
 					
 					legal = false;
 				}
 				else{
 
-					while (std::abs(prev_x) < std::abs(new_x) || std::abs(prev_y) < std::abs(new_y)){
+					int vec_x = static_cast<int>(vector_x);
+					int vec_y = static_cast<int>(vector_y);
+
+					prev_x += vec_x;
+					prev_y += vec_y;
+
+					while (std::abs(new_x - prev_x) > 0 || std::abs(new_y - prev_y) > 0){
+
+
+						if (this->board[prev_x][prev_y] != 0){
+
+							legal = false;
+							std::cout << "rook ilegal\n";
+						}
+
+						prev_x += vec_x;
+						prev_y += vec_y;
+					}
+				}
+
+				break;
+
+				case BISHOP:
+
+				if (vector_x != vector_y){
+					
+					legal = false;
+				}
+				else{
+
+					int vec_x = static_cast<int>(vector_x);
+					int vec_y = static_cast<int>(vector_y);
+
+					while (std::abs(prev_x) < std::abs(new_x) && std::abs(prev_y) < std::abs(new_y)){
 
 						prev_x += vec_x;
 						prev_y += vec_y;
@@ -527,18 +560,11 @@ public:
 						if (this->board[prev_x][prev_y] != 0){
 
 							legal = false;
-							std::cout << "rook ilegal\n";
+							std::cout << "bishop ilegal\n";
 						}
 					}
 				}
-				break;
 
-				case KNIGHT:
-					// std::cout << "4";
-				break;
-
-				case BISHOP:
-					// std::cout << "5";
 				break;
 
 				case QUEEN:
