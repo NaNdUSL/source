@@ -503,10 +503,10 @@ public:
 			float vector_x = (new_x - prev_x) / sqrt((new_x - prev_x) * (new_x - prev_x) + (new_y - prev_y) * (new_y - prev_y));
 			float vector_y = (new_y - prev_y) / sqrt((new_x - prev_x) * (new_x - prev_x) + (new_y - prev_y) * (new_y - prev_y));			
 
-			// std::cout << "vector " << vec_x << ", " << vec_y  << "\n";
-			// std::cout << "piece " << this->board[prev_x][prev_y]  << "\n";
-			// std::cout << "prev_pos " << prev_x << ", " << prev_y  << "\n";
-			// std::cout << "new pos " << new_x << ", " << new_y  << "\n\n\n";
+			std::cout << "vector " << vector_x << ", " << vector_y  << "\n";
+			std::cout << "piece " << this->board[prev_x][prev_y]  << "\n";
+			std::cout << "prev_pos " << prev_x << ", " << prev_y  << "\n";
+			std::cout << "new pos " << new_x << ", " << new_y  << "\n\n\n";
 
 			switch (std::abs(prev_piece) / 10) {
 
@@ -542,14 +542,15 @@ public:
 
 				case BISHOP:
 
-				if (vector_x != vector_y){
+				if (std::abs(vector_x) != std::abs(vector_y)){
 					
+					std::cout << "sup\n";
 					legal = false;
 				}
 				else{
 
-					int vec_x = static_cast<int>(vector_x);
-					int vec_y = static_cast<int>(vector_y);
+					int vec_x = static_cast<int>(vector_x / std::abs(vector_x));
+					int vec_y = static_cast<int>(vector_y / std::abs(vector_y));
 
 					prev_x += vec_x;
 					prev_y += vec_y;
@@ -560,7 +561,6 @@ public:
 						if (this->board[prev_x][prev_y] != 0){
 
 							legal = false;
-							std::cout << "rook ilegal\n";
 						}
 
 						prev_x += vec_x;
