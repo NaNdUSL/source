@@ -577,8 +577,13 @@ public:
 
 				not_found = false;
 
-				// std::cout << "signal " << (signal * this->board[pos_x + 1][pos_y + i] < 0) << "\n";
-				// std::cout << "bishop " << (std::abs(this->board[pos_x + i][pos_y + i]) / 10 == BISHOP) << "\n";
+				if(this->dir == -i){
+
+					if (std::abs(this->board[pos_x - i][pos_y - i]) / 10 == PAWN && std::abs(i) == 1 && signal * this->board[pos_x - i][pos_y - i] < 0){
+
+						safe = false;
+					}
+				}
 
 				if ((std::abs(this->board[pos_x - i][pos_y - i]) / 10 == BISHOP || std::abs(this->board[pos_x - i][pos_y - i]) / 10 == QUEEN) && signal * this->board[pos_x - i][pos_y - i] < 0){
 
@@ -597,8 +602,13 @@ public:
 
 				not_found = false;
 
-				// std::cout << "signal " << (signal * this->board[pos_x + 1][pos_y + i] < 0) << "\n";
-				// std::cout << "bishop " << (std::abs(this->board[pos_x + i][pos_y + i]) / 10 == BISHOP) << "\n";
+				if(this->dir == -i){
+
+					if (std::abs(this->board[pos_x - i][pos_y + i]) / 10 == PAWN && std::abs(i) == 1 && signal * this->board[pos_x - i][pos_y + i] < 0){
+
+						safe = false;
+					}
+				}
 
 				if ((std::abs(this->board[pos_x - i][pos_y + i]) / 10 == BISHOP || std::abs(this->board[pos_x - i][pos_y + i]) / 10 == QUEEN) && signal * this->board[pos_x - i][pos_y + i] < 0){
 
@@ -617,8 +627,13 @@ public:
 
 				not_found = false;
 
-				// std::cout << "signal " << (signal * this->board[pos_x + 1][pos_y + i] < 0) << "\n";
-				// std::cout << "bishop " << (std::abs(this->board[pos_x + i][pos_y + i]) / 10 == BISHOP) << "\n";
+				if(this->dir == i){
+
+					if (std::abs(this->board[pos_x + i][pos_y - i]) / 10 == PAWN && std::abs(i) == 1 && signal * this->board[pos_x + i][pos_y - i] < 0){
+
+						safe = false;
+					}
+				}
 
 				if ((std::abs(this->board[pos_x + i][pos_y - i]) / 10 == BISHOP || std::abs(this->board[pos_x + i][pos_y - i]) / 10 == QUEEN) && signal * this->board[pos_x + i][pos_y - i] < 0){
 
@@ -637,8 +652,13 @@ public:
 
 				not_found = false;
 
-				// std::cout << "signal " << (signal * this->board[pos_x + 1][pos_y + i] < 0) << "\n";
-				// std::cout << "bishop " << (std::abs(this->board[pos_x + i][pos_y + i]) / 10 == BISHOP) << "\n";
+				if(this->dir == i){
+
+					if (std::abs(this->board[pos_x + i][pos_y + i]) / 10 == PAWN && std::abs(i) == 1 && signal * this->board[pos_x + i][pos_y + i] < 0){
+
+						safe = false;
+					}
+				}
 
 				if ((std::abs(this->board[pos_x + i][pos_y + i]) / 10 == BISHOP || std::abs(this->board[pos_x + i][pos_y + i]) / 10 == QUEEN) && signal * this->board[pos_x + i][pos_y + i] < 0){
 
@@ -646,8 +666,6 @@ public:
 				}
 			}
 		}
-
-//    (std::abs(this->board[pos_x + i][pos_y + i]) / 10 == PAWN && std::abs(i - 1) == 1)
 
 		return safe;
 	}
@@ -799,7 +817,7 @@ public:
 					int vec_x = static_cast<int>(vector_x / std::abs(vector_x));
 					int vec_y = static_cast<int>(vector_y / std::abs(vector_y));
 
-					if (!(std::abs(new_x - prev_x) * dir * vec_x == 1 && std::abs(new_y - prev_y) * dir * vec_y == 1 || std::abs(new_x - prev_x) * dir * vec_x == 1 && std::abs(new_y - prev_y) * dir * vec_y == -1)){
+					if (!(std::abs(new_x - prev_x) * this->dir * vec_x == 1 && std::abs(new_y - prev_y) * this->dir * vec_y == 1 || std::abs(new_x - prev_x) * this->dir * vec_x == 1 && std::abs(new_y - prev_y) * this->dir * vec_y == -1)){
 						
 						legal = false;
 					}
@@ -812,7 +830,7 @@ public:
 					}
 					else{
 
-						if (vector_x * dir <= 0){
+						if (vector_x * this->dir <= 0){
 							
 							legal = false;
 						}
@@ -829,17 +847,17 @@ public:
 
 								if (std::abs(new_x - prev_x) == 2){
 
-									if (this->board[prev_x + 1 * dir][prev_y] != 0){
+									if (this->board[prev_x + 1 * this->dir][prev_y] != 0){
 
 										legal = false;
 									}
 
-									if (dir < 0 && prev_x != 6){
+									if (this->dir < 0 && prev_x != 6){
 
 										legal = false;
 									}
 
-									else if (dir > 0 && prev_x != 1){
+									else if (this->dir > 0 && prev_x != 1){
 
 										legal = false;
 									}
