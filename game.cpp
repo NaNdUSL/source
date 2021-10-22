@@ -555,7 +555,9 @@ public:
 				break;
 
 				case KNIGHT:
-				
+
+
+
 				break;
 
 				case BISHOP:
@@ -657,14 +659,23 @@ public:
 							}
 							else{
 
-								if (std::abs(new_x - prev_x) == 2 && !(prev_x == 6 && dir < 0)){
+								if (std::abs(new_x - prev_x) == 2){
 
-									legal == false;
-								}
+									std::cout << "açjfalkiuhfliaybduyavdjabjfdyabdjyavbsdjabsjdbvasudvb\n";
+									if (this->board[prev_x + 1 * dir][prev_y] != 0){
 
-								else if (std::abs(new_x - prev_x) == 2 && !(prev_x == 1 && dir > 0)){
+										legal = false;
+									}
 
-									legal == false;
+									if (dir < 0 && prev_x != 6){
+
+										legal = false;
+									}
+
+									if (dir > 0 && prev_x != 1){
+
+										legal = false;
+									}
 								}
 							}
 						}
@@ -742,9 +753,16 @@ public:
 
 		this->init_vars(player);
 		this->boards.set_texture_size(this->texture.getSize(), 6, 2);
-		this->boards.set_dir(-1);
-		if (this->player == -1) this->boards.fill_board("RCBQKBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_Q_K_B_C_R");
-		else this->boards.fill_board("_R_C_B_K_Q_B_C_R_P_P_P_P_P_P_P_P8888PPPPPPPPRCBKQBCR");
+		if (this->player == -1){
+
+			this->boards.fill_board("RCBQKBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_Q_K_B_C_R");
+			this->boards.set_dir(1);
+		}
+		else{
+
+			this->boards.fill_board("_R_C_B_K_Q_B_C_R_P_P_P_P_P_P_P_P8888PPPPPPPPRCBKQBCR");
+			this->boards.set_dir(-1);
+		}
 		if (this->player = -1) this->player *= -1;
 		this->boards.fill_helping_board();
 		this->boards.load_pieces();
