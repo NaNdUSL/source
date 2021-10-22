@@ -509,6 +509,11 @@ public:
 
 				not_found = false;
 
+				if (std::abs(this->board[pos_x - i][pos_y]) / 10 == KING && std::abs(i) == 1 && signal * this->board[pos_x - i][pos_y] < 0){
+
+					safe = false;
+				}
+
 				if ((std::abs(this->board[pos_x - i][pos_y]) / 10 == ROOK || std::abs(this->board[pos_x - i][pos_y]) / 10 == QUEEN) && signal * this->board[pos_x - i][pos_y] < 0){
 
 					safe = false;
@@ -525,6 +530,11 @@ public:
 			if (this->board[pos_x + i][pos_y] != 0){
 
 				not_found = false;
+
+				if (std::abs(this->board[pos_x + i][pos_y]) / 10 == KING && std::abs(i) == 1 && signal * this->board[pos_x + i][pos_y] < 0){
+
+					safe = false;
+				}
 
 				if ((std::abs(this->board[pos_x + i][pos_y]) / 10 == ROOK || std::abs(this->board[pos_x + i][pos_y]) / 10 == QUEEN) && signal * this->board[pos_x + i][pos_y] < 0){
 
@@ -543,6 +553,11 @@ public:
 
 				not_found = false;
 
+				if (std::abs(this->board[pos_x][pos_y - i]) / 10 == KING && std::abs(i) == 1 && signal * this->board[pos_x][pos_y - i] < 0){
+
+					safe = false;
+				}
+
 				if ((std::abs(this->board[pos_x][pos_y - i]) / 10 == ROOK || std::abs(this->board[pos_x][pos_y - i]) / 10 == QUEEN) && signal * this->board[pos_x][pos_y - i] < 0){
 
 					safe = false;
@@ -560,6 +575,11 @@ public:
 
 				not_found = false;
 
+				if (std::abs(this->board[pos_x][pos_y + i]) / 10 == KING && std::abs(i) == 1 && signal * this->board[pos_x][pos_y + i] < 0){
+
+					safe = false;
+				}
+
 				if ((std::abs(this->board[pos_x][pos_y + i]) / 10 == ROOK || std::abs(this->board[pos_x][pos_y + i]) / 10 == QUEEN) && signal * this->board[pos_x][pos_y + i] < 0){
 
 					safe = false;
@@ -576,6 +596,11 @@ public:
 			if (this->board[pos_x - i][pos_y - i] != 0){
 
 				not_found = false;
+
+				if (std::abs(this->board[pos_x - i][pos_y - i]) / 10 == KING && std::abs(i) == 1 && signal * this->board[pos_x - i][pos_y - i] < 0){
+
+					safe = false;
+				}
 
 				if(this->dir == -i){
 
@@ -602,6 +627,11 @@ public:
 
 				not_found = false;
 
+				if (std::abs(this->board[pos_x - i][pos_y + i]) / 10 == KING && std::abs(i) == 1 && signal * this->board[pos_x - i][pos_y + i] < 0){
+
+					safe = false;
+				}
+
 				if(this->dir == -i){
 
 					if (std::abs(this->board[pos_x - i][pos_y + i]) / 10 == PAWN && std::abs(i) == 1 && signal * this->board[pos_x - i][pos_y + i] < 0){
@@ -626,6 +656,11 @@ public:
 			if (this->board[pos_x + i][pos_y - i] != 0){
 
 				not_found = false;
+
+				if (std::abs(this->board[pos_x + i][pos_y - i]) / 10 == KING && std::abs(i) == 1 && signal * this->board[pos_x + i][pos_y - i] < 0){
+
+					safe = false;
+				}
 
 				if(this->dir == i){
 
@@ -652,6 +687,11 @@ public:
 
 				not_found = false;
 
+				if (std::abs(this->board[pos_x + i][pos_y + i]) / 10 == KING && std::abs(i) == 1 && signal * this->board[pos_x + i][pos_y + i] < 0){
+
+					safe = false;
+				}
+
 				if(this->dir == i){
 
 					if (std::abs(this->board[pos_x + i][pos_y + i]) / 10 == PAWN && std::abs(i) == 1 && signal * this->board[pos_x + i][pos_y + i] < 0){
@@ -664,6 +704,72 @@ public:
 
 					safe = false;
 				}
+			}
+		}
+
+		// Knight check
+
+		if (pos_x - 1 >= 0 && pos_y - 2 >= 0 && this->board[pos_x - 1][pos_y - 2] != 0){
+
+			if (std::abs(this->board[pos_x - 1][pos_y - 2]) / 10 == KNIGHT && signal * this->board[pos_x - 1][pos_y - 2] < 0){
+
+				safe = false;
+			}
+		}
+
+		if (pos_x - 2 >= 0 && pos_y - 1 >= 0 && this->board[pos_x - 2][pos_y - 1] != 0){
+
+			if (std::abs(this->board[pos_x - 2][pos_y - 1]) / 10 == KNIGHT && signal * this->board[pos_x - 2][pos_y - 1] < 0){
+
+				safe = false;
+			}
+		}
+
+		if (pos_x - 2 >= 0 && pos_y + 1 < 8 && this->board[pos_x - 2][pos_y + 1] != 0){
+
+			if (std::abs(this->board[pos_x - 2][pos_y + 1]) / 10 == KNIGHT && signal * this->board[pos_x - 2][pos_y + 1] < 0){
+
+				safe = false;
+			}
+		}
+
+		if (pos_x - 1 >= 0 && pos_y + 2 < 8 && this->board[pos_x - 1][pos_y + 2] != 0){
+
+			if (std::abs(this->board[pos_x - 1][pos_y + 2]) / 10 == KNIGHT && signal * this->board[pos_x - 1][pos_y + 2] < 0){
+
+				safe = false;
+			}
+		}
+
+		if (pos_x + 1 < 8 && pos_y + 2 < 8 && this->board[pos_x + 1][pos_y + 2] != 0){
+
+			if (std::abs(this->board[pos_x + 1][pos_y + 2]) / 10 == KNIGHT && signal * this->board[pos_x + 1][pos_y + 2] < 0){
+
+				safe = false;
+			}
+		}
+
+		if (pos_x + 2 < 8 && pos_y + 1 < 8 && this->board[pos_x + 2][pos_y + 1] != 0){
+
+			if (std::abs(this->board[pos_x + 2][pos_y + 1]) / 10 == KNIGHT && signal * this->board[pos_x + 2][pos_y + 1] < 0){
+
+				safe = false;
+			}
+		}
+
+		if (pos_x + 2 < 8 && pos_y - 1 >= 0 && this->board[pos_x + 2][pos_y - 1] != 0){
+
+			if (std::abs(this->board[pos_x + 2][pos_y - 1]) / 10 == KNIGHT && signal * this->board[pos_x + 2][pos_y - 1] < 0){
+
+				safe = false;
+			}
+		}
+
+		if (pos_x + 1 < 8 && pos_y - 2 >= 0 && this->board[pos_x + 1][pos_y - 2] != 0){
+
+			if (std::abs(this->board[pos_x + 1][pos_y - 2]) / 10 == KNIGHT && signal * this->board[pos_x + 1][pos_y - 2] < 0){
+
+				safe = false;
 			}
 		}
 
