@@ -544,7 +544,6 @@ public:
 						if (this->board[prev_x][prev_y] != 0){
 
 							legal = false;
-							std::cout << "rook ilegal\n";
 						}
 
 						prev_x += vec_x;
@@ -556,7 +555,10 @@ public:
 
 				case KNIGHT:
 
+				if (!(std::abs(new_x - prev_x) == 2 && std::abs(new_y - prev_y) == 1 || (std::abs(new_x - prev_x) == 1 && std::abs(new_y - prev_y) == 2))){
 
+					legal = false;
+				}
 
 				break;
 
@@ -580,7 +582,6 @@ public:
 						if (this->board[prev_x][prev_y] != 0){
 
 							legal = false;
-							std::cout << "bishop ilegal\n";
 						}
 
 						prev_x += vec_x;
@@ -610,7 +611,6 @@ public:
 						if (this->board[prev_x][prev_y] != 0){
 
 							legal = false;
-							std::cout << "queen ilegal\n";
 						}
 
 						prev_x += vec_x;
@@ -621,7 +621,12 @@ public:
 				break;
 
 				case KING:
-					// std::cout << "1";
+
+				// if (){
+
+
+				// }
+
 				break;
 
 				case PAWN:
@@ -661,7 +666,6 @@ public:
 
 								if (std::abs(new_x - prev_x) == 2){
 
-									std::cout << "açjfalkiuhfliaybduyavdjabjfdyabdjyavbsdjabsjdbvasudvb\n";
 									if (this->board[prev_x + 1 * dir][prev_y] != 0){
 
 										legal = false;
@@ -672,7 +676,7 @@ public:
 										legal = false;
 									}
 
-									if (dir > 0 && prev_x != 1){
+									else if (dir > 0 && prev_x != 1){
 
 										legal = false;
 									}
