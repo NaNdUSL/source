@@ -500,7 +500,6 @@ public:
 		if (prev_x != new_x || prev_y != new_y){
 
 			int prev_piece = this->board[prev_x][prev_y];
-			int i;
 			float vector_x = (new_x - prev_x) / sqrt((new_x - prev_x) * (new_x - prev_x) + (new_y - prev_y) * (new_y - prev_y));
 			float vector_y = (new_y - prev_y) / sqrt((new_x - prev_x) * (new_x - prev_x) + (new_y - prev_y) * (new_y - prev_y));			
 
@@ -552,16 +551,20 @@ public:
 					int vec_x = static_cast<int>(vector_x);
 					int vec_y = static_cast<int>(vector_y);
 
-					while (std::abs(prev_x) < std::abs(new_x) && std::abs(prev_y) < std::abs(new_y)){
+					prev_x += vec_x;
+					prev_y += vec_y;
 
-						prev_x += vec_x;
-						prev_y += vec_y;
+					while (std::abs(new_x - prev_x) > 0 || std::abs(new_y - prev_y) > 0){
+
 
 						if (this->board[prev_x][prev_y] != 0){
 
 							legal = false;
-							std::cout << "bishop ilegal\n";
+							std::cout << "rook ilegal\n";
 						}
+
+						prev_x += vec_x;
+						prev_y += vec_y;
 					}
 				}
 
@@ -683,17 +686,6 @@ public:
 		}
 	}
 
-/*
- 51  41  31  20  10  32  42  52
- 61  62  63  64  65  66  60  61
-  0   0   0   0   0   0   0   0
-  0   0   0   0   0   0   0   0
-  0   0   0   0   0   0   0   0
-  0   0   0   0   0   0   0   0
--62 -63 -64 -65 -66 -60 -61 -62
--50 -40 -30 -20 -10 -31 -41 -51
-*/
-
 // se calhar pegar na peça que tou a segurar e desenhar depois de todas as outras
 
 	void update_board(){
@@ -744,8 +736,6 @@ public:
 					for (sf::RectangleShape element : vec){
 
 						if (element.getGlobalBounds().contains(this->mouse_pos_view)){
-
-// check if it's legal move
 
 						int prev_x = static_cast<int> (this->prev_place.y * this->boards.get_square_size() / 800);
 						int prev_y = static_cast<int> (this->prev_place.x * this->boards.get_square_size() / 800);
