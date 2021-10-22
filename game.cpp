@@ -540,11 +540,14 @@ public:
 
 				break;
 
+				case KNIGHT:
+				
+				break;
+
 				case BISHOP:
 
 				if (std::abs(vector_x) != std::abs(vector_y)){
-					
-					std::cout << "sup\n";
+
 					legal = false;
 				}
 				else{
@@ -561,6 +564,7 @@ public:
 						if (this->board[prev_x][prev_y] != 0){
 
 							legal = false;
+							std::cout << "bishop ilegal\n";
 						}
 
 						prev_x += vec_x;
@@ -571,7 +575,33 @@ public:
 				break;
 
 				case QUEEN:
-					// std::cout << "2";
+
+				if (std::abs(vector_x) != std::abs(vector_y) && vector_x * vector_y != 0.0f){
+
+					legal = false;
+				}
+				else{
+
+					int vec_x = static_cast<int>(vector_x / std::abs(vector_x));
+					int vec_y = static_cast<int>(vector_y / std::abs(vector_y));
+
+					prev_x += vec_x;
+					prev_y += vec_y;
+
+					while (std::abs(new_x - prev_x) > 0 || std::abs(new_y - prev_y) > 0){
+
+
+						if (this->board[prev_x][prev_y] != 0){
+
+							legal = false;
+							std::cout << "queen ilegal\n";
+						}
+
+						prev_x += vec_x;
+						prev_y += vec_y;
+					}
+				}
+
 				break;
 
 				case KING:
