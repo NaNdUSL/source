@@ -164,6 +164,7 @@ private:
 	int square_size;
 	Pieces pieces;
 	int dir;
+	std::vector<int> last;
 
 public:
 
@@ -199,6 +200,11 @@ public:
 		this->square_size = square_size;
 	}
 
+	void set_last(std::vector<int> piece){
+
+		this->last = piece;
+	}
+
 	void set_dir(int dir){
 
 		this->dir = dir;
@@ -222,6 +228,12 @@ public:
 
 		int size = this->square_size;
 		return size;
+	}
+
+	std::vector<int> get_last(){
+
+		std::vector<int> piece = this->last;
+		return piece;
 	}
 
 	int get_dir(){
@@ -776,6 +788,61 @@ public:
 		return safe;
 	}
 
+	bool check_mate(int pos_x, int pos_y, int king){
+
+		bool mate = true;
+
+		if (this->last[0]){
+
+		// Checks if the king can move
+
+			for (int i = -1; i < 2; i++){
+
+				for (int j = -1; j < 2; j++){
+
+					if (pos_x + i >= 0 && pos_y + j >= 0 && pos_x + i < 8 && pos_y + j < 8){
+
+						if (this->not_check(pos_x + i, pos_y + j, this->board[pos_x + i][pos_y + j])){
+
+							mate = false;
+						}
+					}
+				}
+			}
+
+		// Checks if the piece doing the check can be taken
+
+			if (!this->not_check(this->last[1], this->last[2], this->last[0])){
+
+				mate = false;
+			}
+
+		// Checks if the piece doing the check can be blocked (only happens to rooks, bishops or queens)
+		// So just gotta check out the vector that has origin in the piece's square and is pointing to the king
+		// Then just follow the track and see if any square is in check, this means that is blockable
+
+			int vec_x = pos_x - this->last[1];
+			int vec_y = pos_y - this->last[2];
+
+			if (std::abs(this->last[0]) / 10 == ROOK || std::abs(this->last[0]) / 10 == QUEEN || std::abs(this->last[0]) / 10 == BISHOP){
+
+				int aux_x = static_cast<int>(vec_x / std::abs(vec_x));
+				int aux_y = static_cast<int>(vec_y / std::abs(vec_y));
+
+				for (int i = 1; i < std::abs(vec_x + vec_y); i++){
+
+					if (!this->not_check(i * aux_x, i * aux_y, this->board[i * aux_x][i * aux_y])){
+
+						mate = false;
+					}
+				}
+			}
+		}
+
+		std::cout << "mate: " << mate << "\n";
+		return mate;
+	}
+
 	/*
 	 51  41  31  20  10  32  42  52
 	 61  62  63  64  65  66  60  61
@@ -1043,6 +1110,13 @@ public:
 	Game(int player){
 
 		this->init_vars(player);
+
+		std::vector<int> last;
+		last.push_back(0);
+		last.push_back(0);
+		last.push_back(0);
+		this->boards.set_last(last);
+
 		this->boards.set_texture_size(this->texture.getSize(), 6, 2);
 		if (this->player == -1){
 
@@ -1106,9 +1180,7 @@ public:
 			}
 		}
 
-		bool free = true;
-
-		if (free){
+		if (this->boards.not_check(pos_x, pos_y, king) || !this->boards.check_mate(pos_x, pos_y, king)){
 
 			if (this->mouse_pos_view.x <= this->window->getSize().x && this->mouse_pos_view.y <= this->window->getSize().y && this->mouse_pos_view.x >= 0 && this->mouse_pos_view.y >= 0){
 
@@ -1174,6 +1246,12 @@ public:
 
 											this->player *= -1;
 											this->boards.set_dir(this->boards.get_dir() * (-1));
+
+											std::vector<int> last;
+											last.push_back(this->piece_held);
+											last.push_back(new_x);
+											last.push_back(new_y);
+											this->boards.set_last(last);
 										}
 									}
 									else{
@@ -1186,7 +1264,6 @@ public:
 						}
 
 						this->holding = false;
-						this->piece_held = 0;
 					}
 				}
 			}
