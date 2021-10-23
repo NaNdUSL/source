@@ -797,11 +797,11 @@ public:
 			float vector_x = (new_x - prev_x) / sqrt((new_x - prev_x) * (new_x - prev_x) + (new_y - prev_y) * (new_y - prev_y));
 			float vector_y = (new_y - prev_y) / sqrt((new_x - prev_x) * (new_x - prev_x) + (new_y - prev_y) * (new_y - prev_y));			
 
-			std::cout << "vector " << vector_x << ", " << vector_y  << "\n";
-			std::cout << "dir " << this->dir << "\n";
-			std::cout << "piece " << this->board[prev_x][prev_y]  << "\n";
-			std::cout << "prev_pos " << prev_x << ", " << prev_y  << "\n";
-			std::cout << "new pos " << new_x << ", " << new_y  << "\n\n\n";
+			// std::cout << "vector " << vector_x << ", " << vector_y  << "\n";
+			// std::cout << "dir " << this->dir << "\n";
+			// std::cout << "piece " << this->board[prev_x][prev_y]  << "\n";
+			// std::cout << "prev_pos " << prev_x << ", " << prev_y  << "\n";
+			// std::cout << "new pos " << new_x << ", " << new_y  << "\n\n\n";
 
 			switch (std::abs(prev_piece) / 10) {
 
@@ -1087,120 +1087,112 @@ public:
 		}
 	}
 
-// se calhar pegar na peça que tou a segurar e desenhar depois de todas as outras
+// se calhar pegar na peça que tou a segurar e desenhar depois de todas as outras!!!!!!!!!!!
 
 	void update_board(){
 
-		// int king, pos_x, pos_y;
+		int king, pos_x, pos_y;
 
-		// for (int i = 0; i < 8; i++){
+		for (int i = 0; i < 8; i++){
 
-		// 	for (int j = 0; j < 8; j++){
+			for (int j = 0; j < 8; j++){
 
-		// 		if (std::abs(this->boards.get_board()[i][j]) / 10 == KING && this->boards.get_board()[i][j] == this->player * this->boards.get_dir() * std::abs(this->boards.get_board()[i][j])){
+				if (std::abs(this->boards.get_board()[i][j]) / 10 == KING && this->boards.get_board()[i][j] == this->player * this->boards.get_dir() * std::abs(this->boards.get_board()[i][j])){
 
-		// 			king = this->boards.get_board()[i][j];
-		// 			pos_x = i;
-		// 			pos_y = j;
-		// 		}
-		// 	}
-		// }
+					king = this->boards.get_board()[i][j];
+					pos_x = i;
+					pos_y = j;
+				}
+			}
+		}
 
-		// if (this->boards.not_check(pos_x, pos_y, king)){
+		bool free = true;
 
-		if (this->mouse_pos_view.x <= this->window->getSize().x && this->mouse_pos_view.y <= this->window->getSize().y && this->mouse_pos_view.x >= 0 && this->mouse_pos_view.y >= 0){
+		if (free){
 
-			if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)){
+			if (this->mouse_pos_view.x <= this->window->getSize().x && this->mouse_pos_view.y <= this->window->getSize().y && this->mouse_pos_view.x >= 0 && this->mouse_pos_view.y >= 0){
 
-				if (!this->holding){
+				if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)){
 
-					int board_pos_x;
-					int board_pos_y;
+					if (!this->holding){
 
-					for (std::vector<sf::RectangleShape> vec : this->boards.get_board_image()){
+						int board_pos_x;
+						int board_pos_y;
 
-						for (sf::RectangleShape element : vec){
+						for (std::vector<sf::RectangleShape> vec : this->boards.get_board_image()){
 
-							if (element.getGlobalBounds().contains(this->mouse_pos_view)){
+							for (sf::RectangleShape element : vec){
 
-								board_pos_x = static_cast<int> (element.getPosition().y * this->boards.get_square_size() / 800);
-								board_pos_y = static_cast<int> (element.getPosition().x * this->boards.get_square_size() / 800);
+								if (element.getGlobalBounds().contains(this->mouse_pos_view)){
+
+									board_pos_x = static_cast<int> (element.getPosition().y * this->boards.get_square_size() / 800);
+									board_pos_y = static_cast<int> (element.getPosition().x * this->boards.get_square_size() / 800);
+								}
+							}
+						}
+
+						for (std::pair<int, Piece> element : this->boards.get_pieces().get_pieces()){
+
+							if (this->boards.get_board()[board_pos_x][board_pos_y] * this->player > 0 && element.second.get_piece().getGlobalBounds().contains(this->mouse_pos_view)){
+
+								this->prev_place = element.second.get_piece().getPosition();
+								this->piece_held = element.first;
+								this->holding = true;
 							}
 						}
 					}
+					else{
 
-					for (std::pair<int, Piece> element : this->boards.get_pieces().get_pieces()){
-
-						if (this->boards.get_board()[board_pos_x][board_pos_y] * this->player > 0 && element.second.get_piece().getGlobalBounds().contains(this->mouse_pos_view)){
-
-							this->prev_place = element.second.get_piece().getPosition();
-							this->piece_held = element.first;
-							this->holding = true;
-						}
+						this->boards.set_pieces_pos(this->piece_held, this->mouse_pos_view.x - (this->boards.get_pieces().get_texture_size().x / 6), this->mouse_pos_view.y - (this->boards.get_pieces().get_texture_size().y) / 5);
 					}
 				}
-				else{
 
-					this->boards.set_pieces_pos(this->piece_held, this->mouse_pos_view.x - (this->boards.get_pieces().get_texture_size().x / 6), this->mouse_pos_view.y - (this->boards.get_pieces().get_texture_size().y) / 5);
-				}
-			}
+				else if(sf::Event::MouseButtonReleased && this->event.mouseButton.button == sf::Mouse::Left){
 
-			else if(sf::Event::MouseButtonReleased && this->event.mouseButton.button == sf::Mouse::Left){
+					if (this->holding){
 
-				if (this->holding){
+						for (std::vector<sf::RectangleShape> vec : this->boards.get_board_image()){
 
-					for (std::vector<sf::RectangleShape> vec : this->boards.get_board_image()){
+							for (sf::RectangleShape element : vec){
 
-						for (sf::RectangleShape element : vec){
+								if (element.getGlobalBounds().contains(this->mouse_pos_view)){
 
-							if (element.getGlobalBounds().contains(this->mouse_pos_view)){
+									int prev_x = static_cast<int> (this->prev_place.y * this->boards.get_square_size() / 800);
+									int prev_y = static_cast<int> (this->prev_place.x * this->boards.get_square_size() / 800);
+									int new_x = static_cast<int> (element.getPosition().y * this->boards.get_square_size() / 800);
+									int new_y = static_cast<int> (element.getPosition().x * this->boards.get_square_size() / 800);
 
-								int prev_x = static_cast<int> (this->prev_place.y * this->boards.get_square_size() / 800);
-								int prev_y = static_cast<int> (this->prev_place.x * this->boards.get_square_size() / 800);
-								int new_x = static_cast<int> (element.getPosition().y * this->boards.get_square_size() / 800);
-								int new_y = static_cast<int> (element.getPosition().x * this->boards.get_square_size() / 800);
+									if (this->boards.get_board()[new_x][new_y] * this->boards.get_board()[prev_x][prev_y] <= 0 && this->boards.legal_move(prev_x, prev_y, new_x, new_y)){
 
-								int king, pos_x, pos_y;
+										this->boards.set_pieces_pos(this->piece_held, element.getPosition().x, element.getPosition().y);
 
-								for (int i = 0; i < 8; i++){
+										this->boards.new_pos(prev_x, prev_y, new_x, new_y);
 
-									for (int j = 0; j < 8; j++){
+										this->boards.display_board();
 
-										if (std::abs(this->boards.get_board()[i][j]) / 10 == KING && this->boards.get_board()[i][j] == this->player * this->boards.get_dir() * std::abs(this->boards.get_board()[i][j])){
+										if (prev_x != new_x || prev_y != new_y || this->boards.not_check(pos_x, pos_y, king)){
 
-											king = this->boards.get_board()[i][j];
-											pos_x = i;
-											pos_y = j;
+											this->player *= -1;
+											this->boards.set_dir(this->boards.get_dir() * (-1));
 										}
 									}
-								}
+									else{
 
-								if (this->boards.get_board()[new_x][new_y] * this->boards.get_board()[prev_x][prev_y] <= 0 && this->boards.legal_move(prev_x, prev_y, new_x, new_y)){
+										this->boards.set_pieces_pos(this->piece_held, this->prev_place.x, this->prev_place.y);
 
-									this->boards.set_pieces_pos(this->piece_held, element.getPosition().x, element.getPosition().y);
-
-									this->boards.new_pos(prev_x, prev_y, new_x, new_y);
-
-									this->boards.display_board();
-
-									if (prev_x != new_x || prev_y != new_y || this->boards.not_check(pos_x, pos_y, king)){
-
-										this->player *= -1;
-										this->boards.set_dir(this->boards.get_dir() * (-1));
 									}
-								}
-								else{
-
-									this->boards.set_pieces_pos(this->piece_held, this->prev_place.x, this->prev_place.y);
-
 								}
 							}
 						}
-					}
 
-					this->holding = false;
+						this->holding = false;
+					}
 				}
 			}
+		}
+		else{
+
+			std::cout << "End game!\n";
 		}
 	}
 	// }
