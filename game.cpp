@@ -1226,7 +1226,7 @@ public:
 				sprite = this->boards.get_pieces().get_pieces().find(this->boards.get_board()[i][j])->second.get_piece();
 				sprite.setTexture(this->texture);
 
-				if (this->holding && (this->boards.get_pieces().get_pieces().find(this->boards.get_board()[i][j])->first == this->piece_held)){
+				if (this->boards.get_pieces().get_pieces().find(this->boards.get_board()[i][j])->first == this->piece_held){
 
 					is_it = sprite;
 				}
