@@ -1091,6 +1091,23 @@ public:
 
 	void update_board(){
 
+		// int king, pos_x, pos_y;
+
+		// for (int i = 0; i < 8; i++){
+
+		// 	for (int j = 0; j < 8; j++){
+
+		// 		if (std::abs(this->boards.get_board()[i][j]) / 10 == KING && this->boards.get_board()[i][j] == this->player * this->boards.get_dir() * std::abs(this->boards.get_board()[i][j])){
+
+		// 			king = this->boards.get_board()[i][j];
+		// 			pos_x = i;
+		// 			pos_y = j;
+		// 		}
+		// 	}
+		// }
+
+		// if (this->boards.not_check(pos_x, pos_y, king)){
+
 		if (this->mouse_pos_view.x <= this->window->getSize().x && this->mouse_pos_view.y <= this->window->getSize().y && this->mouse_pos_view.x >= 0 && this->mouse_pos_view.y >= 0){
 
 			if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)){
@@ -1143,6 +1160,21 @@ public:
 								int new_x = static_cast<int> (element.getPosition().y * this->boards.get_square_size() / 800);
 								int new_y = static_cast<int> (element.getPosition().x * this->boards.get_square_size() / 800);
 
+								int king, pos_x, pos_y;
+
+								for (int i = 0; i < 8; i++){
+
+									for (int j = 0; j < 8; j++){
+
+										if (std::abs(this->boards.get_board()[i][j]) / 10 == KING && this->boards.get_board()[i][j] == this->player * this->boards.get_dir() * std::abs(this->boards.get_board()[i][j])){
+
+											king = this->boards.get_board()[i][j];
+											pos_x = i;
+											pos_y = j;
+										}
+									}
+								}
+
 								if (this->boards.get_board()[new_x][new_y] * this->boards.get_board()[prev_x][prev_y] <= 0 && this->boards.legal_move(prev_x, prev_y, new_x, new_y)){
 
 									this->boards.set_pieces_pos(this->piece_held, element.getPosition().x, element.getPosition().y);
@@ -1151,7 +1183,7 @@ public:
 
 									this->boards.display_board();
 
-									if (prev_x != new_x || prev_y != new_y){
+									if (prev_x != new_x || prev_y != new_y || this->boards.not_check(pos_x, pos_y, king)){
 
 										this->player *= -1;
 										this->boards.set_dir(this->boards.get_dir() * (-1));
@@ -1171,6 +1203,7 @@ public:
 			}
 		}
 	}
+	// }
 
 	void update_mouse_pos(){
 
@@ -1209,11 +1242,6 @@ public:
 		this->update_mouse_pos();
 
 		this->update_board();
-
-		/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
-			
-			find_path();
-		}*/
 	}
 
 	void render(){
