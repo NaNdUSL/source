@@ -1186,6 +1186,7 @@ public:
 						}
 
 						this->holding = false;
+						this->piece_held = 0;
 					}
 				}
 			}
@@ -1215,6 +1216,8 @@ public:
 			}
 		}
 
+		sf::Sprite is_it;
+
 		for (int i = 0; i < 8; i++){
 
 			for (int j = 0; j < 8; j++){
@@ -1222,9 +1225,17 @@ public:
 				sf::Sprite sprite;
 				sprite = this->boards.get_pieces().get_pieces().find(this->boards.get_board()[i][j])->second.get_piece();
 				sprite.setTexture(this->texture);
+
+				if (this->holding && (this->boards.get_pieces().get_pieces().find(this->boards.get_board()[i][j])->first == this->piece_held)){
+
+					is_it = sprite;
+				}
+
 				target.draw(sprite);
 			}
 		}
+
+		target.draw(is_it);
 	}
 
 	void update(){
