@@ -792,7 +792,7 @@ public:
 
 		bool mate = true;
 
-		if (this->last[0]){
+		if (this->last[0] != 0){
 
 		// Checks if the king can move
 
@@ -810,6 +810,8 @@ public:
 				}
 			}
 
+			std::cout << "mate 1: " << mate << "\n";
+
 		// Checks if the piece doing the check can be taken
 
 			if (!this->not_check(this->last[1], this->last[2], this->last[0])){
@@ -817,29 +819,38 @@ public:
 				mate = false;
 			}
 
+			std::cout << "mate 2: " << mate << "\n";
+
 		// Checks if the piece doing the check can be blocked (only happens to rooks, bishops or queens)
 		// So just gotta check out the vector that has origin in the piece's square and is pointing to the king
 		// Then just follow the track and see if any square is in check, this means that is blockable
 
-			int vec_x = pos_x - this->last[1];
-			int vec_y = pos_y - this->last[2];
+			// int vec_x = pos_x - this->last[1];
+			// int vec_y = pos_y - this->last[2];
 
-			if (std::abs(this->last[0]) / 10 == ROOK || std::abs(this->last[0]) / 10 == QUEEN || std::abs(this->last[0]) / 10 == BISHOP){
+			// std::cout << "mate 2: " << mate << "\n";
+			// if (std::abs(this->last[0]) / 10 == ROOK || std::abs(this->last[0]) / 10 == QUEEN || std::abs(this->last[0]) / 10 == BISHOP){
 
-				int aux_x = static_cast<int>(vec_x / std::abs(vec_x));
-				int aux_y = static_cast<int>(vec_y / std::abs(vec_y));
+			// 	int aux_x = static_cast<int>(vec_x / std::abs(vec_x));
+			// 	int aux_y = static_cast<int>(vec_y / std::abs(vec_y));
 
-				for (int i = 1; i < std::abs(vec_x + vec_y); i++){
+			// 	for (int i = 1; i < std::abs(vec_x + vec_y); i++){
 
-					if (!this->not_check(i * aux_x, i * aux_y, this->board[i * aux_x][i * aux_y])){
+			// 		if (!this->not_check(i * aux_x, i * aux_y, this->board[pos_x + (i * aux_x)][pos_y + (i * aux_y)])){
 
-						mate = false;
-					}
-				}
-			}
+			// 			mate = false;
+			// 		}
+			// 	}
+			// }
+
+			std::cout << "mate 3: " << mate << "\n";
 		}
 
-		std::cout << "mate: " << mate << "\n";
+		if (mate){
+
+			std::cout << "check mate\n";
+		}
+
 		return mate;
 	}
 
@@ -1120,12 +1131,12 @@ public:
 		this->boards.set_texture_size(this->texture.getSize(), 6, 2);
 		if (this->player == -1){
 
-			this->boards.fill_board("RCBQKBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_Q_K_B_C_R");
+			this->boards.fill_board("RCBKQBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_K_Q_B_C_R");
 			this->boards.set_dir(1);
 		}
 		else{
 
-			this->boards.fill_board("_R_C_B_K_Q_B_C_R_P_P_P_P_P_P_P_P8888PPPPPPPPRCBKQBCR");
+			this->boards.fill_board("_R_C_B_Q_K_B_C_R_P_P_P_P_P_P_P_P8888PPPPPPPPRCBQKBCR");
 			this->boards.set_dir(-1);
 		}
 		if (this->player = -1) this->player *= -1;
