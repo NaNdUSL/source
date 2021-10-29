@@ -362,7 +362,7 @@ public:
 				}
 				else{
 
-					square.setFillColor(sf::Color(100, 100, 100, 255));
+					square.setFillColor(sf::Color(150, 150, 150, 255));
 					color = true;
 				}
 
@@ -513,6 +513,7 @@ public:
 		int signal = piece / std::abs(piece);
 		bool not_found = true;
 
+
 		// Check upwards
 
 		for (int i = 1; not_found && pos_x - i >= 0; i++){
@@ -524,14 +525,17 @@ public:
 				if (std::abs(this->board[pos_x - i][pos_y]) / 10 == KING && std::abs(i) == 1 && signal * this->board[pos_x - i][pos_y] < 0){
 
 					safe = false;
+					std::cout << "safe 1: " << safe  << "\n";
 				}
 
 				if ((std::abs(this->board[pos_x - i][pos_y]) / 10 == ROOK || std::abs(this->board[pos_x - i][pos_y]) / 10 == QUEEN) && signal * this->board[pos_x - i][pos_y] < 0){
 
 					safe = false;
+					std::cout << "safe 1: " << safe  << "\n";
 				}
 			}
 		}
+
 
 		// Check downwards
 
@@ -546,14 +550,17 @@ public:
 				if (std::abs(this->board[pos_x + i][pos_y]) / 10 == KING && std::abs(i) == 1 && signal * this->board[pos_x + i][pos_y] < 0){
 
 					safe = false;
+					std::cout << "safe 2: " << safe  << "\n";
 				}
 
 				if ((std::abs(this->board[pos_x + i][pos_y]) / 10 == ROOK || std::abs(this->board[pos_x + i][pos_y]) / 10 == QUEEN) && signal * this->board[pos_x + i][pos_y] < 0){
 
 					safe = false;
+					std::cout << "safe 2: " << safe  << "\n";
 				}
 			}
 		}
+
 
 		// Check left
 
@@ -568,14 +575,17 @@ public:
 				if (std::abs(this->board[pos_x][pos_y - i]) / 10 == KING && std::abs(i) == 1 && signal * this->board[pos_x][pos_y - i] < 0){
 
 					safe = false;
+					std::cout << "safe 3: " << safe  << "\n";
 				}
 
 				if ((std::abs(this->board[pos_x][pos_y - i]) / 10 == ROOK || std::abs(this->board[pos_x][pos_y - i]) / 10 == QUEEN) && signal * this->board[pos_x][pos_y - i] < 0){
 
 					safe = false;
+					std::cout << "safe 3: " << safe  << "\n";
 				}
 			}
 		}
+
 
 		// Check right
 
@@ -590,14 +600,17 @@ public:
 				if (std::abs(this->board[pos_x][pos_y + i]) / 10 == KING && std::abs(i) == 1 && signal * this->board[pos_x][pos_y + i] < 0){
 
 					safe = false;
+					std::cout << "safe 4: " << safe  << "\n";
 				}
 
 				if ((std::abs(this->board[pos_x][pos_y + i]) / 10 == ROOK || std::abs(this->board[pos_x][pos_y + i]) / 10 == QUEEN) && signal * this->board[pos_x][pos_y + i] < 0){
 
 					safe = false;
+					std::cout << "safe 4: " << safe  << "\n";
 				}
 			}
 		}
+
 
 		// up left
 
@@ -612,6 +625,7 @@ public:
 				if (std::abs(this->board[pos_x - i][pos_y - i]) / 10 == KING && std::abs(i) == 1 && signal * this->board[pos_x - i][pos_y - i] < 0){
 
 					safe = false;
+					std::cout << "safe 5: " << safe  << "\n";
 				}
 
 				if(this->dir == -i){
@@ -619,15 +633,18 @@ public:
 					if (std::abs(this->board[pos_x - i][pos_y - i]) / 10 == PAWN && std::abs(i) == 1 && signal * this->board[pos_x - i][pos_y - i] < 0){
 
 						safe = false;
+						std::cout << "safe 5: " << safe  << "\n";
 					}
 				}
 
 				if ((std::abs(this->board[pos_x - i][pos_y - i]) / 10 == BISHOP || std::abs(this->board[pos_x - i][pos_y - i]) / 10 == QUEEN) && signal * this->board[pos_x - i][pos_y - i] < 0){
 
 					safe = false;
+					std::cout << "safe 5: " << safe  << "\n";
 				}
 			}
 		}
+
 
 		// up right
 
@@ -642,6 +659,7 @@ public:
 				if (std::abs(this->board[pos_x - i][pos_y + i]) / 10 == KING && std::abs(i) == 1 && signal * this->board[pos_x - i][pos_y + i] < 0){
 
 					safe = false;
+					std::cout << "safe 6: " << safe  << "\n";
 				}
 
 				if(this->dir == -i){
@@ -649,15 +667,18 @@ public:
 					if (std::abs(this->board[pos_x - i][pos_y + i]) / 10 == PAWN && std::abs(i) == 1 && signal * this->board[pos_x - i][pos_y + i] < 0){
 
 						safe = false;
+						std::cout << "safe 6: " << safe  << "\n";
 					}
 				}
 
 				if ((std::abs(this->board[pos_x - i][pos_y + i]) / 10 == BISHOP || std::abs(this->board[pos_x - i][pos_y + i]) / 10 == QUEEN) && signal * this->board[pos_x - i][pos_y + i] < 0){
 
 					safe = false;
+					std::cout << "safe 6: " << safe  << "\n";
 				}
 			}
 		}
+
 
 		// down left
 
@@ -672,6 +693,7 @@ public:
 				if (std::abs(this->board[pos_x + i][pos_y - i]) / 10 == KING && std::abs(i) == 1 && signal * this->board[pos_x + i][pos_y - i] < 0){
 
 					safe = false;
+					std::cout << "safe 7: " << safe  << "\n";
 				}
 
 				if(this->dir == i){
@@ -679,6 +701,7 @@ public:
 					if (std::abs(this->board[pos_x + i][pos_y - i]) / 10 == PAWN && std::abs(i) == 1 && signal * this->board[pos_x + i][pos_y - i] < 0){
 
 						safe = false;
+						std::cout << "safe 7: " << safe  << "\n";
 					}
 				}
 
@@ -688,6 +711,7 @@ public:
 				}
 			}
 		}
+
 
 		// down right
 
@@ -702,6 +726,7 @@ public:
 				if (std::abs(this->board[pos_x + i][pos_y + i]) / 10 == KING && std::abs(i) == 1 && signal * this->board[pos_x + i][pos_y + i] < 0){
 
 					safe = false;
+					std::cout << "safe 8: " << safe  << "\n";
 				}
 
 				if(this->dir == i){
@@ -709,15 +734,18 @@ public:
 					if (std::abs(this->board[pos_x + i][pos_y + i]) / 10 == PAWN && std::abs(i) == 1 && signal * this->board[pos_x + i][pos_y + i] < 0){
 
 						safe = false;
+						std::cout << "safe 8: " << safe  << "\n";
 					}
 				}
 
 				if ((std::abs(this->board[pos_x + i][pos_y + i]) / 10 == BISHOP || std::abs(this->board[pos_x + i][pos_y + i]) / 10 == QUEEN) && signal * this->board[pos_x + i][pos_y + i] < 0){
 
 					safe = false;
+					std::cout << "safe 8: " << safe  << "\n";
 				}
 			}
 		}
+
 
 		// Knight check
 
@@ -726,6 +754,7 @@ public:
 			if (std::abs(this->board[pos_x - 1][pos_y - 2]) / 10 == KNIGHT && signal * this->board[pos_x - 1][pos_y - 2] < 0){
 
 				safe = false;
+				std::cout << "safe 9: " << safe  << "\n";
 			}
 		}
 
@@ -734,6 +763,7 @@ public:
 			if (std::abs(this->board[pos_x - 2][pos_y - 1]) / 10 == KNIGHT && signal * this->board[pos_x - 2][pos_y - 1] < 0){
 
 				safe = false;
+				std::cout << "safe 9: " << safe  << "\n";
 			}
 		}
 
@@ -742,6 +772,7 @@ public:
 			if (std::abs(this->board[pos_x - 2][pos_y + 1]) / 10 == KNIGHT && signal * this->board[pos_x - 2][pos_y + 1] < 0){
 
 				safe = false;
+				std::cout << "safe 9: " << safe  << "\n";
 			}
 		}
 
@@ -750,6 +781,7 @@ public:
 			if (std::abs(this->board[pos_x - 1][pos_y + 2]) / 10 == KNIGHT && signal * this->board[pos_x - 1][pos_y + 2] < 0){
 
 				safe = false;
+				std::cout << "safe 9: " << safe  << "\n";
 			}
 		}
 
@@ -758,6 +790,7 @@ public:
 			if (std::abs(this->board[pos_x + 1][pos_y + 2]) / 10 == KNIGHT && signal * this->board[pos_x + 1][pos_y + 2] < 0){
 
 				safe = false;
+				std::cout << "safe 9: " << safe  << "\n";
 			}
 		}
 
@@ -766,6 +799,7 @@ public:
 			if (std::abs(this->board[pos_x + 2][pos_y + 1]) / 10 == KNIGHT && signal * this->board[pos_x + 2][pos_y + 1] < 0){
 
 				safe = false;
+				std::cout << "safe 9: " << safe  << "\n";
 			}
 		}
 
@@ -774,6 +808,7 @@ public:
 			if (std::abs(this->board[pos_x + 2][pos_y - 1]) / 10 == KNIGHT && signal * this->board[pos_x + 2][pos_y - 1] < 0){
 
 				safe = false;
+				std::cout << "safe 9: " << safe  << "\n";
 			}
 		}
 
@@ -782,8 +817,11 @@ public:
 			if (std::abs(this->board[pos_x + 1][pos_y - 2]) / 10 == KNIGHT && signal * this->board[pos_x + 1][pos_y - 2] < 0){
 
 				safe = false;
+				std::cout << "safe 9: " << safe  << "\n";
 			}
 		}
+
+		if (!safe) std::cout << "piece: " << piece  << ", " << pos_x << ", " << pos_y  << "\n";
 
 		return safe;
 	}
@@ -791,10 +829,12 @@ public:
 	bool check_mate(int pos_x, int pos_y, int king){
 
 		bool mate = true;
+		std::cout << "check_mate?\n";
 
 		if (this->last[0] != 0){
 
 		// Checks if the king can move
+			std::cout << "mate 1: " << mate << "\n";
 
 			for (int i = -1; i < 2; i++){
 
@@ -802,7 +842,7 @@ public:
 
 					if (pos_x + i >= 0 && pos_y + j >= 0 && pos_x + i < 8 && pos_y + j < 8){
 
-						if (this->not_check(pos_x + i, pos_y + j, this->board[pos_x + i][pos_y + j])){
+						if (this->board[pos_x + i][pos_y + j] == 0 && this->not_check(pos_x + i, pos_y + j, this->board[pos_x + i][pos_y + j])){
 
 							mate = false;
 						}
@@ -810,7 +850,6 @@ public:
 				}
 			}
 
-			std::cout << "mate 1: " << mate << "\n";
 
 		// Checks if the piece doing the check can be taken
 
@@ -825,23 +864,25 @@ public:
 		// So just gotta check out the vector that has origin in the piece's square and is pointing to the king
 		// Then just follow the track and see if any square is in check, this means that is blockable
 
-			// int vec_x = pos_x - this->last[1];
-			// int vec_y = pos_y - this->last[2];
+			int vec_x = pos_x - this->last[1];
+			int vec_y = pos_y - this->last[2];
 
-			// std::cout << "mate 2: " << mate << "\n";
-			// if (std::abs(this->last[0]) / 10 == ROOK || std::abs(this->last[0]) / 10 == QUEEN || std::abs(this->last[0]) / 10 == BISHOP){
+			if (std::abs(this->last[0]) / 10 == ROOK || std::abs(this->last[0]) / 10 == QUEEN || std::abs(this->last[0]) / 10 == BISHOP){
 
-			// 	int aux_x = static_cast<int>(vec_x / std::abs(vec_x));
-			// 	int aux_y = static_cast<int>(vec_y / std::abs(vec_y));
+				int aux_x = static_cast<int>(vec_x / std::abs(vec_x));
+				int aux_y = static_cast<int>(vec_y / std::abs(vec_y));
 
-			// 	for (int i = 1; i < std::abs(vec_x + vec_y); i++){
+				std::cout << "aux " << aux_x << ", " << aux_y << "\n";
+				for (int i = 1; i < std::abs(vec_x + vec_y); i++){
+					std::cout << "all " << pos_x + (i * aux_x) << ", " << pos_y + (i * aux_y) << "\n";
+					std::cout << "pos " << pos_x  << ", " << pos_y << "\n";
 
-			// 		if (!this->not_check(i * aux_x, i * aux_y, this->board[pos_x + (i * aux_x)][pos_y + (i * aux_y)])){
+					if (!this->not_check(i * aux_x, i * aux_y, this->board[pos_x + (i * aux_x)][pos_y + (i * aux_y)])){
 
-			// 			mate = false;
-			// 		}
-			// 	}
-			// }
+						mate = false;
+					}
+				}
+			}
 
 			std::cout << "mate 3: " << mate << "\n";
 		}
@@ -865,23 +906,25 @@ public:
 	-50 -40 -30 -20 -10 -31 -41 -51
 	*/
 
-	bool legal_move(int prev_x, int prev_y, int new_x, int new_y){
+	bool legal_move(int prev_x, int prev_y, int new_x, int new_y, int king, int king_pos_x, int king_pos_y){
 
 		bool legal = true;
 
-		if (prev_x != new_x || prev_y != new_y){
+		if ((prev_x != new_x || prev_y != new_y) && not_check(king_pos_x, king_pos_y, king)){
 
 			int prev_piece = this->board[prev_x][prev_y];
 			float vector_x = (new_x - prev_x) / sqrt((new_x - prev_x) * (new_x - prev_x) + (new_y - prev_y) * (new_y - prev_y));
 			float vector_y = (new_y - prev_y) / sqrt((new_x - prev_x) * (new_x - prev_x) + (new_y - prev_y) * (new_y - prev_y));			
 
-			// std::cout << "vector " << vector_x << ", " << vector_y  << "\n";
+			std::cout << "vector " << vector_x << ", " << vector_y  << "\n";
 			// std::cout << "dir " << this->dir << "\n";
-			// std::cout << "piece " << this->board[prev_x][prev_y]  << "\n";
-			// std::cout << "prev_pos " << prev_x << ", " << prev_y  << "\n";
-			// std::cout << "new pos " << new_x << ", " << new_y  << "\n\n\n";
+			std::cout << "piece " << this->board[prev_x][prev_y]  << "\n";
+			std::cout << "prev_pos " << prev_x << ", " << prev_y  << "\n";
+			std::cout << "new pos " << new_x << ", " << new_y  << "\n";
+			std::cout << "king " << king << "\n";
+			std::cout << "king_pos " << king_pos_x << ", " << king_pos_y  << "\n\n\n";
 
-			switch (std::abs(prev_piece) / 10) {
+			switch (std::abs(prev_piece) / 10){
 
 				case ROOK:
 
@@ -1055,6 +1098,28 @@ public:
 			}
 		}
 
+		if (legal){
+
+			int temp = this->board[new_x][new_y];
+
+			this->new_pos(prev_x, prev_y, new_x, new_y);
+
+			// std::cout << "prev pos: " << prev_x << ", " << prev_y << "\n";
+			// std::cout << "new pos: " << new_x << ", " << new_y << "\n";
+			// std::cout << "king pos: " << king << " " << king_pos_x << ", " << king_pos_y << "\n";
+			// this->display_board();
+
+			if (!not_check(king_pos_x, king_pos_y, king)){
+
+				legal = false;
+			}
+			// std::cout << "end board\n";
+
+			this->new_pos(new_x, new_y, prev_x, prev_y);
+
+			this->board[new_x][new_y] = temp;
+		}
+
 		return legal;
 	}
 };
@@ -1090,6 +1155,7 @@ private:
 	bool dragging;
 	int piece_held;
 	sf::Vector2f prev_place;
+	int changed;
 
 	// Private methods
 
@@ -1097,6 +1163,7 @@ private:
 
 		this->player = player;
 		this->window = nullptr;
+		this->changed = 1;
 		if(!this->texture.loadFromFile("Pieces.png")){
 
 			std::cout << "Problem loading textures\n";
@@ -1176,19 +1243,35 @@ public:
 
 	void update_board(){
 
-		int king, pos_x, pos_y;
+		int king, pos_x, pos_y, king_op, pos_x_op, pos_y_op;
 
 		for (int i = 0; i < 8; i++){
 
 			for (int j = 0; j < 8; j++){
 
-				if (std::abs(this->boards.get_board()[i][j]) / 10 == KING && this->boards.get_board()[i][j] == this->player * this->boards.get_dir() * std::abs(this->boards.get_board()[i][j])){
+				if (std::abs(this->boards.get_board()[i][j]) / 10 == KING && this->boards.get_board()[i][j] * this->player > 0){
 
 					king = this->boards.get_board()[i][j];
 					pos_x = i;
 					pos_y = j;
 				}
+
+				if (std::abs(this->boards.get_board()[i][j]) / 10 == KING && this->boards.get_board()[i][j] * this->player < 0){
+
+					king_op = this->boards.get_board()[i][j];
+					pos_x_op = i;
+					pos_y_op = j;
+				}
 			}
+		}
+
+		if (this->changed){
+
+			this->changed = 0;
+			std::cout << "player " << this->player << "\n";
+			std::cout << "dir " << this->boards.get_dir() << "\n";
+			std::cout << "king: " << king << ", " << pos_x << ", " << pos_y << "\n";
+			std::cout << "king_op: " << king_op << ", " << pos_x_op << ", " << pos_y_op << "\n\n\n";
 		}
 
 		if (this->boards.not_check(pos_x, pos_y, king) || !this->boards.check_mate(pos_x, pos_y, king)){
@@ -1231,6 +1314,8 @@ public:
 				}
 
 				else if(sf::Event::MouseButtonReleased && this->event.mouseButton.button == sf::Mouse::Left){
+		// std::cout << "king: "  << king << ", " << pos_x << ", " << pos_y << "\n";
+		// std::cout << "king_op: "  << king_op << ", " << pos_x_op << ", " << pos_y_op << "\n";
 
 					if (this->holding){
 
@@ -1245,7 +1330,7 @@ public:
 									int new_x = static_cast<int> (element.getPosition().y * this->boards.get_square_size() / 800);
 									int new_y = static_cast<int> (element.getPosition().x * this->boards.get_square_size() / 800);
 
-									if (this->boards.get_board()[new_x][new_y] * this->boards.get_board()[prev_x][prev_y] <= 0 && this->boards.legal_move(prev_x, prev_y, new_x, new_y)){
+									if (this->boards.get_board()[new_x][new_y] * this->boards.get_board()[prev_x][prev_y] <= 0 && this->boards.legal_move(prev_x, prev_y, new_x, new_y, king_op, pos_x_op, pos_y_op)){
 
 										this->boards.set_pieces_pos(this->piece_held, element.getPosition().x, element.getPosition().y);
 
@@ -1253,9 +1338,10 @@ public:
 
 										this->boards.display_board();
 
-										if (prev_x != new_x || prev_y != new_y || this->boards.not_check(pos_x, pos_y, king)){
+										if (prev_x != new_x || prev_y != new_y){
 
 											this->player *= -1;
+											this->changed = 1;
 											this->boards.set_dir(this->boards.get_dir() * (-1));
 
 											std::vector<int> last;
