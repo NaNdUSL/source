@@ -121,7 +121,6 @@ public:
 
 				this->holding = true;
 
-				this->boardsq.select_new_square(this->mouse_pos_view, this->resolution, this->squares_number, sf::Color::White, sf::Color(150, 150, 150, 255));
 
 				sf::Vector2i pos = this->boardnm.get_piece_index(this->mouse_pos_view, this->resolution, this->squares_number);
 
@@ -129,7 +128,10 @@ public:
 
 				if (pos.x != -1 && pos.y != -1 && (pos.x != aux.x || pos.y != aux.y)){
 
+					this->boardsq.select_new_square(this->mouse_pos_view, this->resolution, this->squares_number, sf::Color(30, 50, 150, 255), sf::Color::White, sf::Color(150, 150, 150, 255));
+
 					if(this->boardnm.get_moving_piece().z == 0 && this->boardnm.get_piece_number(pos.x, pos.y) != 0){
+
 
 						int piece_type = this->boardnm.get_piece_number(pos.x, pos.y);
 
@@ -141,9 +143,13 @@ public:
 
 						if (this->boardnm.piece_side(pos.x, pos.y) != this->boardnm.piece_side(aux.x, aux.y)){
 
-							this->boardnm.move_piece(aux.z, aux.x, aux.y, pos.x, pos.y);
+							this->boardnm.move_piece(this->resolution, this->squares_number, aux.z, aux.x, aux.y, pos.x, pos.y);
+
+							this->boardsq.undo_prev_color(this->mouse_pos_view, this->resolution, this->squares_number, sf::Color::White, sf::Color(150, 150, 150, 255));
 
 							this->boardnm.set_moving_piece(sf::Vector3i(-1, -1, 0));
+
+							this->boardsq.set_selected(sf::Vector2i(-1, -1));
 						}
 						else{
 
