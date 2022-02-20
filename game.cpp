@@ -125,28 +125,46 @@ public:
 
 				sf::Vector2i pos = this->boardnm.get_piece_index(this->mouse_pos_view, this->resolution, this->squares_number);
 
-				if ((pos.x != -1 && pos.y != -1) && this->boardnm.get_moving_piece().z == 0 && this->boardnm.get_piece_number(pos.x, pos.y) != 0){
+				sf::Vector3i aux = this->boardnm.get_moving_piece();
 
-					int piece_type = this->boardnm.get_piece_number(pos.x, pos.y);
+				if (pos.x != -1 && pos.y != -1 && (pos.x != aux.x || pos.y != aux.y)){
 
-					sf::Vector3i aux(pos.x, pos.y, piece_type);
+					if(this->boardnm.get_moving_piece().z == 0 && this->boardnm.get_piece_number(pos.x, pos.y) != 0){
 
-					this->boardnm.set_moving_piece(aux);
+						int piece_type = this->boardnm.get_piece_number(pos.x, pos.y);
+
+						aux = sf::Vector3i(pos.x, pos.y, piece_type);
+
+						this->boardnm.set_moving_piece(aux);
+					}
+					else if (this->boardnm.get_moving_piece().z != 0){
+
+						if (this->boardnm.piece_side(pos.x, pos.y) != this->boardnm.piece_side(aux.x, aux.y)){
+
+							this->boardnm.move_piece(aux.z, aux.x, aux.y, pos.x, pos.y);
+
+							this->boardnm.set_moving_piece(sf::Vector3i(-1, -1, 0));
+						}
+						else{
+
+							int piece_type = this->boardnm.get_piece_number(pos.x, pos.y);
+
+							aux = sf::Vector3i(pos.x, pos.y, piece_type);
+
+							this->boardnm.set_moving_piece(aux);
+						}
+					}
 				}
-				else if ((pos.x != -1 && pos.y != -1) && this->boardnm.get_moving_piece().z != 0 /*gonna have to check for possible moves here*/){
 
-					sf::Vector3i aux = this->boardnm.get_moving_piece();
-
-					this->boardnm.move_piece(aux.z, aux.x, aux.y, pos.x, pos.y);
-
-					this->boardnm.set_moving_piece(sf::Vector3i(-1, -1, 0));
-				}
+				std::cout << "curr moving piece: " << aux.x << ", " << aux.y << ", " << aux.z << "\n";
+				this->boardnm.display_board();
 			}
-			this->boardnm.display_board();
+
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
 
 			this->boardsq.clean(this->squares_number, this->resolution, sf::Color::White, sf::Color(150, 150, 150, 255));
+			this->boardnm.set_moving_piece(sf::Vector3i(-1, -1, 0));
 		}
 		else{
 
