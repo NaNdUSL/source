@@ -15,6 +15,7 @@ private:
 	float resolution;
 	int squares_number;
 	bool holding;
+	bool pressing;
 
 	// Mouse vars
 
@@ -35,6 +36,7 @@ private:
 		this->resolution = 900.0f;
 		this->squares_number = 8;
 		this->holding = false;
+		this->pressing = false;
 		if(!this->texture.loadFromFile("Pieces.png")){
 
 			std::cout << "Problem loading textures\n";
@@ -49,7 +51,7 @@ private:
 		this->window->setFramerateLimit(144);
 	}
 
-public:
+public: 
 
 	// Constructors / Destructors
 
@@ -72,9 +74,9 @@ public:
 			this->boardnm.fill_board("_R_C_B_Q_K_B_C_R_P_P_P_P_P_P_P_P8888PPPPPPPPRCBQKBCR");
 			// this->boardnm.set_dir(-1);
 		}
-
 		this->boardnm.load_pieces(this->squares_number, this->resolution);
 		this->boardnm.display_board();
+		// this->boardnm.get_board_state();
 	}
 
 	virtual ~Game(){
@@ -145,6 +147,8 @@ public:
 
 							this->boardnm.move_piece(this->resolution, this->squares_number, aux.z, aux.x, aux.y, pos.x, pos.y);
 
+							this->boardnm.update_state();
+
 							this->boardsq.undo_prev_color(this->mouse_pos_view, this->resolution, this->squares_number, sf::Color::White, sf::Color(150, 150, 150, 255));
 
 							this->boardnm.set_moving_piece(sf::Vector3i(-1, -1, 0));
@@ -160,21 +164,39 @@ public:
 							this->boardnm.set_moving_piece(aux);
 						}
 					}
+
+					// std::cout << "curr moving piece: " << aux.x << ", " << aux.y << ", " << aux.z << "\n";
+
+					this->boardnm.display_board();
 				}
-
-				std::cout << "curr moving piece: " << aux.x << ", " << aux.y << ", " << aux.z << "\n";
-				this->boardnm.display_board();
 			}
-
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
-
-			this->boardsq.clean(this->squares_number, this->resolution, sf::Color::White, sf::Color(150, 150, 150, 255));
-			this->boardnm.set_moving_piece(sf::Vector3i(-1, -1, 0));
 		}
 		else{
 
 			this->holding = false;
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
+
+			this->boardsq.clean(this->squares_number, this->resolution, sf::Color::White, sf::Color(150, 150, 150, 255));
+			this->boardnm.set_moving_piece(sf::Vector3i(-1, -1, 0));
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::U)){
+
+			if (!this->pressing){
+
+				this->pressing = true;
+
+				this->boardnm.undo_play();
+
+				this->boardnm.load_pieces(this->squares_number, this->resolution);
+
+				// this->boardnm.display_board();
+			}
+		}
+		else{
+
+			this->pressing = false;
 		}
 	}
 

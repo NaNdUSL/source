@@ -74,8 +74,7 @@ public:
 
 	void delete_piece(int num){
 
-		std::map<int, sf::Sprite>::iterator piece = this->pieces.find(num);
-		this->pieces.erase(piece); 
+		this->pieces.erase(num);
 	}
 
 	sf::Sprite get_piece(int num){

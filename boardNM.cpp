@@ -17,6 +17,7 @@ private:
 	std::vector<std::vector<int>> board;
 	Pieces pieces;
 	sf::Vector3i moving_piece;
+	std::stack<std::vector<std::vector<int>>> stack;
 
 public:
 
@@ -186,6 +187,140 @@ public:
 		}
 	}
 
+	std::string get_board_state(std::vector<std::vector<int>> curr_board){
+
+		std::string result;
+
+		for (int i = 0; i < 8; i++){
+
+			for (int j = 0; j < 8;){
+
+				if (curr_board[i][j] == EMPTY){
+
+					int aux = 0;
+
+					while (curr_board[i][j] == EMPTY){
+
+						aux++;
+						j++;
+					}
+
+					std::string num = std::to_string(aux);
+
+					result.append(num);
+				}
+				else{
+
+					//_R_C_B_Q_K_B_C_R_P_P_P_P_P_P_P_P8888PPPPPPPPRCBQKBCR
+
+					switch (curr_board[i][j] / 10){
+
+						case -1 * ROOK:
+
+						result.append("_R");
+						break;
+
+						case ROOK:
+						
+						result.append("R");
+						break;
+
+						case -1 * KNIGHT:
+
+						result.append("_C");
+						break;
+
+						case KNIGHT:
+						
+						result.append("C");
+						break;
+
+						case -1 * BISHOP:
+
+						result.append("_B");
+						break;
+
+						case BISHOP:
+						
+						result.append("B");
+						break;
+
+						case -1 * QUEEN:
+
+						result.append("_Q");
+						break;
+
+						case QUEEN:
+						
+						result.append("Q");
+						break;
+
+						case -1 * KING:
+
+						result.append("_K");
+						break;
+
+						case KING:
+						
+						result.append("K");
+						break;
+
+						case -1 * PAWN:
+
+						result.append("_P");
+						break;
+
+						case PAWN:
+						
+						result.append("P");
+						break;
+					}
+
+					j++;
+				}
+			}
+		}
+
+		std::cout << result << "\n";
+
+		return result;
+	}
+
+	void save_board_state(){
+
+		while (!this->stack.empty()){
+
+			std::vector<std::vector<int>> aux = this->stack.top();
+
+			// Create and open a text file
+			std::ofstream Saves("saves.txt");
+
+			// Write to the file
+			Saves << this->get_board_state(aux) << "\n";
+
+			// Close the file
+			Saves.close();
+		}
+	}
+
+	void update_state(){
+
+		std::vector<std::vector<int>> aux = this->board;
+		this->stack.push(aux);
+	}
+
+	void undo_play(){
+
+		if (!this->stack.empty()){
+
+			std::vector<std::vector<int>> aux = this->stack.top();
+
+			this->stack.pop();
+
+			this->set_board(aux);
+		}
+	}
+
 	void display_board(){
 
 		for (int i = 0; i < 8; i++){
@@ -273,6 +408,13 @@ public:
 					}
 
 					color_piece = 0;
+					std::map<int, sf::Sprite>::iterator piece = this->pieces.get_pieces().find(this->board[i][j]);
+
+					if (piece != this->pieces.get_pieces().end()){
+
+						this->pieces.delete_piece(this->board[i][j]);
+					}
+
 					this->pieces.insert_elem(this->board[i][j], sprite);
 				}
 			}
@@ -284,7 +426,7 @@ public:
 		sf::Vector2i b_pos(-1, -1);
 
 		if (mouse_coords.x >= 0.0f && mouse_coords.x <= resolution && mouse_coords.y >= 0.0f && mouse_coords.y <= resolution){
-			
+
 			b_pos.x = static_cast<int>(mouse_coords.y / (resolution / squares_number));
 
 			b_pos.y = static_cast<int>(mouse_coords.x / (resolution / squares_number));
@@ -294,6 +436,31 @@ public:
 
 		return b_pos;
 	}
+
+	int piece_side(int i, int j){
+
+		if(this->board[i][j]) return this->board[i][j] / std::abs(this->board[i][j]);
+	}
+
+	bool check_knight(sf::Vector3i pos){
+
+
+	}
+
+	bool check_bishop(){}
+
+	bool check_rook(sf::Vector3i pos){
+
+
+	}
+
+	bool check_pawn(){}
+
+	void legal_move(){}
+
+	bool check(){}
+
+	bool check_mate(){}
 
 	void move_piece(float resolution, int squares_number, int num, int prev_x, int prev_y, int new_x, int new_y){
 
@@ -315,10 +482,5 @@ public:
 			// 	this->pieces.delete_piece(res);
 			// }
 		}
-	}
-
-	int piece_side(int i, int j){
-
-		if(this->board[i][j]) return this->board[i][j] / std::abs(this->board[i][j]);
 	}
 };

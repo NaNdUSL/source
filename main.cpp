@@ -6,9 +6,11 @@
 #include <unordered_map>
 #include <iostream>
 #include <stdlib.h>
+#include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <stack>
 #include <cmath>
 
 #include "game.cpp"
@@ -19,13 +21,13 @@ int main(int argc, char const *argv[]){
 
     // init game engine
 
-    int white;
+    int player;
 
     std::cout << "white: 1, black: 0\n";
-    std::cin >> white;
+    std::cin >> player;
     std::cout << "\n";
 
-    Game game(white);
+    Game game(player);
 
     while(game.running()){
 
