@@ -59,6 +59,11 @@ public:
 		this->pieces.set_texture_size(texture_size);
 	}
 
+	void set_stack(std::stack<std::vector<std::vector<int>>> stack){
+
+		this->stack = stack;
+	}
+
 	std::vector<std::vector<int>> get_board(){
 
 		std::vector<std::vector<int>> board = this->board;
@@ -69,6 +74,12 @@ public:
 
 		Pieces pieces = this->pieces;
 		return pieces;
+	}
+
+	std::stack<std::vector<std::vector<int>>> get_stack(){
+
+		std::stack<std::vector<std::vector<int>>> stack = this->stack;
+		return stack;
 	}
 
 	sf::Vector3i get_moving_piece(){
@@ -199,7 +210,7 @@ public:
 
 					int aux = 0;
 
-					while (curr_board[i][j] == EMPTY){
+					while (j < 8 && curr_board[i][j] == EMPTY){
 
 						aux++;
 						j++;
@@ -281,26 +292,32 @@ public:
 			}
 		}
 
-		std::cout << result << "\n";
+		// std::cout << result;
 
 		return result;
 	}
 
 	void save_board_state(){
 
-		while (!this->stack.empty()){
+		std::stack<std::vector<std::vector<int>>> stack = this->get_stack();
 
-			std::vector<std::vector<int>> aux = this->stack.top();
+		// Create and open a text file
+		std::ofstream Saves("saves.txt");
 
-			// Create and open a text file
-			std::ofstream Saves("saves.txt");
+		Saves << this->get_board_state(this->get_board()) << "\n";
+
+		while (!stack.empty()){
+
+			std::vector<std::vector<int>> aux = stack.top();
+
+			stack.pop();
 
 			// Write to the file
 			Saves << this->get_board_state(aux) << "\n";
-
-			// Close the file
-			Saves.close();
 		}
+
+		// Close the file
+		Saves.close();
 	}
 
 	void update_state(){

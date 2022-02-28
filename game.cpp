@@ -75,6 +75,7 @@ public:
 			// this->boardnm.set_dir(-1);
 		}
 		this->boardnm.load_pieces(this->squares_number, this->resolution);
+		// this->boardnm.update_state();
 		this->boardnm.display_board();
 		// this->boardnm.get_board_state();
 	}
@@ -145,15 +146,19 @@ public:
 
 						if (this->boardnm.piece_side(pos.x, pos.y) != this->boardnm.piece_side(aux.x, aux.y)){
 
-							this->boardnm.move_piece(this->resolution, this->squares_number, aux.z, aux.x, aux.y, pos.x, pos.y);
-
 							this->boardnm.update_state();
+
+							this->boardnm.move_piece(this->resolution, this->squares_number, aux.z, aux.x, aux.y, pos.x, pos.y);
 
 							this->boardsq.undo_prev_color(this->mouse_pos_view, this->resolution, this->squares_number, sf::Color::White, sf::Color(150, 150, 150, 255));
 
 							this->boardnm.set_moving_piece(sf::Vector3i(-1, -1, 0));
 
 							this->boardsq.set_selected(sf::Vector2i(-1, -1));
+
+							// std::cout << "curr moving piece: " << aux.x << ", " << aux.y << ", " << aux.z << "\n";
+
+							this->boardnm.display_board();
 						}
 						else{
 
@@ -164,10 +169,6 @@ public:
 							this->boardnm.set_moving_piece(aux);
 						}
 					}
-
-					// std::cout << "curr moving piece: " << aux.x << ", " << aux.y << ", " << aux.z << "\n";
-
-					this->boardnm.display_board();
 				}
 			}
 		}
@@ -190,8 +191,15 @@ public:
 				this->boardnm.undo_play();
 
 				this->boardnm.load_pieces(this->squares_number, this->resolution);
+			}
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
 
-				// this->boardnm.display_board();
+			if (!this->pressing){
+
+				this->pressing = true;
+
+				this->boardnm.save_board_state();
 			}
 		}
 		else{
