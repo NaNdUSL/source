@@ -459,30 +459,149 @@ public:
 		if(this->board[i][j]) return this->board[i][j] / std::abs(this->board[i][j]);
 	}
 
-	bool check_knight(sf::Vector3i pos){
+	sf::Vector2i check_knight(sf::Vector2i pos){
+
+		// up and left
+
+		int i = pos.x - 1;
+		int j = pos.y - 1;
+
+		while (i >= 0 && j >= 0 && this->board[i][j] == 0){i--; j--;}
+
+		if (i >= 0 && j >= 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+
+		// up and right
+
+		i = pos.x - 1;
+		j = pos.y + 1;
+
+		while (i >= 0 && j < 8 && this->board[i][j] == 0){i--; j++;}
+
+		if (i >= 0  && j < 8 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+
+		// down right
+
+		i = pos.x + 1;
+		j = pos.y + 1;
+
+		while (i < 8 && j < 8 && this->board[i][j] == 0){i++; j++;}
+
+		if (i < 8 && j < 8 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+
+		// down left
+
+		i = pos.x + 1;
+		j = pos.y - 1;
+
+		while (i < 8 && j >= 0 && this->board[i][j] == 0){i++; j--;}
+
+		if (i < 8 && j >= 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+
+		return sf::Vector2i(-1, -1);
+	}
+
+	sf::Vector2i check_bishop(sf::Vector2i pos){
+
+		// up and left
+
+		int i = pos.x - 1;
+		int j = pos.y - 1;
+
+		while (i >= 0 && j >= 0 && this->board[i][j] == 0){i--; j--;}
+
+		if (i >= 0 && j >= 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+
+		// up and right
+
+		i = pos.x - 1;
+		j = pos.y + 1;
+
+		while (i >= 0 && j < 8 && this->board[i][j] == 0){i--; j++;}
+
+		if (i >= 0  && j < 8 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+
+		// down right
+
+		i = pos.x + 1;
+		j = pos.y + 1;
+
+		while (i < 8 && j < 8 && this->board[i][j] == 0){i++; j++;}
+
+		if (i < 8 && j < 8 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+
+		// down left
+
+		i = pos.x + 1;
+		j = pos.y - 1;
+
+		while (i < 8 && j >= 0 && this->board[i][j] == 0){i++; j--;}
+
+		if (i < 8 && j >= 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+
+		return sf::Vector2i(-1, -1);
+	}
+
+	// returns position of the other player's piece if there is one either on the same line or column of the current player's piece, if it's clear returns (-1, -1)
+
+	sf::Vector2i check_rook(sf::Vector2i pos){
+
+		// up
+
+		int i, j;
+
+		j = pos.y;
+
+		for (i = pos.x - 1; i >= 0 && this->board[i][j] == 0; i--);
+
+		if (i >= 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+
+		// down
+
+		for (i = pos.x + 1; i < 8 && this->board[i][j] == 0; i++);
+
+		if (i < 8 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+
+		// left
+
+		i = pos.x;
+
+		for (j = pos.y - 1; j >= 0 && this->board[i][j] == 0; j--);
+
+		if (j >= 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+
+		// right
+
+		for (j = pos.y + 1; j < 8 && this->board[i][j] == 0; j++);
+
+		if (j < 8 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+
+		return sf::Vector2i(-1, -1);
+	}
+
+	bool check_pawn(){
 
 
 	}
 
-	bool check_bishop(){}
-
-	bool check_rook(sf::Vector3i pos){
+	void legal_move(){
 
 
 	}
 
-	bool check_pawn(){}
+	bool check(){
 
-	void legal_move(){}
 
-	bool check(){}
+	}
 
-	bool check_mate(){}
+	bool check_mate(){
+
+		
+	}
 
 	void move_piece(float resolution, int squares_number, int num, int prev_x, int prev_y, int new_x, int new_y){
 
 		// int res = this->board[new_x][new_y];
-		std::cout << "prev: " << prev_x << ", " << prev_y << " new: " << new_x << ", " << new_y << "\n";
+		// std::cout << "prev: " << prev_x << ", " << prev_y << " new: " << new_x << ", " << new_y << "\n";
 
 		if (prev_x != new_x || prev_y != new_y){
 
