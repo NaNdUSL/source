@@ -18,6 +18,7 @@ private:
 	Pieces pieces;
 	sf::Vector3i moving_piece;
 	std::stack<std::vector<std::vector<int>>> stack;
+	int dir;
 
 public:
 
@@ -27,21 +28,26 @@ public:
 		this->board = board;
 		Pieces pieces;
 		this->pieces = pieces;
-		this->moving_piece.x = -1;
-		this->moving_piece.y = -1;
-		this->moving_piece.z = 0;
+		this->moving_piece = sf::Vector3i(-1, -1, 0);
+		this->dir = 0;
 	}
 
-	BoardNM(std::vector<std::vector<int>> board, Pieces pieces, sf::Vector3i moving_piece){
+	BoardNM(std::vector<std::vector<int>> board, Pieces pieces, sf::Vector3i moving_piece, int dir){
 
 		this->board = board;
 		this->pieces = pieces;
 		this->moving_piece = moving_piece;
+		this->dir = dir;
 	}
 
 	void set_board(std::vector<std::vector<int>> board){
 
 		this->board = board;
+	}
+
+	void set_dir(int dir){
+
+		this->dir = dir;
 	}
 
 	void set_pieces(Pieces pieces){
@@ -96,6 +102,12 @@ public:
 	void set_piece_number(int num, int i, int j){
 
 		this->board[i][j] = num;
+	}
+
+	int get_dir(){
+
+		int dir = this->dir;
+		return dir;
 	}
 
 	int get_piece_number(int i, int j){
@@ -464,38 +476,58 @@ public:
 		// up and left
 
 		int i = pos.x - 1;
-		int j = pos.y - 1;
+		int j = pos.y + 2;
 
-		while (i >= 0 && j >= 0 && this->board[i][j] == 0){i--; j--;}
-
-		if (i >= 0 && j >= 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+		if (i >= 0 && j < 8 && this->get_board()[i][j] != 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
 
 		// up and right
 
-		i = pos.x - 1;
-		j = pos.y + 1;
+		i = pos.x + 1;
+		j = pos.y + 2;
 
-		while (i >= 0 && j < 8 && this->board[i][j] == 0){i--; j++;}
-
-		if (i >= 0  && j < 8 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+		if (i < 8 && j < 8 && this->get_board()[i][j] != 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
 
 		// down right
 
-		i = pos.x + 1;
+		i = pos.x + 2;
 		j = pos.y + 1;
 
-		while (i < 8 && j < 8 && this->board[i][j] == 0){i++; j++;}
+		if (i < 8 && j < 8 && this->get_board()[i][j] != 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
 
-		if (i < 8 && j < 8 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+		// down left
+
+		i = pos.x + 2;
+		j = pos.y - 1;
+
+		if (i < 8 && j >= 0 && this->get_board()[i][j] != 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
 
 		// down left
 
 		i = pos.x + 1;
+		j = pos.y - 2;
+
+		if (i < 8 && j >= 0 && this->get_board()[i][j] != 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+
+		// down left
+
+		i = pos.x - 1;
+		j = pos.y - 2;
+
+		if (i >= 0 && j >= 0 && this->get_board()[i][j] != 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+
+		// down left
+
+		i = pos.x - 2;
 		j = pos.y - 1;
 
-		while (i < 8 && j >= 0 && this->board[i][j] == 0){i++; j--;}
+		if (i >= 0 && j >= 0 && this->get_board()[i][j] != 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
 
-		if (i < 8 && j >= 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+		// down left
+
+		i = pos.x - 2;
+		j = pos.y + 1;
+
+		if (i >= 0 && j < 8 && this->get_board()[i][j] != 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
 
 		return sf::Vector2i(-1, -1);
 	}
@@ -553,13 +585,13 @@ public:
 
 		for (i = pos.x - 1; i >= 0 && this->board[i][j] == 0; i--);
 
-		if (i >= 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+			if (i >= 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
 
 		// down
 
 		for (i = pos.x + 1; i < 8 && this->board[i][j] == 0; i++);
 
-		if (i < 8 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+			if (i < 8 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
 
 		// left
 
@@ -567,24 +599,35 @@ public:
 
 		for (j = pos.y - 1; j >= 0 && this->board[i][j] == 0; j--);
 
-		if (j >= 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+			if (j >= 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
 
 		// right
 
 		for (j = pos.y + 1; j < 8 && this->board[i][j] == 0; j++);
 
-		if (j < 8 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+			if (j < 8 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
 
 		return sf::Vector2i(-1, -1);
 	}
 
-	bool check_pawn(){
+	sf::Vector2i check_pawn(sf::Vector2i pos, int dir){
 
+		// left square
 
+		int i = pos.x + dir;
+		int j = pos.y - 1;
+
+		if (i >= 0 && i < 8 && j >= 0 && this->get_board()[i][j] != 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+
+		// right square
+
+		i = pos.x + dir;
+		j = pos.y + 1;
+
+		if (i >= 0 && i < 8 && j < 8 && this->get_board()[i][j] != 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
 	}
 
 	void legal_move(){
-
 
 	}
 

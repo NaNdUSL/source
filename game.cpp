@@ -67,13 +67,12 @@ public:
 		if (!white){
 
 			this->boardnm.fill_board("RCBKQBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_K_Q_B_C_R");
-			// this->boardnm.set_dir(1);
 		}
 		else{
 
 			this->boardnm.fill_board("_R_C_B_Q_K_B_C_R_P_P_P_P_P_P_P_P8888PPPPPPPPRCBQKBCR");
-			// this->boardnm.set_dir(-1);
 		}
+		this->boardnm.set_dir(-2*white + 1);
 		this->boardnm.load_pieces(this->squares_number, this->resolution);
 		// this->boardnm.update_state();
 		this->boardnm.display_board();
@@ -154,13 +153,15 @@ public:
 
 							std::cout << "new: " << this->boardnm.get_board()[pos.x][pos.y] << "-> " << pos.x << ", " << pos.y << "\n";
 
-							std::cout << "value: " << this->boardnm.check_bishop(pos).x <<  ", " << this->boardnm.check_bishop(pos).y << "\n";
+							std::cout << "value: " << this->boardnm.check_pawn(pos, this->boardnm.get_dir()).x <<  ", " << this->boardnm.check_pawn(pos, this->boardnm.get_dir()).y << "\n";
 
 							this->boardsq.undo_prev_color(this->mouse_pos_view, this->resolution, this->squares_number, sf::Color::White, sf::Color(150, 150, 150, 255));
 
 							this->boardnm.set_moving_piece(sf::Vector3i(-1, -1, 0));
 
 							this->boardsq.set_selected(sf::Vector2i(-1, -1));
+
+							this->boardnm.set_dir(this->boardnm.get_dir() * (-1));
 
 							// std::cout << "curr moving piece: " << aux.x << ", " << aux.y << ", " << aux.z << "\n";
 
