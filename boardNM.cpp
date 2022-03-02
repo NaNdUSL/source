@@ -610,21 +610,23 @@ public:
 		return sf::Vector2i(-1, -1);
 	}
 
-	sf::Vector2i check_pawn(sf::Vector2i pos, int dir){
+	sf::Vector2i check_pawn(sf::Vector2i pos){
 
 		// left square
 
-		int i = pos.x + dir;
+		int i = pos.x + this->dir;
 		int j = pos.y - 1;
 
 		if (i >= 0 && i < 8 && j >= 0 && this->get_board()[i][j] != 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
 
 		// right square
 
-		i = pos.x + dir;
+		i = pos.x + this->dir;
 		j = pos.y + 1;
 
 		if (i >= 0 && i < 8 && j < 8 && this->get_board()[i][j] != 0 && this->piece_side(i,j) != this->piece_side(pos.x, pos.y)) return sf::Vector2i(i, j);
+
+		return sf::Vector2i(-1, -1);
 	}
 
 	void legal_move(){
