@@ -629,8 +629,39 @@ public:
 		return sf::Vector2i(-1, -1);
 	}
 
-	void legal_move(){
+	bool legal_pawn(sf::Vector2i pos){
 
+		
+	}
+
+	bool legal_rook(sf::Vector2i pos){
+
+		
+	}
+
+	bool legal_bishop(sf::Vector2i pos){
+
+		
+	}
+
+	bool legal_knight(sf::Vector2i pos){
+
+		
+	}
+
+	bool legal_queen(sf::Vector2i pos){
+
+		
+	}
+
+	bool legal_king(sf::Vector2i pos){
+
+		
+	}
+
+	bool legal_move(){
+
+		return true;
 	}
 
 	bool check(){
@@ -648,7 +679,7 @@ public:
 		// int res = this->board[new_x][new_y];
 		// std::cout << "prev: " << prev_x << ", " << prev_y << " new: " << new_x << ", " << new_y << "\n";
 
-		if (prev_x != new_x || prev_y != new_y){
+		if ((prev_x != new_x || prev_y != new_y) && legal_move()){
 
 			this->board[new_x][new_y] = num;
 			this->board[prev_x][prev_y] = 0;
