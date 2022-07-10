@@ -33,7 +33,7 @@ private:
 	void init_vars(){
 
 		this->window = nullptr;
-		this->resolution = 900.0f;
+		this->resolution = 800.0f;
 		this->squares_number = 8;
 		this->holding = false;
 		this->pressing = false;
@@ -123,7 +123,6 @@ public:
 
 				this->holding = true;
 
-
 				sf::Vector2i pos = this->boardnm.get_piece_index(this->mouse_pos_view, this->resolution, this->squares_number);
 
 				sf::Vector3i aux = this->boardnm.get_moving_piece();
@@ -133,7 +132,6 @@ public:
 					this->boardsq.select_new_square(this->mouse_pos_view, this->resolution, this->squares_number, sf::Color(30, 50, 150, 255), sf::Color::White, sf::Color(150, 150, 150, 255));
 
 					if(this->boardnm.get_moving_piece().z == 0 && this->boardnm.get_piece_number(pos.x, pos.y) != 0){
-
 
 						int piece_type = this->boardnm.get_piece_number(pos.x, pos.y);
 
@@ -160,8 +158,6 @@ public:
 							this->boardnm.set_moving_piece(sf::Vector3i(-1, -1, 0));
 
 							this->boardsq.set_selected(sf::Vector2i(-1, -1));
-
-							this->boardnm.set_dir(this->boardnm.get_dir() * (-1));
 
 							// std::cout << "curr moving piece: " << aux.x << ", " << aux.y << ", " << aux.z << "\n";
 

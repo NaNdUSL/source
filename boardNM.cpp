@@ -875,15 +875,15 @@ public:
 		return true;
 	}
 
-	// bool check(){
+	bool check(){
 
+		return true;
+	}
 
-	// }
+	bool check_mate(){
 
-	// bool check_mate(){
-
-
-	// }
+		return true;
+	}
 
 	void move_piece(float resolution, int squares_number, int num, int prev_x, int prev_y, int new_x, int new_y){
 
@@ -899,6 +899,8 @@ public:
 			int y = (resolution / squares_number) * new_x;
 
 			this->pieces.set_piece_pos(num, x, y);
+
+			this->set_dir(this->get_dir() * (-1));
 
 			// if (res != 0){
 
