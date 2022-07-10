@@ -469,6 +469,7 @@ public:
 	int piece_side(int i, int j){
 
 		if(this->board[i][j]) return this->board[i][j] / std::abs(this->board[i][j]);
+		else return 0;
 	}
 
 	sf::Vector2i check_knight(sf::Vector2i pos){
@@ -629,57 +630,137 @@ public:
 		return sf::Vector2i(-1, -1);
 	}
 
+	sf::Vector2i get_vector_dir(sf::Vector2i prevp, sf::Vector2i newp){
+
+		sf::Vector2i res = sf::Vector2i(newp.x - prevp.x, newp.y - prevp.y);
+
+		if(res.x != 0){
+
+			res.x = res.x/std::abs(res.x);
+		}
+
+		if(res.y != 0){
+
+			res.y = res.y/std::abs(res.y);
+		}
+
+		return res;
+	}
+
 	bool legal_pawn(sf::Vector2i pos){
-
-		
-	}
-
-	bool legal_rook(sf::Vector2i pos){
-
-		
-	}
-
-	bool legal_bishop(sf::Vector2i pos){
-
-		
-	}
-
-	bool legal_knight(sf::Vector2i pos){
-
-		
-	}
-
-	bool legal_queen(sf::Vector2i pos){
-
-		
-	}
-
-	bool legal_king(sf::Vector2i pos){
-
-		
-	}
-
-	bool legal_move(){
 
 		return true;
 	}
 
-	bool check(){
+	bool legal_rook(sf::Vector2i prev_pos, sf::Vector2i new_pos){
 
+		sf::Vector2i dir_vetor = this->get_vector_dir(prev_pos, new_pos);
+		sf::Vector2i curr_poss = prev_pos;
 
+		if (dir_vetor.x == 0 || dir_vetor.y == 0){
+
+			curr_poss.x += dir_vetor.x;
+			curr_poss.y += dir_vetor.y;
+
+			for (int i = 0; curr_poss != new_pos; i++){
+
+				std::cout << curr_poss.x << ", " << curr_poss.y << "\n";
+
+				if (this->board[curr_poss.x][curr_poss.y] != EMPTY){
+
+					return false;
+				}
+
+				curr_poss.x += dir_vetor.x;
+				curr_poss.y += dir_vetor.y;
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
-	bool check_mate(){
+	bool legal_bishop(sf::Vector2i prev_pos, sf::Vector2i new_pos){
 
-		
+		sf::Vector2i dir_vetor = this->get_vector_dir(prev_pos, new_pos);
+		sf::Vector2i curr_poss = prev_pos;
+
+		if (std::abs(dir_vetor.x) == std::abs(dir_vetor.y)){
+
+			curr_poss.x += dir_vetor.x;
+			curr_poss.y += dir_vetor.y;
+
+			for (int i = 0; curr_poss != new_pos; i++){
+
+				std::cout << curr_poss.x << ", " << curr_poss.y << "\n";
+
+				if (this->board[curr_poss.x][curr_poss.y] != EMPTY){
+
+					return false;
+				}
+
+				curr_poss.x += dir_vetor.x;
+				curr_poss.y += dir_vetor.y;
+			}
+
+			return true;
+		}
+
+		return false;
 	}
+
+	// bool legal_knight(sf::Vector2i pos){
+
+
+	// }
+
+	bool legal_queen(sf::Vector2i prev_pos, sf::Vector2i new_pos){
+
+		return legal_rook(prev_pos, new_pos) || legal_bishop(prev_pos, new_pos);
+	}
+
+	// bool legal_king(sf::Vector2i pos){
+
+
+	// }
+
+	bool legal_move(sf::Vector2i prev_pos, sf::Vector2i new_pos){
+
+		switch(std::abs(this->board[prev_pos.x][prev_pos.y]) / 10){
+
+			case ROOK:
+			return legal_rook(prev_pos, new_pos);
+			break;
+
+			case BISHOP:
+			return legal_bishop(prev_pos, new_pos);
+			break;
+
+			case QUEEN:
+			return legal_queen(prev_pos, new_pos);
+			break;
+		}
+
+		return true;
+	}
+
+	// bool check(){
+
+
+	// }
+
+	// bool check_mate(){
+
+
+	// }
 
 	void move_piece(float resolution, int squares_number, int num, int prev_x, int prev_y, int new_x, int new_y){
 
 		// int res = this->board[new_x][new_y];
 		// std::cout << "prev: " << prev_x << ", " << prev_y << " new: " << new_x << ", " << new_y << "\n";
 
-		if ((prev_x != new_x || prev_y != new_y) && legal_move()){
+		if ((prev_x != new_x || prev_y != new_y) && this->legal_move(sf::Vector2i(prev_x, prev_y), sf::Vector2i(new_x, new_y))){
 
 			this->board[new_x][new_y] = num;
 			this->board[prev_x][prev_y] = 0;
