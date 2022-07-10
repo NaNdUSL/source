@@ -151,8 +151,6 @@ public:
 
 							std::cout << "new: " << this->boardnm.get_board()[pos.x][pos.y] << "-> " << pos.x << ", " << pos.y << "\n";
 
-							std::cout << "value: " << this->boardnm.check_pawn(pos).x <<  ", " << this->boardnm.check_pawn(pos).y << "\n";
-
 							this->boardsq.undo_prev_color(this->mouse_pos_view, this->resolution, this->squares_number, sf::Color::White, sf::Color(150, 150, 150, 255));
 
 							this->boardnm.set_moving_piece(sf::Vector3i(-1, -1, 0));
