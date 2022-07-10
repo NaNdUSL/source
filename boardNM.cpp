@@ -659,6 +659,7 @@ public:
 
 		if (dir_vetor.x == 0 || dir_vetor.y == 0){
 
+			std::cout << curr_poss.x << ", " << curr_poss.y << "\n";
 			curr_poss.x += dir_vetor.x;
 			curr_poss.y += dir_vetor.y;
 
@@ -684,9 +685,12 @@ public:
 	bool legal_bishop(sf::Vector2i prev_pos, sf::Vector2i new_pos){
 
 		sf::Vector2i dir_vetor = this->get_vector_dir(prev_pos, new_pos);
+		sf::Vector2i res = sf::Vector2i(new_pos.x - prev_pos.x, new_pos.y - prev_pos.y);
 		sf::Vector2i curr_poss = prev_pos;
 
-		if (std::abs(dir_vetor.x) == std::abs(dir_vetor.y)){
+		if (std::abs(res.x) == std::abs(res.y)){
+
+			std::cout << curr_poss.x << ", " << curr_poss.y << "\n";
 
 			curr_poss.x += dir_vetor.x;
 			curr_poss.y += dir_vetor.y;
@@ -720,9 +724,12 @@ public:
 		return legal_rook(prev_pos, new_pos) || legal_bishop(prev_pos, new_pos);
 	}
 
-	// bool legal_king(sf::Vector2i pos){
+	// bool legal_king(sf::Vector2i prev_pos, sf::Vector2i new_pos){
+
+	// 	if(prev_pos.x - 1 >= 0 && prev_pos.y - 1 >= 0 && this->board[prev_pos.x - 1][prev_pos.y - 1] && this->){
 
 
+	// 	}
 	// }
 
 	bool legal_move(sf::Vector2i prev_pos, sf::Vector2i new_pos){
