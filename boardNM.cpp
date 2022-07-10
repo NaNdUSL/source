@@ -647,9 +647,43 @@ public:
 		return res;
 	}
 
-	bool legal_pawn(sf::Vector2i pos){
+	bool legal_pawn(sf::Vector2i prev_pos, sf::Vector2i new_pos){
 
-		return true;
+		sf::Vector2i dir_vetor = sf::Vector2i(new_pos.x - prev_pos.x, new_pos.y - prev_pos.y);
+
+		if(dir_vetor.y == 0){
+
+			if(dir_vetor.x == this->dir){
+
+				if(this->board[new_pos.x][new_pos.y] == EMPTY){
+
+					return true;
+				}
+			}
+
+			if(dir_vetor.x == this->dir * 2){
+
+				if(this->board[prev_pos.x + this->dir][prev_pos.y] == EMPTY && this->board[new_pos.x][new_pos.y] == EMPTY){
+
+					if((this->dir == -1 && prev_pos.x == 6) || (this->dir == 1 && prev_pos.x == 1)){
+
+						return true;
+					}
+				}
+			}
+		}
+		else if(dir_vetor.y == -1 || dir_vetor.y == 1){
+
+			if(dir_vetor.x == this->dir){
+
+				if(this->board[new_pos.x][new_pos.y] != EMPTY && this->piece_side(prev_pos.x, prev_pos.y) != this->piece_side(new_pos.x, new_pos.y)){
+
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	bool legal_rook(sf::Vector2i prev_pos, sf::Vector2i new_pos){
@@ -831,6 +865,10 @@ public:
 
 			case KNIGHT:
 			return legal_knight(prev_pos, new_pos);
+			break;
+
+			case PAWN:
+			return legal_pawn(prev_pos, new_pos);
 			break;
 		}
 
