@@ -714,23 +714,100 @@ public:
 		return false;
 	}
 
-	// bool legal_knight(sf::Vector2i pos){
+	bool legal_knight(sf::Vector2i prev_pos, sf::Vector2i new_pos){
 
+		if(prev_pos.x - 2 == new_pos.x && prev_pos.y - 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
 
-	// }
+			return true;
+		}
+
+		if(prev_pos.x - 1 == new_pos.x && prev_pos.y - 2 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+
+			return true;
+		}
+
+		if(prev_pos.x - 2 == new_pos.x && prev_pos.y + 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+
+			return true;
+		}
+
+		if(prev_pos.x - 1 == new_pos.x && prev_pos.y + 2 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+
+			return true;
+		}
+
+		if(prev_pos.x + 1 == new_pos.x && prev_pos.y - 2 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+
+			return true;
+		}
+
+		if(prev_pos.x + 2 == new_pos.x && prev_pos.y - 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+
+			return true;
+		}
+
+		if(prev_pos.x + 1 == new_pos.x && prev_pos.y + 2== new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+
+			return true;
+		}
+
+		if(prev_pos.x + 2 == new_pos.x && prev_pos.y + 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+
+			return true;
+		}
+
+		return false;
+	}
 
 	bool legal_queen(sf::Vector2i prev_pos, sf::Vector2i new_pos){
 
 		return legal_rook(prev_pos, new_pos) || legal_bishop(prev_pos, new_pos);
 	}
 
-	// bool legal_king(sf::Vector2i prev_pos, sf::Vector2i new_pos){
+	bool legal_king(sf::Vector2i prev_pos, sf::Vector2i new_pos){
 
-	// 	if(prev_pos.x - 1 >= 0 && prev_pos.y - 1 >= 0 && this->board[prev_pos.x - 1][prev_pos.y - 1] && this->){
+		if(prev_pos.x - 1 == new_pos.x && prev_pos.y - 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
 
+			return true;
+		}
 
-	// 	}
-	// }
+		if(prev_pos.x - 1 == new_pos.x && prev_pos.y == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+
+			return true;
+		}
+
+		if(prev_pos.x - 1 == new_pos.x && prev_pos.y + 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+
+			return true;
+		}
+
+		if(prev_pos.x == new_pos.x && prev_pos.y - 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+
+			return true;
+		}
+
+		if(prev_pos.x == new_pos.x && prev_pos.y + 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+
+			return true;
+		}
+
+		if(prev_pos.x + 1 == new_pos.x && prev_pos.y - 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+
+			return true;
+		}
+
+		if(prev_pos.x + 1 == new_pos.x && prev_pos.y == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+
+			return true;
+		}
+
+		if(prev_pos.x + 1 == new_pos.x && prev_pos.y + 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+
+			return true;
+		}
+
+		return false;
+	}
 
 	bool legal_move(sf::Vector2i prev_pos, sf::Vector2i new_pos){
 
@@ -746,6 +823,14 @@ public:
 
 			case QUEEN:
 			return legal_queen(prev_pos, new_pos);
+			break;
+
+			case KING:
+			return legal_king(prev_pos, new_pos);
+			break;
+
+			case KNIGHT:
+			return legal_knight(prev_pos, new_pos);
 			break;
 		}
 
