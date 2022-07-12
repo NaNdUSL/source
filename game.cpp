@@ -55,7 +55,7 @@ public:
 
 	// Constructors / Destructors
 
-	Game(int white){
+	Game(int white, int pboard){
 
 		this->init_vars();
 		this->init_window();
@@ -64,15 +64,29 @@ public:
 		sf::Vector2u aux(this->texture.getSize().x / 6, this->texture.getSize().y / 2);
 		this->boardnm.set_texture_size(aux);
 
+		std::fstream Myfile("boardstates.txt");
+		std::string line;
+
+		// gets the board chosen
+
+		for (int i = 0; i < pboard; i++){
+
+			getline(Myfile, line);
+		}
+
 		if (!white){
 
-			this->boardnm.fill_board("RCBKQBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_K_Q_B_C_R");
+			this->boardnm.fill_board(line);
+
 		}
 		else{
 
-			this->boardnm.fill_board("_R_C_B_Q_K_B_C_R_P_P_P_P_P_P_P_P8888PPPPPPPPRCBQKBCR");
+			reverse(line.begin(),line.end());
+			this->boardnm.fill_board(line);
 		}
-		this->boardnm.set_dir(-2*white + 1);
+
+		this->boardnm.set_dir(-2 * white + 1);
+			std::cout << line << "sup\n";
 		this->boardnm.load_pieces(this->squares_number, this->resolution);
 		// this->boardnm.update_state();
 		this->boardnm.display_board();

@@ -883,23 +883,23 @@ public:
 
 	bool check(sf::Vector2i pos, int piece_side){
 
-		if(this->check_pawn(pos, piece_side) != sf::Vector2i(-1, -1)){
+		// if(this->check_pawn(pos, piece_side) != sf::Vector2i(-1, -1)){
 
-			std::cout << "pawn check" <<  this->check_pawn(pos, piece_side).x << ", " << this->check_pawn(pos, piece_side).y << "\n";
-			return true;
-		}
+		// 	std::cout << "pawn check" <<  this->check_pawn(pos, piece_side).x << ", " << this->check_pawn(pos, piece_side).y << "\n";
+		// 	return true;
+		// }
 
-		if(this->check_knight(pos, piece_side) != sf::Vector2i(-1, -1)){
+		// if(this->check_knight(pos, piece_side) != sf::Vector2i(-1, -1)){
 
-			std::cout << "knight check" <<  this->check_pawn(pos, piece_side).x << ", " << this->check_pawn(pos, piece_side).y << "\n";
-			return true;
-		}
+		// 	std::cout << "knight check" <<  this->check_pawn(pos, piece_side).x << ", " << this->check_pawn(pos, piece_side).y << "\n";
+		// 	return true;
+		// }
 
-		if(this->check_bishop(pos, piece_side) != sf::Vector2i(-1, -1)){
+		// if(this->check_bishop(pos, piece_side) != sf::Vector2i(-1, -1)){
 
-			std::cout << "bishop check" <<  this->check_pawn(pos, piece_side).x << ", " << this->check_pawn(pos, piece_side).y << "\n";
-			return true;
-		}
+		// 	std::cout << "bishop check" <<  this->check_pawn(pos, piece_side).x << ", " << this->check_pawn(pos, piece_side).y << "\n";
+		// 	return true;
+		// }
 
 		if(this->check_rook(pos, piece_side) != sf::Vector2i(-1, -1)){
 
