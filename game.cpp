@@ -77,12 +77,11 @@ public:
 		if (!white){
 
 			this->boardnm.fill_board(line);
-
 		}
 		else{
 
-			reverse(line.begin(),line.end());
-			this->boardnm.fill_board(line);
+			std::string new_line = this->reverse_board(line);
+			this->boardnm.fill_board(new_line);
 		}
 
 		this->boardnm.set_dir(-2 * white + 1);
