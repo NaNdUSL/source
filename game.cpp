@@ -106,6 +106,11 @@ public:
 
 	// Methods
 
+	std::string reverse_board(){
+
+		
+	}
+
 	void poll_events(){
 
 		while(this->window->pollEvent(this->event)){
