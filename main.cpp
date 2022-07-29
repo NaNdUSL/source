@@ -24,10 +24,6 @@ int main(int argc, char const *argv[]){
 	int player;
 	int board;
 
-	std::cout << "white: 1, black: 0\n";
-	std::cin >> player;
-	std::cout << "\n";
-
 	std::fstream Myfile("boardstates.txt");
 
 	std::cout << "boards:\n";
@@ -62,6 +58,9 @@ int main(int argc, char const *argv[]){
 	std::cin >> board;
 	std::cout << "\n";
 
+	std::cout << "white: 1, black: 0\n";
+	std::cin >> player;
+	std::cout << "\n";
 
 	Game game(player, board);
 

@@ -80,12 +80,12 @@ public:
 		}
 		else{
 
-			std::string new_line = this->reverse_board(line);
+			std::string new_line = this->reverse_board(line, line.length());
 			this->boardnm.fill_board(new_line);
 		}
 
 		this->boardnm.set_dir(-2 * white + 1);
-			std::cout << line << "sup\n";
+		// std::cout << line << "sup\n";
 		this->boardnm.load_pieces(this->squares_number, this->resolution);
 		// this->boardnm.update_state();
 		this->boardnm.display_board();
@@ -106,9 +106,24 @@ public:
 
 	// Methods
 
-	std::string reverse_board(){
+	std::string reverse_board(std::string s, int N){
 
-		
+		std::string new_str = "\0";
+
+		for (int i = 0; i < N; i++){
+
+			if (s[i] == '_'){
+
+				new_str.insert(0, 1, s[i+1]);
+				new_str.insert(0, 1, s[i++]);
+			}
+			else{
+
+				new_str.insert(0, 1, s[i]);
+			}
+		}
+
+		return new_str;
 	}
 
 	void poll_events(){
