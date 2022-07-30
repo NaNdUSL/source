@@ -592,7 +592,7 @@ public:
 
 	// returns position of the other player's piece if there is one either on the same line or column of the current player's piece, if it's clear returns (-1, -1)
 
-	sf::Vector2i check_rook(sf::Vector2i pos, int piece_side){
+	sf::Vector2i check_rook(sf::Vector2i pos, int piece_side, std::vector<std::vector<int>> temp_board){
 
 		// up
 
@@ -600,29 +600,29 @@ public:
 
 		j = pos.y;
 
-		for (i = pos.x - 1; i >= 0 && this->board[i][j] == 0; i--);
+		for (i = pos.x - 1; i >= 0 && temp_board[i][j] == 0; i--);
 
-			if (i >= 0 && std::abs(this->get_board()[i][j] / 10) == ROOK && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
+			if (i >= 0 && std::abs(temp_board[i][j] / 10) == ROOK && this->piece_side(i, j, temp_board) != piece_side) return sf::Vector2i(i, j);
 
 		// down
 
-		for (i = pos.x + 1; i < 8 && this->board[i][j] == 0; i++);
+		for (i = pos.x + 1; i < 8 && temp_board[i][j] == 0; i++);
 
-			if (i < 8 && std::abs(this->get_board()[i][j] / 10) == ROOK && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
+			if (i < 8 && std::abs(temp_board[i][j] / 10) == ROOK && this->piece_side(i, j, temp_board) != piece_side) return sf::Vector2i(i, j);
 
 		// left
 
 		i = pos.x;
 
-		for (j = pos.y - 1; j >= 0 && this->board[i][j] == 0; j--);
+		for (j = pos.y - 1; j >= 0 && temp_board[i][j] == 0; j--);
 
-			if (j >= 0 && std::abs(this->get_board()[i][j] / 10) == ROOK && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
+			if (j >= 0 && std::abs(temp_board[i][j] / 10) == ROOK && this->piece_side(i, j, temp_board) != piece_side) return sf::Vector2i(i, j);
 
 		// right
 
-		for (j = pos.y + 1; j < 8 && this->board[i][j] == 0; j++);
+		for (j = pos.y + 1; j < 8 && temp_board[i][j] == 0; j++);
 
-			if (j < 8 && std::abs(this->get_board()[i][j] / 10) == ROOK && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
+			if (j < 8 && std::abs(temp_board[i][j] / 10) == ROOK && this->piece_side(i, j, temp_board) != piece_side) return sf::Vector2i(i, j);
 
 		return sf::Vector2i(-1, -1);
 	}
@@ -899,25 +899,25 @@ public:
 
 		// if(this->check_pawn(pos, piece_side) != sf::Vector2i(-1, -1)){
 
-		// 	std::cout << "pawn check" <<  this->check_pawn(pos, piece_side).x << ", " << this->check_pawn(pos, piece_side).y << "\n";
+		// 	std::cout << "pawn check " <<  this->check_pawn(pos, piece_side).x << ", " << this->check_pawn(pos, piece_side).y << "\n";
 		// 	return true;
 		// }
 
 		// if(this->check_knight(pos, piece_side) != sf::Vector2i(-1, -1)){
 
-		// 	std::cout << "knight check" <<  this->check_pawn(pos, piece_side).x << ", " << this->check_pawn(pos, piece_side).y << "\n";
+		// 	std::cout << "knight check " <<  this->check_knight(pos, piece_side).x << ", " << this->check_knight(pos, piece_side).y << "\n";
 		// 	return true;
 		// }
 
-		// if(this->check_bishop(pos, piece_side) != sf::Vector2i(-1, -1)){
+		if(this->check_bishop(pos, piece_side) != sf::Vector2i(-1, -1)){
 
-		// 	std::cout << "bishop check" <<  this->check_pawn(pos, piece_side).x << ", " << this->check_pawn(pos, piece_side).y << "\n";
-		// 	return true;
-		// }
+			std::cout << "bishop check " <<  this->check_bishop(pos, piece_side).x << ", " << this->check_bishop(pos, piece_side).y << "\n";
+			return true;
+		}
 
 		if(this->check_rook(pos, piece_side) != sf::Vector2i(-1, -1)){
 
-			std::cout << "rook check" <<  this->check_rook(pos, piece_side).x << ", " << this->check_rook(pos, piece_side).y << "\n";
+			std::cout << "rook check " <<  this->check_rook(pos, piece_side).x << ", " << this->check_rook(pos, piece_side).y << "\n";
 			return true;
 		}
 
