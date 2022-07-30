@@ -540,7 +540,6 @@ public:
 		i = pos.x + 1;
 		j = pos.y + 2;
 
-		std::cout << "cheguei ao fim do knight: " << std::abs(this->get_board()[i][j] / 10) << ", " << KNIGHT << "\n" << this->piece_side(i,j) << ", " << piece_side << "\n";
 		if (i < 8 && j < 8 && std::abs(this->get_board()[i][j] / 10) == KNIGHT && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
 
 		// down right
@@ -944,17 +943,17 @@ public:
 		std::cout << "temp board ->>>>>>>>>>>>> \n";
 		this->display_board(temp_board);
 
-		// if(this->check_pawn(pos, piece_side) != sf::Vector2i(-1, -1)){
+		if(this->check_pawn(new_pos, piece_side) != sf::Vector2i(-1, -1)){
 
-		// 	std::cout << "pawn check " <<  this->check_pawn(pos, piece_side).x << ", " << this->check_pawn(pos, piece_side).y << "\n";
-		// 	return true;
-		// }
+			std::cout << "pawn check " <<  this->check_pawn(new_pos, piece_side).x << ", " << this->check_pawn(new_pos, piece_side).y << "\n";
+			return true;
+		}
 
-		// if(this->check_knight(pos, piece_side) != sf::Vector2i(-1, -1)){
+		if(this->check_knight(new_pos, piece_side) != sf::Vector2i(-1, -1)){
 
-		// 	std::cout << "knight check " <<  this->check_knight(pos, piece_side).x << ", " << this->check_knight(pos, piece_side).y << "\n";
-		// 	return true;
-		// }
+			std::cout << "knight check " <<  this->check_knight(new_pos, piece_side).x << ", " << this->check_knight(new_pos, piece_side).y << "\n";
+			return true;
+		}
 
 		if(this->check_bishop(new_pos, piece_side, temp_board) != sf::Vector2i(-1, -1)){
 
