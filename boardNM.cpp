@@ -917,7 +917,7 @@ public:
 
 		if(this->check_rook(pos, piece_side) != sf::Vector2i(-1, -1)){
 
-			std::cout << "rook check" <<  this->check_pawn(pos, piece_side).x << ", " << this->check_pawn(pos, piece_side).y << "\n";
+			std::cout << "rook check" <<  this->check_rook(pos, piece_side).x << ", " << this->check_rook(pos, piece_side).y << "\n";
 			return true;
 		}
 

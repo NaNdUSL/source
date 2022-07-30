@@ -50,6 +50,8 @@ int main(int argc, char const *argv[]){
 	}
 	else std::cout << "Unable to open file"; 
 
+	// the program doesn't take in consideration wrong user input!!!! (take care of this later)
+
 	std::cout << "board number:\n";
 	std::cin >> board;
 	std::cout << "\n";
