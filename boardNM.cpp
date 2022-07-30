@@ -629,6 +629,43 @@ public:
 		return sf::Vector2i(-1, -1);
 	}
 
+	sf::Vector2i check_king(sf::Vector2i pos, int piece_side){
+
+		// up
+
+		if (pos.x - 1 >= 0 && std::abs(this->get_board()[pos.x - 1][pos.y] / 10) == KING && this->piece_side(pos.x - 1, pos.y) != piece_side) return sf::Vector2i(pos.x - 1, pos.y);
+
+		// down
+
+		if (pos.x + 1 < 8 && std::abs(this->get_board()[pos.x + 1][pos.y] / 10) == KING && this->piece_side(pos.x + 1, pos.y) != piece_side) return sf::Vector2i(pos.x + 1, pos.y);
+
+		// left
+
+		if (pos.y - 1 < 8 && std::abs(this->get_board()[pos.x][pos.y - 1] / 10) == KING && this->piece_side(pos.x, pos.y - 1) != piece_side) return sf::Vector2i(pos.x, pos.y - 1);
+
+		// right
+
+		if (pos.y + 1 < 8 && std::abs(this->get_board()[pos.x][pos.y + 1] / 10) == KING && this->piece_side(pos.x, pos.y + 1) != piece_side) return sf::Vector2i(pos.x, pos.y + 1);
+
+		// up and left
+
+		if (pos.x - 1 >= 0 && pos.y - 1 >= 0 && std::abs(this->get_board()[pos.x - 1][pos.y - 1] / 10) == KING && this->piece_side(pos.x - 1, pos.y - 1) != piece_side) return sf::Vector2i(pos.x - 1, pos.y - 1);
+
+		// up and right
+
+		if (pos.x - 1 >= 0 && pos.y + 1 >= 0 && std::abs(this->get_board()[pos.x - 1][pos.y + 1] / 10) == KING && this->piece_side(pos.x - 1, pos.y + 1) != piece_side) return sf::Vector2i(pos.x - 1, pos.y + 1);
+
+		// down right
+
+		if (pos.x + 1 >= 0 && pos.y + 1 >= 0 && std::abs(this->get_board()[pos.x + 1][pos.y + 1] / 10) == KING && this->piece_side(pos.x + 1, pos.y + 1) != piece_side) return sf::Vector2i(pos.x + 1, pos.y + 1);
+
+		// down left
+
+		if (pos.x + 1 >= 0 && pos.y - 1 >= 0 && std::abs(this->get_board()[pos.x + 1][pos.y - 1] / 10) == KING && this->piece_side(pos.x +1, pos.y - 1) != piece_side) return sf::Vector2i(pos.x +1, pos.y - 1);
+
+		return sf::Vector2i(-1, -1);
+	}
+
 	// returns position of the other player's piece if there is one either on the same line or column of the current player's piece, if it's clear returns (-1, -1)
 
 	sf::Vector2i check_rook(sf::Vector2i pos, int piece_side, std::vector<std::vector<int>> temp_board){
@@ -964,6 +1001,12 @@ public:
 		if(this->check_rook(new_pos, piece_side, temp_board) != sf::Vector2i(-1, -1)){
 
 			std::cout << "rook check " <<  this->check_rook(new_pos, piece_side, temp_board).x << ", " << this->check_rook(new_pos, piece_side, temp_board).y << "\n";
+			return true;
+		}
+
+		if(this->check_king(new_pos, piece_side) != sf::Vector2i(-1, -1)){
+
+			std::cout << "king check " <<  this->check_king(new_pos, piece_side).x << ", " << this->check_king(new_pos, piece_side).y << "\n";
 			return true;
 		}
 
