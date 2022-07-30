@@ -29,16 +29,11 @@ int main(int argc, char const *argv[]){
 	std::cout << "boards:\n";
 
     // display boars here.
-    // this is used for testing, the boards can be edited in the boardstates.txt for example adding these 2 lines:
+    // this is used for testing, the boards can be edited in the boardstates.txt for example adding this line:
 
     // CBKQBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_K_Q_B_C_R
-    // _R_C_B_Q_K_B_C_R_P_P_P_P_P_P_P_P8888PPPPPPPPRCBQKBCR
 
-    // each piece is represented by letters and the numbers represent lines of empty squares (min. 1, max. 8).
-    // letters without underscore before them are white pieces and vice-versa
-
-    //each board is represented by 2 lines wich the one used is gonna depend on the color the player wants to play (i'm a little lazy to create a method
-    // that reads back to front depending on the side the user starts... maybe i'll add that... idk)
+    // always create a new board where the player with the white pieces is at the bottom of the board (this is a must) otherwise it will mess the players turns and the direction that they have to play
 
 	if (Myfile.is_open()){
 
@@ -50,6 +45,7 @@ int main(int argc, char const *argv[]){
 			std::cout << bn << ". ---> " << line << '\n';
 			bn++;
 		}
+
 		Myfile.close();
 	}
 	else std::cout << "Unable to open file"; 

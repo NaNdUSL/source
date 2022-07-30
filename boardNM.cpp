@@ -19,6 +19,7 @@ private:
 	sf::Vector3i moving_piece;
 	std::stack<std::vector<std::vector<int>>> stack;
 	int dir;
+	int turn;
 
 public:
 
@@ -30,14 +31,16 @@ public:
 		this->pieces = pieces;
 		this->moving_piece = sf::Vector3i(-1, -1, 0);
 		this->dir = 0;
+		this->turn = 1;
 	}
 
-	BoardNM(std::vector<std::vector<int>> board, Pieces pieces, sf::Vector3i moving_piece, int dir){
+	BoardNM(std::vector<std::vector<int>> board, Pieces pieces, sf::Vector3i moving_piece, int dir, int turn){
 
 		this->board = board;
 		this->pieces = pieces;
 		this->moving_piece = moving_piece;
 		this->dir = dir;
+		this->turn = turn;
 	}
 
 	void set_board(std::vector<std::vector<int>> board){
@@ -48,6 +51,11 @@ public:
 	void set_dir(int dir){
 
 		this->dir = dir;
+	}
+
+	void set_turn(int turn){
+
+		this->turn = turn;
 	}
 
 	void set_pieces(Pieces pieces){
@@ -108,6 +116,12 @@ public:
 
 		int dir = this->dir;
 		return dir;
+	}
+
+	int get_turn(){
+
+		int turn = this->turn;
+		return turn;
 	}
 
 	int get_piece_number(int i, int j){
@@ -931,6 +945,7 @@ public:
 			this->pieces.set_piece_pos(num, x, y);
 
 			this->set_dir(this->get_dir() * (-1));
+			this->set_turn(this->get_turn() * (-1));
 		}
 	}
 };

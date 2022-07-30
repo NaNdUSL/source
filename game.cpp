@@ -83,7 +83,7 @@ public:
 			std::string new_line = this->reverse_board(line, line.length());
 			this->boardnm.fill_board(new_line);
 		}
-
+		this->boardnm.set_turn(1);
 		this->boardnm.set_dir(-2 * white + 1);
 		// std::cout << line << "sup\n";
 		this->boardnm.load_pieces(this->squares_number, this->resolution);
@@ -146,8 +146,6 @@ public:
 		// std::cout << "mouse position: x_" << this->mouse_pos_view.x << " y_" << this->mouse_pos_view.y << "\n";
 	}
 
-// need to add some stuff here... "else if" doesn't look that good and affects performance
-
 	void update_board(){
 
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && this->mouse_pos_view.x >= 0.0f && this->mouse_pos_view.x <= resolution && this->mouse_pos_view.y >= 0.0f && this->mouse_pos_view.y <= resolution){
@@ -160,9 +158,15 @@ public:
 
 				sf::Vector3i aux = this->boardnm.get_moving_piece();
 
+				std::cout << "pos: " << pos.x << ", " << pos.y << "\n";
+
+				std::cout << "aux: " << aux.x << ", " << aux.y << ", " << aux.z << "\n";
+
 				if (pos.x != -1 && pos.y != -1 && (pos.x != aux.x || pos.y != aux.y)){
 
 					this->boardsq.select_new_square(this->mouse_pos_view, this->resolution, this->squares_number, sf::Color(30, 50, 150, 255), sf::Color::White, sf::Color(150, 150, 150, 255));
+
+					// if i didn't select one piece that i wanna play and i click on one piece and not on an empty square then "grab" that piece
 
 					if(this->boardnm.get_moving_piece().z == 0 && this->boardnm.get_piece_number(pos.x, pos.y) != 0){
 
@@ -170,10 +174,14 @@ public:
 
 						aux = sf::Vector3i(pos.x, pos.y, piece_type);
 
-						this->boardnm.set_moving_piece(aux);
-					}
+						if (aux.z * this->boardnm.get_turn() > 0){
+
+							this->boardnm.set_moving_piece(aux);
+						}
+					} // else if i already have one piece grabbed then check if i can play it
 					else if (this->boardnm.get_moving_piece().z != 0){
 
+						// if I'm clicking on a piece from the other player or on an empty square check if i can play it
 						if (this->boardnm.piece_side(pos.x, pos.y) != this->boardnm.piece_side(aux.x, aux.y)){
 
 							this->boardnm.update_state();
