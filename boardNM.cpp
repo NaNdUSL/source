@@ -1,4 +1,5 @@
 #include "pieces.cpp"
+#include <string.h>
 
 #define EMPTY 0
 #define KING 1
@@ -156,6 +157,90 @@ public:
 		}
 
 		return count;
+	}
+
+	std::vector<std::vector<int>> get_board_from_string(std::string input){
+
+		// "RCBQKBCRPPPPPPPP8888_P_P_P_P_P_P_P_P_R_C_B_K_Q_B_C_R"
+
+		std::vector<std::vector<int>> board;
+		int row = 0;
+		int col = 0;
+		std::vector<int> aux;
+		int is_black = 1;
+		int pawn = 1;
+		int bishop = 1;
+		int rook = 1;
+		int knight = 1;
+
+		for (int i = 0; i < input.length(); i++){
+
+			if (!std::isdigit(static_cast<unsigned char>(input[i]))){
+
+				if (input[i] == '_'){
+
+					is_black = -1;
+					i++;
+				}
+
+				switch (input[i]){
+
+					case 'R':
+					if (rook > 2) rook = 1;
+					aux.push_back((50 + rook++) * is_black);
+					break;
+
+					case 'C':
+					if (knight > 2) knight = 1;
+					aux.push_back((40 + knight++) * is_black);
+					break;
+
+					case 'B':
+					if (bishop > 2) bishop = 1;
+					aux.push_back((30 + bishop++) * is_black);
+					break;
+
+					case 'Q':
+					aux.push_back(20 * is_black);
+					break;
+
+					case 'K':
+					aux.push_back(10 * is_black);
+					break;
+
+					case 'P':
+					if (pawn > 8) pawn = 1;
+					aux.push_back((60 + pawn++) * is_black);
+					break;
+				}
+
+				is_black = 1;
+				col++;
+			}
+
+			else{
+
+				std::string str(1,input[i]);
+				int num = std::stoi(str);
+
+				while (num > 0){
+
+					aux.push_back(0);
+					num--;
+					col++;
+				}
+			}
+
+			if (col == 8){
+
+				board.push_back(aux);
+				aux.clear();
+				col = 0;
+				row++;
+			}
+		}
+
+		return board;
 	}
 
 	void fill_board(std::string input){
@@ -345,7 +430,7 @@ public:
 		// Create and open a text file
 		std::ofstream Boards("saves.txt");
 
-		Boards << this->get_board_state(this->get_board()) << ";" << this->get_turn() << ";" << this->get_dir() << "\n";
+		// Boards << this->get_board_state(this->get_board()) << ";" << this->get_turn() << ";" << this->get_dir() << "\n";
 
 		while (!stack.empty()){
 
@@ -361,9 +446,75 @@ public:
 		Boards.close();
 	}
 
+	std::stack<Saves> invert_stack(std::stack<Saves> stack){
+
+		std::stack<Saves> s = stack;
+		std::stack<Saves> aux;
+
+		while (!s.empty()){
+
+			Saves temp = s.top();
+			s.pop();
+
+			aux.push(temp);
+		}
+
+		return aux;
+	}
+
+	void print_stack(std::stack<Saves> stack){
+
+		std::stack<Saves> aux = stack;
+
+		while (!aux.empty()){
+
+			Saves temp = aux.top();
+			aux.pop();
+			std::cout << "board: " << this->get_board_state(temp.board) << "|||| turn:" << temp.turn << "|||| dir:" << temp.dir << "\n";
+		}
+	}
+
 	void load_from_saves(){
 
-		
+		std::fstream Myfile("saves.txt");
+
+		if (Myfile.is_open()){
+
+			std::stack<Saves> aux_stack;
+			std::string line;
+
+			while(getline(Myfile, line)){
+
+				// std::cout << line << "\n";
+
+				char* ptr = strtok(const_cast<char*>(line.c_str()), ";");
+
+				Saves aux;
+				const char *s = ptr;
+				std::string str(s);
+				aux.board = this->get_board_from_string(s);
+				ptr = strtok(NULL, ";");
+				aux.turn = std::stoi(ptr);
+				ptr = strtok(NULL, ";");
+				aux.dir = std::stoi(ptr);
+				aux_stack.push(aux);
+			}
+
+			Myfile.close();
+			// std::cout << "aux_stack\n";
+			// this->print_stack(aux_stack);
+			this->set_stack(this->invert_stack(aux_stack));
+			// std::cout << "\n";
+			// std::cout << "this_stack\n";
+			// this->print_stack(this->stack);
+			// std::cout << "\n";
+			Saves recent = this->stack.top();
+			this->stack.pop();
+			this->set_board(recent.board);
+			this->turn = recent.turn;
+			this->dir = recent.dir;
+		}
+		else std::cout << "Unable to open file"; 
 	}
 
 	void update_state(){
@@ -374,6 +525,8 @@ public:
 		saves.turn = this->turn;
 		saves.dir = this->dir;
 		this->stack.push(saves);
+		std::cout << "update_state--------------------------------------------------\n";
+		this->print_stack(this->stack);
 	}
 
 	void undo_play(){
@@ -387,6 +540,8 @@ public:
 			this->set_board(prev_save.board);
 			this->set_turn(prev_save.turn);
 			this->set_dir(prev_save.dir);
+			std::cout << "undo ---------------------------------------------------------\n";
+			this->print_stack(this->stack);
 		}
 	}
 
@@ -811,7 +966,7 @@ public:
 
 			for (int i = 0; curr_poss != new_pos; i++){
 
-				std::cout << curr_poss.x << ", " << curr_poss.y << "\n";
+				// std::cout << curr_poss.x << ", " << curr_poss.y << "\n";
 
 				if (this->board[curr_poss.x][curr_poss.y] != EMPTY){
 
@@ -836,14 +991,14 @@ public:
 
 		if (std::abs(res.x) == std::abs(res.y)){
 
-			std::cout << curr_poss.x << ", " << curr_poss.y << "\n";
+			// std::cout << curr_poss.x << ", " << curr_poss.y << "\n";
 
 			curr_poss.x += dir_vetor.x;
 			curr_poss.y += dir_vetor.y;
 
 			for (int i = 0; curr_poss != new_pos; i++){
 
-				std::cout << curr_poss.x << ", " << curr_poss.y << "\n";
+				// std::cout << curr_poss.x << ", " << curr_poss.y << "\n";
 
 				if (this->board[curr_poss.x][curr_poss.y] != EMPTY){
 

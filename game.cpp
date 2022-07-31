@@ -248,7 +248,13 @@ public:
 
 				this->pressing = true;
 
+				std::cout << "clicked on L\n";
+
 				this->boardnm.load_from_saves();
+
+				// this->boardnm.display_board();
+
+				this->boardnm.load_pieces(this->squares_number, this->resolution);
 			}
 		}
 		else{
