@@ -87,7 +87,7 @@ public:
 		this->boardnm.set_dir(-2 * white + 1);
 		// std::cout << line << "sup\n";
 		this->boardnm.load_pieces(this->squares_number, this->resolution);
-		// this->boardnm.update_state();
+		this->boardnm.update_state();
 		this->boardnm.display_board();
 		// this->boardnm.get_board_state();
 	}
@@ -184,8 +184,6 @@ public:
 						// if I'm clicking on a piece from the other player or on an empty square check if i can play it
 						if (this->boardnm.piece_side(pos.x, pos.y) != this->boardnm.piece_side(aux.x, aux.y)){
 
-							this->boardnm.update_state();
-
 							this->boardnm.move_piece(this->resolution, this->squares_number, aux.z, aux.x, aux.y, pos.x, pos.y);
 
 							std::cout << "prev: " << this->boardnm.get_board()[aux.x][aux.y] << "-> " << aux.x << ", " << aux.y << "\n";
@@ -242,6 +240,15 @@ public:
 				this->pressing = true;
 
 				this->boardnm.save_board_state();
+			}
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::L)){
+
+			if (!this->pressing){
+
+				this->pressing = true;
+
+				this->boardnm.load_from_saves();
 			}
 		}
 		else{

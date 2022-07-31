@@ -8,6 +8,15 @@
 #define ROOK 5
 #define PAWN 6
 
+class Saves{
+
+public:
+
+	std::vector<std::vector<int>> board;
+	int dir;
+	int turn;
+};
+
 // Board class
 
 class BoardNM{
@@ -15,11 +24,11 @@ class BoardNM{
 private:
 
 	std::vector<std::vector<int>> board;
-	Pieces pieces;
-	sf::Vector3i moving_piece;
-	std::stack<std::vector<std::vector<int>>> stack;
 	int dir;
 	int turn;
+	Pieces pieces;
+	sf::Vector3i moving_piece;
+	std::stack<Saves> stack;
 
 public:
 
@@ -73,7 +82,7 @@ public:
 		this->pieces.set_texture_size(texture_size);
 	}
 
-	void set_stack(std::stack<std::vector<std::vector<int>>> stack){
+	void set_stack(std::stack<Saves> stack){
 
 		this->stack = stack;
 	}
@@ -90,9 +99,9 @@ public:
 		return pieces;
 	}
 
-	std::stack<std::vector<std::vector<int>>> get_stack(){
+	std::stack<Saves> get_stack(){
 
-		std::stack<std::vector<std::vector<int>>> stack = this->stack;
+		std::stack<Saves> stack = this->stack;
 		return stack;
 	}
 
@@ -331,42 +340,53 @@ public:
 
 	void save_board_state(){
 
-		std::stack<std::vector<std::vector<int>>> stack = this->get_stack();
+		std::stack<Saves> stack = this->get_stack();
 
 		// Create and open a text file
-		std::ofstream Saves("saves.txt");
+		std::ofstream Boards("saves.txt");
 
-		Saves << this->get_board_state(this->get_board()) << "\n";
+		Boards << this->get_board_state(this->get_board()) << ";" << this->get_turn() << ";" << this->get_dir() << "\n";
 
 		while (!stack.empty()){
 
-			std::vector<std::vector<int>> aux = stack.top();
+			Saves aux = stack.top();
 
 			stack.pop();
 
 			// Write to the file
-			Saves << this->get_board_state(aux) << "\n";
+			Boards << this->get_board_state(aux.board) << ";" << aux.turn << ";" << aux.dir << "\n";
 		}
 
 		// Close the file
-		Saves.close();
+		Boards.close();
+	}
+
+	void load_from_saves(){
+
+		
 	}
 
 	void update_state(){
 
 		std::vector<std::vector<int>> aux = this->board;
-		this->stack.push(aux);
+		Saves saves;
+		saves.board = aux;
+		saves.turn = this->turn;
+		saves.dir = this->dir;
+		this->stack.push(saves);
 	}
 
 	void undo_play(){
 
 		if (!this->stack.empty()){
 
-			std::vector<std::vector<int>> aux = this->stack.top();
+			Saves prev_save = this->stack.top();
 
 			this->stack.pop();
 
-			this->set_board(aux);
+			this->set_board(prev_save.board);
+			this->set_turn(prev_save.turn);
+			this->set_dir(prev_save.dir);
 		}
 	}
 
@@ -641,7 +661,7 @@ public:
 
 		// left
 
-		if (pos.y - 1 < 8 && std::abs(this->get_board()[pos.x][pos.y - 1] / 10) == KING && this->piece_side(pos.x, pos.y - 1) != piece_side) return sf::Vector2i(pos.x, pos.y - 1);
+		if (pos.y - 1 >= 0 && std::abs(this->get_board()[pos.x][pos.y - 1] / 10) == KING && this->piece_side(pos.x, pos.y - 1) != piece_side) return sf::Vector2i(pos.x, pos.y - 1);
 
 		// right
 
@@ -653,15 +673,15 @@ public:
 
 		// up and right
 
-		if (pos.x - 1 >= 0 && pos.y + 1 >= 0 && std::abs(this->get_board()[pos.x - 1][pos.y + 1] / 10) == KING && this->piece_side(pos.x - 1, pos.y + 1) != piece_side) return sf::Vector2i(pos.x - 1, pos.y + 1);
+		if (pos.x - 1 >= 0 && pos.y + 1 < 8 && std::abs(this->get_board()[pos.x - 1][pos.y + 1] / 10) == KING && this->piece_side(pos.x - 1, pos.y + 1) != piece_side) return sf::Vector2i(pos.x - 1, pos.y + 1);
 
 		// down right
 
-		if (pos.x + 1 >= 0 && pos.y + 1 >= 0 && std::abs(this->get_board()[pos.x + 1][pos.y + 1] / 10) == KING && this->piece_side(pos.x + 1, pos.y + 1) != piece_side) return sf::Vector2i(pos.x + 1, pos.y + 1);
+		if (pos.x + 1 < 8 && pos.y + 1 < 8 && std::abs(this->get_board()[pos.x + 1][pos.y + 1] / 10) == KING && this->piece_side(pos.x + 1, pos.y + 1) != piece_side) return sf::Vector2i(pos.x + 1, pos.y + 1);
 
 		// down left
 
-		if (pos.x + 1 >= 0 && pos.y - 1 >= 0 && std::abs(this->get_board()[pos.x + 1][pos.y - 1] / 10) == KING && this->piece_side(pos.x +1, pos.y - 1) != piece_side) return sf::Vector2i(pos.x +1, pos.y - 1);
+		if (pos.x + 1 < 8 && pos.y - 1 >= 0 && std::abs(this->get_board()[pos.x + 1][pos.y - 1] / 10) == KING && this->piece_side(pos.x +1, pos.y - 1) != piece_side) return sf::Vector2i(pos.x +1, pos.y - 1);
 
 		return sf::Vector2i(-1, -1);
 	}
@@ -974,8 +994,13 @@ public:
 	bool check(sf::Vector2i prev_pos, sf::Vector2i new_pos, int piece_side){
 
 		std::vector<std::vector<int>> temp_board = this->get_board();
-		temp_board[new_pos.x][new_pos.y] = temp_board[prev_pos.x][prev_pos.y];
-		temp_board[prev_pos.x][prev_pos.y] = 0;
+
+		std::cout << "deu asneira aqui? " << (prev_pos != sf::Vector2i(-1, -1)) << "\n";
+		if (prev_pos != sf::Vector2i(-1, -1)){
+
+			temp_board[new_pos.x][new_pos.y] = temp_board[prev_pos.x][prev_pos.y];
+			temp_board[prev_pos.x][prev_pos.y] = 0;
+		}
 
 		std::cout << "temp board ->>>>>>>>>>>>> \n";
 		this->display_board(temp_board);
@@ -985,6 +1010,7 @@ public:
 			std::cout << "pawn check " <<  this->check_pawn(new_pos, piece_side).x << ", " << this->check_pawn(new_pos, piece_side).y << "\n";
 			return true;
 		}
+
 
 		if(this->check_knight(new_pos, piece_side) != sf::Vector2i(-1, -1)){
 
@@ -1018,23 +1044,55 @@ public:
 		return true;
 	}
 
+	sf::Vector2i get_curr_king(){
+
+		for (int i = 0; i < 8; i++){
+
+			for (int j = 0; j < 8; j++){
+
+				// std::cout << "info do rei: " << std::abs(this->get_board()[i][j] / 10) << " side->>>>> " << this->piece_side(i, j) * this->get_turn() << "\n";
+				if (std::abs(this->get_board()[i][j] / 10) == KING && this->piece_side(i, j) * this->get_turn() > 0){
+
+					return sf::Vector2i(i, j);
+				}
+			}
+		}
+
+		return sf::Vector2i(-1, -1);
+	}
+
 	void move_piece(float resolution, int squares_number, int num, int prev_x, int prev_y, int new_x, int new_y){
 
 		// int res = this->board[new_x][new_y];
-		// std::cout << "prev: " << prev_x << ", " << prev_y << " new: " << new_x << ", " << new_y << "\n";
 
 		if ((prev_x != new_x || prev_y != new_y) && this->legal_move(sf::Vector2i(prev_x, prev_y), sf::Vector2i(new_x, new_y))){
 
+			int temp_piece = this->board[new_x][new_y];
 			this->board[new_x][new_y] = num;
 			this->board[prev_x][prev_y] = 0;
 
-			int x = (resolution / squares_number) * new_y;
-			int y = (resolution / squares_number) * new_x;
+			sf::Vector2i curr_king_pos = this->get_curr_king();
 
-			this->pieces.set_piece_pos(num, x, y);
+			std::cout << "deu asneira aqui? " << curr_king_pos.x << ", " << curr_king_pos.y << ", piece side" << this->piece_side(curr_king_pos.x, curr_king_pos.y) << "\n";
 
-			this->set_dir(this->get_dir() * (-1));
-			this->set_turn(this->get_turn() * (-1));
+			if (!this->check(sf::Vector2i(-1, -1), sf::Vector2i(curr_king_pos.x, curr_king_pos.y), this->piece_side(curr_king_pos.x, curr_king_pos.y))){
+
+				int x = (resolution / squares_number) * new_y;
+				int y = (resolution / squares_number) * new_x;
+
+				this->pieces.set_piece_pos(num, x, y);
+
+				this->set_dir(this->get_dir() * (-1));
+				this->set_turn(this->get_turn() * (-1));
+
+				this->update_state();
+
+			}
+			else{
+
+				this->board[new_x][new_y] = temp_piece;
+				this->board[prev_x][prev_y] = num;
+			}
 		}
 	}
 };
