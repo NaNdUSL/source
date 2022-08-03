@@ -198,7 +198,7 @@ public:
 
 							// std::cout << "curr moving piece: " << aux.x << ", " << aux.y << ", " << aux.z << "\n";
 
-							this->boardnm.display_board();
+							// this->boardnm.display_board();
 						}
 						else{
 
@@ -242,6 +242,15 @@ public:
 				this->boardnm.save_board_state();
 			}
 		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
+
+			if (!this->pressing){
+
+				this->pressing = true;
+
+				this->boardnm.display_board();
+			}
+		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::L)){
 
 			if (!this->pressing){
@@ -255,6 +264,21 @@ public:
 				// this->boardnm.display_board();
 
 				this->boardnm.load_pieces(this->squares_number, this->resolution);
+			}
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)){
+
+			if (!this->pressing){
+
+				this->pressing = true;
+
+				std::cout << "clicked on E\n";
+
+				this->boardnm.print_stack(this->boardnm.get_stack());
+
+				// this->boardnm.display_board();
+
+				// this->boardnm.load_pieces(this->squares_number, this->resolution);
 			}
 		}
 		else{
