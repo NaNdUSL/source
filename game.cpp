@@ -1,5 +1,5 @@
 #include "boardNM.cpp"
-#include "boardSQ.cpp"
+// #include "boardSQ.cpp"
 
 // Game class
 
@@ -148,6 +148,14 @@ public:
 
 	void update_board(){
 
+		sf::Vector2i curr_king_pos = this->boardnm.get_curr_king();
+
+		if (this->boardnm.get_moving_piece().x != curr_king_pos.x && this->boardnm.get_moving_piece().y != curr_king_pos.y && this->boardnm.check(sf::Vector2i(-1, -1), sf::Vector2i(curr_king_pos.x, curr_king_pos.y), this->boardnm.piece_side(curr_king_pos.x, curr_king_pos.y))){
+			this->boardsq.change_fill_color(sf::Color(155, 155, 0, 255), curr_king_pos.x, curr_king_pos.y);
+			// this->boardsq.undo_prev_color(this->mouse_pos_view, this->resolution, this->squares_number, sf::Color::White, sf::Color(150, 150, 150, 255));
+			// this->boardsq.change_fill_color(sf::Color(155, 155, 0, 255), curr_king_pos.x, curr_king_pos.y);
+		}
+
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && this->mouse_pos_view.x >= 0.0f && this->mouse_pos_view.x <= resolution && this->mouse_pos_view.y >= 0.0f && this->mouse_pos_view.y <= resolution){
 
 			if (!this->holding){
@@ -163,6 +171,8 @@ public:
 				std::cout << "aux: " << aux.x << ", " << aux.y << ", " << aux.z << "\n";
 
 				if (pos.x != -1 && pos.y != -1 && (pos.x != aux.x || pos.y != aux.y)){
+
+					this->boardsq.clean(this->squares_number, this->resolution, sf::Color::White, sf::Color(150, 150, 150, 255));
 
 					this->boardsq.select_new_square(this->mouse_pos_view, this->resolution, this->squares_number, sf::Color(30, 50, 150, 255), sf::Color::White, sf::Color(150, 150, 150, 255));
 
@@ -184,7 +194,7 @@ public:
 						// if I'm clicking on a piece from the other player or on an empty square check if i can play it
 						if (this->boardnm.piece_side(pos.x, pos.y) != this->boardnm.piece_side(aux.x, aux.y)){
 
-							this->boardnm.move_piece(this->resolution, this->squares_number, aux.z, aux.x, aux.y, pos.x, pos.y);
+							this->boardnm.move_piece(this->resolution, this->squares_number, aux.z, aux.x, aux.y, pos.x, pos.y, this->mouse_pos_view, this->boardsq);
 
 							std::cout << "prev: " << this->boardnm.get_board()[aux.x][aux.y] << "-> " << aux.x << ", " << aux.y << "\n";
 

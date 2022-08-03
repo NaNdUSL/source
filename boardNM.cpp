@@ -1,4 +1,5 @@
 #include "pieces.cpp"
+#include "boardSQ.cpp"
 #include <string.h>
 
 #define EMPTY 0
@@ -1141,7 +1142,7 @@ public:
 
 		std::vector<std::vector<int>> temp_board = this->get_board();
 
-		std::cout << "deu asneira aqui? " << (prev_pos != sf::Vector2i(-1, -1)) << "\n";
+		// std::cout << "deu asneira aqui? " << (prev_pos != sf::Vector2i(-1, -1)) << "\n";
 		if (prev_pos != sf::Vector2i(-1, -1)){
 
 			temp_board[new_pos.x][new_pos.y] = temp_board[prev_pos.x][prev_pos.y];
@@ -1207,7 +1208,7 @@ public:
 		return sf::Vector2i(-1, -1);
 	}
 
-	void move_piece(float resolution, int squares_number, int num, int prev_x, int prev_y, int new_x, int new_y){
+	void move_piece(float resolution, int squares_number, int num, int prev_x, int prev_y, int new_x, int new_y, sf::Vector2f mouse_pos_view, BoardSQ &boardsq){
 
 		// int res = this->board[new_x][new_y];
 
@@ -1219,7 +1220,7 @@ public:
 
 			sf::Vector2i curr_king_pos = this->get_curr_king();
 
-			std::cout << "deu asneira aqui? " << curr_king_pos.x << ", " << curr_king_pos.y << ", piece side" << this->piece_side(curr_king_pos.x, curr_king_pos.y) << "\n";
+			// std::cout << "deu asneira aqui? " << curr_king_pos.x << ", " << curr_king_pos.y << ", piece side" << this->piece_side(curr_king_pos.x, curr_king_pos.y) << "\n";
 
 			if (!this->check(sf::Vector2i(-1, -1), sf::Vector2i(curr_king_pos.x, curr_king_pos.y), this->piece_side(curr_king_pos.x, curr_king_pos.y))){
 
@@ -1230,6 +1231,8 @@ public:
 
 				this->set_dir(this->get_dir() * (-1));
 				this->set_turn(this->get_turn() * (-1));
+
+				boardsq.select_new_square(mouse_pos_view, resolution, squares_number, sf::Color(20, 50, 80, 255), sf::Color::White, sf::Color(150, 150, 150, 255));
 
 				this->update_state();
 
