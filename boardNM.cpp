@@ -1188,7 +1188,29 @@ public:
 
 	bool check_mate(){
 
-		return true;
+		sf::Vector2i curr_king_pos = this->get_curr_king();
+
+		if (this->check(sf::Vector2i(-1, -1), sf::Vector2i(curr_king_pos.x, curr_king_pos.y), this->piece_side(curr_king_pos.x, curr_king_pos.y))){
+
+			std::cout << "check????????????????????????\n";
+
+			for (int x = curr_king_pos.x - 1; x <= curr_king_pos.x + 1; x++){
+
+				for (int y = curr_king_pos.y - 1; y <= curr_king_pos.y + 1; y++){
+
+					// std::cout << "square available: " << x << ", " << y << " >>>> " << (curr_king_pos.y - 1 >= 0 && curr_king_pos.y + 1 < 8 && curr_king_pos.x - 1 >= 0 && curr_king_pos.x + 1 < 8 && this->legal_king(curr_king_pos, sf::Vector2i(x, y))) << "\n";
+
+					if (y >= 0 && y < 8 && x >= 0 && x < 8 && this->legal_king(curr_king_pos, sf::Vector2i(x, y))){
+
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
 	sf::Vector2i get_curr_king(){
@@ -1232,7 +1254,7 @@ public:
 				this->set_dir(this->get_dir() * (-1));
 				this->set_turn(this->get_turn() * (-1));
 
-				boardsq.select_new_square(mouse_pos_view, resolution, squares_number, sf::Color(20, 50, 80, 255), sf::Color::White, sf::Color(150, 150, 150, 255));
+				boardsq.select_new_square(mouse_pos_view, resolution, squares_number, sf::Color(30, 100, 210, 255), sf::Color::White, sf::Color(150, 150, 150, 255));
 
 				this->update_state();
 

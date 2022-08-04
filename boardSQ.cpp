@@ -154,15 +154,15 @@ public:
 
 		sf::Vector2i square = highlight_square(main_color, mouse_coords, resolution, squares_number);
 
-		if ((selected.x != -1 && selected.y != -1) && (selected.x != square.x || selected.y != square.y)){
+		if ((this->selected.x != -1 && this->selected.y != -1) && (this->selected.x != square.x || this->selected.y != square.y)){
 
-			if ((selected.x + selected.y) % 2 == 0){
+			if ((this->selected.x + this->selected.y) % 2 == 0){
 
-				this->change_fill_color(color1, selected.x, selected.y);
+				this->change_fill_color(color1, this->selected.x, this->selected.y);
 			}
 			else{
 
-				this->change_fill_color(color2, selected.x, selected.y);
+				this->change_fill_color(color2, this->selected.x, this->selected.y);
 			}
 		}
 
@@ -171,15 +171,15 @@ public:
 
 	void undo_prev_color(sf::Vector2f mouse_coords, float resolution, int squares_number, sf::Color color1, sf::Color color2){
 
-		if (selected.x != -1 && selected.y != -1){
+		if (this->selected.x != -1 && this->selected.y != -1){
 
-			if ((selected.x + selected.y) % 2 == 0){
+			if ((this->selected.x + this->selected.y) % 2 == 0){
 
-				this->change_fill_color(color1, selected.x, selected.y);
+				this->change_fill_color(color1, this->selected.x, this->selected.y);
 			}
 			else{
 
-				this->change_fill_color(color2, selected.x, selected.y);
+				this->change_fill_color(color2, this->selected.x, this->selected.y);
 			}
 		}
 
