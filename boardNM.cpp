@@ -522,7 +522,7 @@ public:
 		std::cout << "update_state--------------------------------------------------\n";
 	}
 
-	void undo_play(){
+	void undo_play(BoardSQ &board, float resolution, int squares_number){
 
 		if (this->stack.size() > 1){
 
@@ -533,6 +533,8 @@ public:
 			this->set_board(prev_save.board);
 			this->set_turn(prev_save.turn);
 			this->set_dir(prev_save.dir);
+			board.clean(squares_number, resolution, sf::Color::White, sf::Color(150, 150, 150, 255));
+
 			std::cout << "undo ---------------------------------------------------------\n";
 		}
 	}
@@ -693,63 +695,63 @@ public:
 		else return 0;
 	}
 
-	sf::Vector2i check_knight(sf::Vector2i pos, int piece_side){
+	sf::Vector2i check_knight(sf::Vector2i pos, int piece_side, std::vector<std::vector<int>> temp_board){
 
 		// up and left
 
 		int i = pos.x - 1;
 		int j = pos.y + 2;
 
-		if (i >= 0 && j < 8 && std::abs(this->get_board()[i][j] / 100) == KNIGHT && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
+		if (i >= 0 && j < 8 && std::abs(temp_board[i][j] / 100) == KNIGHT && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
 
 		// up and right
 
 		i = pos.x + 1;
 		j = pos.y + 2;
 
-		if (i < 8 && j < 8 && std::abs(this->get_board()[i][j] / 100) == KNIGHT && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
+		if (i < 8 && j < 8 && std::abs(temp_board[i][j] / 100) == KNIGHT && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
 
 		// down right
 
 		i = pos.x + 2;
 		j = pos.y + 1;
 
-		if (i < 8 && j < 8 && std::abs(this->get_board()[i][j] / 100) == KNIGHT && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
+		if (i < 8 && j < 8 && std::abs(temp_board[i][j] / 100) == KNIGHT && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
 
 		// down left
 
 		i = pos.x + 2;
 		j = pos.y - 1;
 
-		if (i < 8 && j >= 0 && std::abs(this->get_board()[i][j] / 100) == KNIGHT && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
+		if (i < 8 && j >= 0 && std::abs(temp_board[i][j] / 100) == KNIGHT && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
 
 		// down left
 
 		i = pos.x + 1;
 		j = pos.y - 2;
 
-		if (i < 8 && j >= 0 && std::abs(this->get_board()[i][j] / 100) == KNIGHT && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
+		if (i < 8 && j >= 0 && std::abs(temp_board[i][j] / 100) == KNIGHT && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
 
 		// down left
 
 		i = pos.x - 1;
 		j = pos.y - 2;
 
-		if (i >= 0 && j >= 0 && std::abs(this->get_board()[i][j] / 100) == KNIGHT && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
+		if (i >= 0 && j >= 0 && std::abs(temp_board[i][j] / 100) == KNIGHT && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
 
 		// down left
 
 		i = pos.x - 2;
 		j = pos.y - 1;
 
-		if (i >= 0 && j >= 0 && std::abs(this->get_board()[i][j] / 100) == KNIGHT && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
+		if (i >= 0 && j >= 0 && std::abs(temp_board[i][j] / 100) == KNIGHT && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
 
 		// down left
 
 		i = pos.x - 2;
 		j = pos.y + 1;
 
-		if (i >= 0 && j < 8 && std::abs(this->get_board()[i][j] / 100) == KNIGHT && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
+		if (i >= 0 && j < 8 && std::abs(temp_board[i][j] / 100) == KNIGHT && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
 
 
 		return sf::Vector2i(-1, -1);
@@ -796,39 +798,39 @@ public:
 		return sf::Vector2i(-1, -1);
 	}
 
-	sf::Vector2i check_king(sf::Vector2i pos, int piece_side){
+	sf::Vector2i check_king(sf::Vector2i pos, int piece_side, std::vector<std::vector<int>> temp_board){
 
 		// up
 
-		if (pos.x - 1 >= 0 && std::abs(this->get_board()[pos.x - 1][pos.y] / 100) == KING && this->piece_side(pos.x - 1, pos.y) != piece_side) return sf::Vector2i(pos.x - 1, pos.y);
+		if (pos.x - 1 >= 0 && std::abs(temp_board[pos.x - 1][pos.y] / 100) == KING && this->piece_side(pos.x - 1, pos.y) != piece_side) return sf::Vector2i(pos.x - 1, pos.y);
 
 		// down
 
-		if (pos.x + 1 < 8 && std::abs(this->get_board()[pos.x + 1][pos.y] / 100) == KING && this->piece_side(pos.x + 1, pos.y) != piece_side) return sf::Vector2i(pos.x + 1, pos.y);
+		if (pos.x + 1 < 8 && std::abs(temp_board[pos.x + 1][pos.y] / 100) == KING && this->piece_side(pos.x + 1, pos.y) != piece_side) return sf::Vector2i(pos.x + 1, pos.y);
 
 		// left
 
-		if (pos.y - 1 >= 0 && std::abs(this->get_board()[pos.x][pos.y - 1] / 100) == KING && this->piece_side(pos.x, pos.y - 1) != piece_side) return sf::Vector2i(pos.x, pos.y - 1);
+		if (pos.y - 1 >= 0 && std::abs(temp_board[pos.x][pos.y - 1] / 100) == KING && this->piece_side(pos.x, pos.y - 1) != piece_side) return sf::Vector2i(pos.x, pos.y - 1);
 
 		// right
 
-		if (pos.y + 1 < 8 && std::abs(this->get_board()[pos.x][pos.y + 1] / 100) == KING && this->piece_side(pos.x, pos.y + 1) != piece_side) return sf::Vector2i(pos.x, pos.y + 1);
+		if (pos.y + 1 < 8 && std::abs(temp_board[pos.x][pos.y + 1] / 100) == KING && this->piece_side(pos.x, pos.y + 1) != piece_side) return sf::Vector2i(pos.x, pos.y + 1);
 
 		// up and left
 
-		if (pos.x - 1 >= 0 && pos.y - 1 >= 0 && std::abs(this->get_board()[pos.x - 1][pos.y - 1] / 100) == KING && this->piece_side(pos.x - 1, pos.y - 1) != piece_side) return sf::Vector2i(pos.x - 1, pos.y - 1);
+		if (pos.x - 1 >= 0 && pos.y - 1 >= 0 && std::abs(temp_board[pos.x - 1][pos.y - 1] / 100) == KING && this->piece_side(pos.x - 1, pos.y - 1) != piece_side) return sf::Vector2i(pos.x - 1, pos.y - 1);
 
 		// up and right
 
-		if (pos.x - 1 >= 0 && pos.y + 1 < 8 && std::abs(this->get_board()[pos.x - 1][pos.y + 1] / 100) == KING && this->piece_side(pos.x - 1, pos.y + 1) != piece_side) return sf::Vector2i(pos.x - 1, pos.y + 1);
+		if (pos.x - 1 >= 0 && pos.y + 1 < 8 && std::abs(temp_board[pos.x - 1][pos.y + 1] / 100) == KING && this->piece_side(pos.x - 1, pos.y + 1) != piece_side) return sf::Vector2i(pos.x - 1, pos.y + 1);
 
 		// down right
 
-		if (pos.x + 1 < 8 && pos.y + 1 < 8 && std::abs(this->get_board()[pos.x + 1][pos.y + 1] / 100) == KING && this->piece_side(pos.x + 1, pos.y + 1) != piece_side) return sf::Vector2i(pos.x + 1, pos.y + 1);
+		if (pos.x + 1 < 8 && pos.y + 1 < 8 && std::abs(temp_board[pos.x + 1][pos.y + 1] / 100) == KING && this->piece_side(pos.x + 1, pos.y + 1) != piece_side) return sf::Vector2i(pos.x + 1, pos.y + 1);
 
 		// down left
 
-		if (pos.x + 1 < 8 && pos.y - 1 >= 0 && std::abs(this->get_board()[pos.x + 1][pos.y - 1] / 100) == KING && this->piece_side(pos.x +1, pos.y - 1) != piece_side) return sf::Vector2i(pos.x +1, pos.y - 1);
+		if (pos.x + 1 < 8 && pos.y - 1 >= 0 && std::abs(temp_board[pos.x + 1][pos.y - 1] / 100) == KING && this->piece_side(pos.x +1, pos.y - 1) != piece_side) return sf::Vector2i(pos.x +1, pos.y - 1);
 
 		return sf::Vector2i(-1, -1);
 	}
@@ -870,21 +872,21 @@ public:
 		return sf::Vector2i(-1, -1);
 	}
 
-	sf::Vector2i check_pawn(sf::Vector2i pos, int piece_side){
+	sf::Vector2i check_pawn(sf::Vector2i pos, int piece_side, std::vector<std::vector<int>> temp_board){
 
 		// left square
 
 		int i = pos.x + this->dir;
 		int j = pos.y - 1;
 
-		if (i >= 0 && i < 8 && j >= 0 && std::abs(this->get_board()[i][j] / 100) == PAWN && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
+		if (i >= 0 && i < 8 && j >= 0 && std::abs(temp_board[i][j] / 100) == PAWN && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
 
 		// right square
 
 		i = pos.x + this->dir;
 		j = pos.y + 1;
 
-		if (i >= 0 && i < 8 && j < 8 && std::abs(this->get_board()[i][j] / 100) == PAWN && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
+		if (i >= 0 && i < 8 && j < 8 && std::abs(temp_board[i][j] / 100) == PAWN && this->piece_side(i,j) != piece_side) return sf::Vector2i(i, j);
 
 		return sf::Vector2i(-1, -1);
 	}
@@ -1060,7 +1062,7 @@ public:
 	bool legal_king(sf::Vector2i prev_pos, sf::Vector2i new_pos){
 
 		// std::cout << new_pos.x << ", " << new_pos.y << ": "  << this->check(new_pos) << "\n";
-		if (!this->check(prev_pos, new_pos, this->piece_side(prev_pos.x, prev_pos.y))){
+		if (this->check(prev_pos, new_pos, this->piece_side(prev_pos.x, prev_pos.y)) == sf::Vector2i(-1, -1)){
 
 			if(prev_pos.x - 1 == new_pos.x && prev_pos.y - 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
 
@@ -1138,7 +1140,7 @@ public:
 		return true;
 	}
 
-	bool check(sf::Vector2i prev_pos, sf::Vector2i new_pos, int piece_side){
+	sf::Vector2i check(sf::Vector2i prev_pos, sf::Vector2i new_pos, int piece_side){
 
 		std::vector<std::vector<int>> temp_board = this->get_board();
 
@@ -1152,47 +1154,49 @@ public:
 		// std::cout << "temp board ->>>>>>>>>>>>> \n";
 		// this->display_board(temp_board);
 
-		if(this->check_pawn(new_pos, piece_side) != sf::Vector2i(-1, -1)){
+		if(this->check_pawn(new_pos, piece_side, temp_board) != sf::Vector2i(-1, -1)){
 
-			std::cout << "pawn check " <<  this->check_pawn(new_pos, piece_side).x << ", " << this->check_pawn(new_pos, piece_side).y << "\n";
-			return true;
+			std::cout << "pawn check " <<  this->check_pawn(new_pos, piece_side, temp_board).x << ", " << this->check_pawn(new_pos, piece_side, temp_board).y << "\n";
+			return this->check_pawn(new_pos, piece_side, temp_board);
 		}
 
 
-		if(this->check_knight(new_pos, piece_side) != sf::Vector2i(-1, -1)){
+		if(this->check_knight(new_pos, piece_side, temp_board) != sf::Vector2i(-1, -1)){
 
-			std::cout << "knight check " <<  this->check_knight(new_pos, piece_side).x << ", " << this->check_knight(new_pos, piece_side).y << "\n";
-			return true;
+			std::cout << "knight check " <<  this->check_knight(new_pos, piece_side, temp_board).x << ", " << this->check_knight(new_pos, piece_side, temp_board).y << "\n";
+			return this->check_knight(new_pos, piece_side, temp_board);
 		}
 
 		if(this->check_bishop(new_pos, piece_side, temp_board) != sf::Vector2i(-1, -1)){
 
 			std::cout << "bishop check " <<  this->check_bishop(new_pos, piece_side, temp_board).x << ", " << this->check_bishop(new_pos, piece_side, temp_board).y << "\n";
-			return true;
+			return this->check_bishop(new_pos, piece_side, temp_board);
 		}
 
 		if(this->check_rook(new_pos, piece_side, temp_board) != sf::Vector2i(-1, -1)){
 
 			std::cout << "rook check " <<  this->check_rook(new_pos, piece_side, temp_board).x << ", " << this->check_rook(new_pos, piece_side, temp_board).y << "\n";
-			return true;
+			return this->check_rook(new_pos, piece_side, temp_board);
 		}
 
-		if(this->check_king(new_pos, piece_side) != sf::Vector2i(-1, -1)){
+		if(this->check_king(new_pos, piece_side, temp_board) != sf::Vector2i(-1, -1)){
 
-			std::cout << "king check " <<  this->check_king(new_pos, piece_side).x << ", " << this->check_king(new_pos, piece_side).y << "\n";
-			return true;
+			std::cout << "king check " <<  this->check_king(new_pos, piece_side, temp_board).x << ", " << this->check_king(new_pos, piece_side, temp_board).y << "\n";
+			return this->check_king(new_pos, piece_side, temp_board);
 		}
 
-		return false;
+		return sf::Vector2i(-1, -1);
 	}
 
-	bool check_mate(){
 
-		sf::Vector2i curr_king_pos = this->get_curr_king();
+// -----------------------------------------------------------------------------------------------------------------------
 
-		if (this->check(sf::Vector2i(-1, -1), sf::Vector2i(curr_king_pos.x, curr_king_pos.y), this->piece_side(curr_king_pos.x, curr_king_pos.y))){
 
-			std::cout << "check????????????????????????\n";
+	bool is_king_stuck(sf::Vector2i curr_king_pos){
+
+		if (this->check(sf::Vector2i(-1, -1), sf::Vector2i(curr_king_pos.x, curr_king_pos.y), this->piece_side(curr_king_pos.x, curr_king_pos.y)) != sf::Vector2i(-1, -1)){
+
+			// std::cout << "check????????????????????????\n";
 
 			for (int x = curr_king_pos.x - 1; x <= curr_king_pos.x + 1; x++){
 
@@ -1209,9 +1213,107 @@ public:
 
 			return true;
 		}
+	}
+
+	bool defend_king(sf::Vector2i curr_king_pos){
+
+		std::vector<std::vector<int>> temp_board = this->get_board();
+
+		sf::Vector2i piece_pos = this->check(sf::Vector2i(-1, -1), curr_king_pos, this->piece_side(curr_king_pos.x, curr_king_pos.y));
+
+		if (piece_pos != sf::Vector2i(-1, -1)){
+
+			sf::Vector2i dir_vetor = this->get_vector_dir(curr_king_pos, piece_pos);
+
+			if (dir_vetor.x == 0 || dir_vetor.y == 0){
+
+				sf::Vector2i curr_square(curr_king_pos.x, curr_king_pos.y);
+
+				while (curr_square != piece_pos){
+
+					curr_square.x = curr_square.x + dir_vetor.x;
+					curr_square.y = curr_square.y + dir_vetor.y;
+
+					if (/*sf::Vector2i blocker_piece = */this->check(sf::Vector2i(-1, -1), curr_square, this->piece_side(piece_pos.x, piece_pos.y)) != sf::Vector2i(-1, -1)){
+
+						std::cout << "deu asneira aqui?\n";
+						return true;
+					}
+				}
+			}
+		}
+
 
 		return false;
 	}
+
+	bool check_mate(){
+
+		sf::Vector2i curr_king_pos = this->get_curr_king();
+
+		// checks if the king is able to legally move away from the current check
+
+		// this->is_king_stuck(curr_king_pos);
+
+		// checks if the piece can be intercepted or taken out
+
+		// this->defend_king(curr_king_pos);
+
+		return false;
+	}
+
+
+// -----------------------------------------------------------------------------------------------------------------------
+
+
+	// bool lazy_very_bad_check_mate(){
+
+	// 	// sf::Vector2i curr_king_pos = this->get_curr_king();
+
+	// 	for (int i = 0; i < 8; i++){
+
+	// 		for (int j = 0; j < 8; j++){
+
+	// 			if (this->piece_side(i, j) * this->get_turn() > 0){
+
+	// 				switch (std::abs(curr_board[i][j] / 100)){
+
+	// 					case ROOK:
+
+	// 					;
+	// 					break;
+
+	// 					case KNIGHT:
+
+	// 					result.append("C");
+	// 					break;
+
+	// 					case BISHOP:
+
+	// 					result.append("B");
+	// 					break;
+
+	// 					case QUEEN:
+
+	// 					result.append("Q");
+	// 					break;
+
+	// 					case KING:
+
+	// 					result.append("K");
+	// 					break;
+
+	// 					case PAWN:
+
+	// 					result.append("P");
+	// 					break;
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+
+	// 	return false;
+	// }
 
 	sf::Vector2i get_curr_king(){
 
@@ -1244,7 +1346,7 @@ public:
 
 			// std::cout << "deu asneira aqui? " << curr_king_pos.x << ", " << curr_king_pos.y << ", piece side" << this->piece_side(curr_king_pos.x, curr_king_pos.y) << "\n";
 
-			if (!this->check(sf::Vector2i(-1, -1), sf::Vector2i(curr_king_pos.x, curr_king_pos.y), this->piece_side(curr_king_pos.x, curr_king_pos.y))){
+			if (this->check(sf::Vector2i(-1, -1), sf::Vector2i(curr_king_pos.x, curr_king_pos.y), this->piece_side(curr_king_pos.x, curr_king_pos.y)) == sf::Vector2i(-1, -1)){
 
 				int x = (resolution / squares_number) * new_y;
 				int y = (resolution / squares_number) * new_x;

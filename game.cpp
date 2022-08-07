@@ -154,7 +154,7 @@ public:
 
 		// if (!this->mated){
 
-		if ((this->boardnm.get_moving_piece().x != curr_king_pos.x || this->boardnm.get_moving_piece().y != curr_king_pos.y) && this->boardnm.check(sf::Vector2i(-1, -1), sf::Vector2i(curr_king_pos.x, curr_king_pos.y), this->boardnm.piece_side(curr_king_pos.x, curr_king_pos.y))){
+		if ((this->boardnm.get_moving_piece().x != curr_king_pos.x || this->boardnm.get_moving_piece().y != curr_king_pos.y) && this->boardnm.check(sf::Vector2i(-1, -1), sf::Vector2i(curr_king_pos.x, curr_king_pos.y), this->boardnm.piece_side(curr_king_pos.x, curr_king_pos.y)) != sf::Vector2i(-1, -1)){
 			this->boardsq.change_fill_color(sf::Color(155, 155, 0, 255), curr_king_pos.x, curr_king_pos.y);
 			// this->boardsq.undo_prev_color(this->mouse_pos_view, this->resolution, this->squares_number, sf::Color::White, sf::Color(150, 150, 150, 255));
 			// this->boardsq.change_fill_color(sf::Color(155, 155, 0, 255), curr_king_pos.x, curr_king_pos.y);
@@ -253,7 +253,7 @@ public:
 
 				this->pressing = true;
 
-				this->boardnm.undo_play();
+				this->boardnm.undo_play(this->boardsq, this->resolution, this->squares_number);
 
 				this->boardnm.load_pieces(this->squares_number, this->resolution);
 			}
