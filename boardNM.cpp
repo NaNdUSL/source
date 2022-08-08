@@ -1194,26 +1194,24 @@ public:
 
 	bool is_king_stuck(sf::Vector2i curr_king_pos){
 
-		if (this->check(sf::Vector2i(-1, -1), sf::Vector2i(curr_king_pos.x, curr_king_pos.y), this->piece_side(curr_king_pos.x, curr_king_pos.y)) != sf::Vector2i(-1, -1)){
+		// std::cout << "check????????????????????????\n";
 
-			// std::cout << "check????????????????????????\n";
+		for (int x = curr_king_pos.x - 1; x <= curr_king_pos.x + 1; x++){
 
-			for (int x = curr_king_pos.x - 1; x <= curr_king_pos.x + 1; x++){
-
-				for (int y = curr_king_pos.y - 1; y <= curr_king_pos.y + 1; y++){
+			for (int y = curr_king_pos.y - 1; y <= curr_king_pos.y + 1; y++){
 
 					// std::cout << "square available: " << x << ", " << y << " >>>> " << (curr_king_pos.y - 1 >= 0 && curr_king_pos.y + 1 < 8 && curr_king_pos.x - 1 >= 0 && curr_king_pos.x + 1 < 8 && this->legal_king(curr_king_pos, sf::Vector2i(x, y))) << "\n";
 
-					if (y >= 0 && y < 8 && x >= 0 && x < 8 && this->legal_king(curr_king_pos, sf::Vector2i(x, y))){
+				if (y >= 0 && y < 8 && x >= 0 && x < 8 && this->legal_king(curr_king_pos, sf::Vector2i(x, y))){
 
-						return false;
-					}
+					return false;
 				}
 			}
-
-			return true;
 		}
+
+		return true;
 	}
+
 
 	bool defend_king(sf::Vector2i curr_king_pos){
 
@@ -1234,17 +1232,21 @@ public:
 					curr_square.x = curr_square.x + dir_vetor.x;
 					curr_square.y = curr_square.y + dir_vetor.y;
 
-					if (/*sf::Vector2i blocker_piece = */this->check(sf::Vector2i(-1, -1), curr_square, this->piece_side(piece_pos.x, piece_pos.y)) != sf::Vector2i(-1, -1)){
+					sf::Vector2i blocker_piece = this->check(sf::Vector2i(-1, -1), curr_square, this->piece_side(piece_pos.x, piece_pos.y));
 
-						std::cout << "deu asneira aqui?\n";
-						return true;
+					if (blocker_piece != sf::Vector2i(-1, -1)){
+
+						// std::cout << "deu asneira aqui?\n";
+						if (this->check(blocker_piece, curr_square, this->piece_side(blocker_piece.x, blocker_piece.y)) == sf::Vector2i(-1, -1)){
+
+							return false;
+						}
 					}
 				}
 			}
 		}
 
-
-		return false;
+		return true;
 	}
 
 	bool check_mate(){
@@ -1258,6 +1260,11 @@ public:
 		// checks if the piece can be intercepted or taken out
 
 		// this->defend_king(curr_king_pos);
+
+		if (this->check(sf::Vector2i(-1, -1), sf::Vector2i(curr_king_pos.x, curr_king_pos.y), this->piece_side(curr_king_pos.x, curr_king_pos.y)) != sf::Vector2i(-1, -1) && is_king_stuck(curr_king_pos) && defend_king(curr_king_pos)){
+
+			return true;
+		}
 
 		return false;
 	}
@@ -1332,7 +1339,7 @@ public:
 		return sf::Vector2i(-1, -1);
 	}
 
-	void move_piece(float resolution, int squares_number, int num, int prev_x, int prev_y, int new_x, int new_y, sf::Vector2f mouse_pos_view, BoardSQ &boardsq){
+	void move_piece(float resolution, int squares_number, int num, int prev_x, int prev_y, int new_x, int new_y, sf::Vector2f mouse_pos_view, BoardSQ &boardsq, bool &mated){
 
 		// int res = this->board[new_x][new_y];
 
@@ -1359,6 +1366,7 @@ public:
 				boardsq.select_new_square(mouse_pos_view, resolution, squares_number, sf::Color(30, 100, 210, 255), sf::Color::White, sf::Color(150, 150, 150, 255));
 
 				this->update_state();
+				mated = false;
 
 			}
 			else{

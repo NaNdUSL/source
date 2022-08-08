@@ -152,20 +152,22 @@ public:
 
 		sf::Vector2i curr_king_pos = this->boardnm.get_curr_king();
 
-		// if (!this->mated){
+		if (!this->mated){
 
-		if ((this->boardnm.get_moving_piece().x != curr_king_pos.x || this->boardnm.get_moving_piece().y != curr_king_pos.y) && this->boardnm.check(sf::Vector2i(-1, -1), sf::Vector2i(curr_king_pos.x, curr_king_pos.y), this->boardnm.piece_side(curr_king_pos.x, curr_king_pos.y)) != sf::Vector2i(-1, -1)){
-			this->boardsq.change_fill_color(sf::Color(155, 155, 0, 255), curr_king_pos.x, curr_king_pos.y);
+			this->mated = true;
+
+			if ((this->boardnm.get_moving_piece().x != curr_king_pos.x || this->boardnm.get_moving_piece().y != curr_king_pos.y) && this->boardnm.check(sf::Vector2i(-1, -1), sf::Vector2i(curr_king_pos.x, curr_king_pos.y), this->boardnm.piece_side(curr_king_pos.x, curr_king_pos.y)) != sf::Vector2i(-1, -1)){
+				this->boardsq.change_fill_color(sf::Color(155, 155, 0, 255), curr_king_pos.x, curr_king_pos.y);
 			// this->boardsq.undo_prev_color(this->mouse_pos_view, this->resolution, this->squares_number, sf::Color::White, sf::Color(150, 150, 150, 255));
 			// this->boardsq.change_fill_color(sf::Color(155, 155, 0, 255), curr_king_pos.x, curr_king_pos.y);
-		}
+			}
 
-		if (this->boardnm.check_mate()){
-			this->boardsq.change_fill_color(sf::Color(255, 30, 30, 255), curr_king_pos.x, curr_king_pos.y);
+			if (this->boardnm.check_mate()){
+				this->boardsq.change_fill_color(sf::Color(255, 30, 30, 255), curr_king_pos.x, curr_king_pos.y);
 			// this->boardsq.undo_prev_color(this->mouse_pos_view, this->resolution, this->squares_number, sf::Color::White, sf::Color(150, 150, 150, 255));
 			// this->boardsq.change_fill_color(sf::Color(155, 155, 0, 255), curr_king_pos.x, curr_king_pos.y);
+			}
 		}
-		// }
 
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && this->mouse_pos_view.x >= 0.0f && this->mouse_pos_view.x <= resolution && this->mouse_pos_view.y >= 0.0f && this->mouse_pos_view.y <= resolution){
 
@@ -207,7 +209,7 @@ public:
 						// if I'm clicking on a piece from the other player or on an empty square check if i can play it
 						if (this->boardnm.piece_side(pos.x, pos.y) != this->boardnm.piece_side(aux.x, aux.y)){
 
-							this->boardnm.move_piece(this->resolution, this->squares_number, aux.z, aux.x, aux.y, pos.x, pos.y, this->mouse_pos_view, this->boardsq);
+							this->boardnm.move_piece(this->resolution, this->squares_number, aux.z, aux.x, aux.y, pos.x, pos.y, this->mouse_pos_view, this->boardsq, this->mated);
 
 							std::cout << "prev: " << this->boardnm.get_board()[aux.x][aux.y] << "-> " << aux.x << ", " << aux.y << "\n";
 
@@ -253,6 +255,8 @@ public:
 
 				this->pressing = true;
 
+				this->mated = false;
+
 				this->boardnm.undo_play(this->boardsq, this->resolution, this->squares_number);
 
 				this->boardnm.load_pieces(this->squares_number, this->resolution);
@@ -280,7 +284,11 @@ public:
 
 			if (!this->pressing){
 
+				this->boardsq.clean(this->squares_number, this->resolution, sf::Color::White, sf::Color(150, 150, 150, 255));
+
 				this->pressing = true;
+
+				this->mated = false;
 
 				std::cout << "clicked on L\n";
 
