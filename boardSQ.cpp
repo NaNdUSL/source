@@ -7,6 +7,7 @@ private:
 	std::vector<std::vector<sf::RectangleShape>> board_image;
 	int dir;
 	sf::Vector2i selected;
+	sf::Color prev_color;
 
 public:
 
@@ -17,6 +18,7 @@ public:
 		this->dir = 1;
 		this->selected.x = -1;
 		this->selected.y = -1;
+		this->prev_color = sf::Color::White;
 	}
 
 	BoardSQ(std::vector<std::vector<sf::RectangleShape>> board_image, int dir, sf::Vector2i selected){
@@ -59,6 +61,12 @@ public:
 		return sel;
 	}
 
+	sf::Color get_prev_color(){
+
+		sf::Color color = this->prev_color;
+		return color;
+	}
+
 	sf::RectangleShape get_square(int i, int j){
 
 		sf::RectangleShape square = this->board_image[i][j];
@@ -68,6 +76,11 @@ public:
 	void set_square(sf::RectangleShape square, int i, int j){
 
 		this->board_image[i][j] = square;
+	}
+
+	void set_prev_color(sf::Color color){
+
+		this->prev_color = color;
 	}
 
 	void change_fill_color(sf::Color color, int i, int j){
@@ -95,6 +108,18 @@ public:
 
 		sf::RectangleShape square = this->board_image[i][j];
 		return square.getSize();
+	}
+
+	sf::Color get_square_fill_color(int i, int j){
+
+		sf::RectangleShape square = this->board_image[i][j];
+		return square.getFillColor();
+	}
+
+	sf::Color get_square_outline_color(int i, int j){
+
+		sf::RectangleShape square = this->board_image[i][j];
+		return square.getOutlineColor();
 	}
 
 	void fill_board(int squares_number, float resolution, sf::Color color1, sf::Color color2){
@@ -144,9 +169,6 @@ public:
 			}
 		}
 
-		this->change_fill_color(color, board_pos.x, board_pos.y);
-		this->change_outline_color(color, board_pos.x, board_pos.y);
-
 		return board_pos;
 	}
 
@@ -156,31 +178,20 @@ public:
 
 		if ((this->selected.x != -1 && this->selected.y != -1) && (this->selected.x != square.x || this->selected.y != square.y)){
 
-			if ((this->selected.x + this->selected.y) % 2 == 0){
-
-				this->change_fill_color(color1, this->selected.x, this->selected.y);
-			}
-			else{
-
-				this->change_fill_color(color2, this->selected.x, this->selected.y);
-			}
+			this->change_fill_color(this->get_prev_color(), this->selected.x, this->selected.y);
 		}
 
+		this->set_prev_color(this->get_square_fill_color(square.x, square.y));
+		this->change_fill_color(main_color, square.x, square.y);
+		this->change_outline_color(main_color, square.x, square.y);
 		this->set_selected(square);
 	}
 
-	void undo_prev_color(sf::Vector2f mouse_coords, float resolution, int squares_number, sf::Color color1, sf::Color color2){
+	void undo_prev_color(sf::Color color1, sf::Color color2){
 
 		if (this->selected.x != -1 && this->selected.y != -1){
 
-			if ((this->selected.x + this->selected.y) % 2 == 0){
-
-				this->change_fill_color(color1, this->selected.x, this->selected.y);
-			}
-			else{
-
-				this->change_fill_color(color2, this->selected.x, this->selected.y);
-			}
+			this->change_fill_color(this->get_prev_color(), this->selected.x, this->selected.y);
 		}
 
 		this->set_selected(sf::Vector2i(-1, -1));

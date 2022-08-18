@@ -157,15 +157,13 @@ public:
 			this->mated = true;
 
 			if ((this->boardnm.get_moving_piece().x != curr_king_pos.x || this->boardnm.get_moving_piece().y != curr_king_pos.y) && this->boardnm.check(sf::Vector2i(-1, -1), sf::Vector2i(curr_king_pos.x, curr_king_pos.y), this->boardnm.piece_side(curr_king_pos.x, curr_king_pos.y)) != sf::Vector2i(-1, -1)){
+
 				this->boardsq.change_fill_color(sf::Color(155, 155, 0, 255), curr_king_pos.x, curr_king_pos.y);
-			// this->boardsq.undo_prev_color(this->mouse_pos_view, this->resolution, this->squares_number, sf::Color::White, sf::Color(150, 150, 150, 255));
-			// this->boardsq.change_fill_color(sf::Color(155, 155, 0, 255), curr_king_pos.x, curr_king_pos.y);
 			}
 
 			if (this->boardnm.check_mate()){
+
 				this->boardsq.change_fill_color(sf::Color(255, 30, 30, 255), curr_king_pos.x, curr_king_pos.y);
-			// this->boardsq.undo_prev_color(this->mouse_pos_view, this->resolution, this->squares_number, sf::Color::White, sf::Color(150, 150, 150, 255));
-			// this->boardsq.change_fill_color(sf::Color(155, 155, 0, 255), curr_king_pos.x, curr_king_pos.y);
 			}
 		}
 
@@ -185,11 +183,11 @@ public:
 
 				if (pos.x != -1 && pos.y != -1 && (pos.x != aux.x || pos.y != aux.y)){
 
-					this->boardsq.clean(this->squares_number, this->resolution, sf::Color::White, sf::Color(150, 150, 150, 255));
+					// this->boardsq.clean(this->squares_number, this->resolution, sf::Color::White, sf::Color(150, 150, 150, 255));
+
+					// this->boardsq.undo_prev_color(sf::Color::White, sf::Color(150, 150, 150, 255));
 
 					this->boardsq.select_new_square(this->mouse_pos_view, this->resolution, this->squares_number, sf::Color(30, 50, 150, 255), sf::Color::White, sf::Color(150, 150, 150, 255));
-
-					// this->boardsq.undo_prev_color();
 
 					// if i didn't select one piece that i wanna play and i click on one piece and not on an empty square then "grab" that piece
 
@@ -219,7 +217,7 @@ public:
 
 							this->boardnm.set_moving_piece(sf::Vector3i(-1, -1, 0));
 
-							this->boardsq.set_selected(sf::Vector2i(-1, -1));
+							// this->boardsq.set_selected(sf::Vector2i(-1, -1));
 
 							// this->mated = false;
 

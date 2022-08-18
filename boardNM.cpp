@@ -1345,6 +1345,8 @@ public:
 
 		if ((prev_x != new_x || prev_y != new_y) && this->legal_move(sf::Vector2i(prev_x, prev_y), sf::Vector2i(new_x, new_y))){
 
+			sf::Vector2i prev_king_pos = this->get_curr_king();
+
 			int temp_piece = this->board[new_x][new_y];
 			this->board[new_x][new_y] = num;
 			this->board[prev_x][prev_y] = 0;
@@ -1363,8 +1365,19 @@ public:
 				this->set_dir(this->get_dir() * (-1));
 				this->set_turn(this->get_turn() * (-1));
 
+				boardsq.undo_prev_color(sf::Color::White, sf::Color(150, 150, 150, 255));
+
 				boardsq.select_new_square(mouse_pos_view, resolution, squares_number, sf::Color(30, 100, 210, 255), sf::Color::White, sf::Color(150, 150, 150, 255));
 
+				if ((prev_king_pos.x + prev_king_pos.y) % 2 == 0){
+
+					boardsq.change_fill_color(sf::Color::White, prev_king_pos.x, prev_king_pos.y);
+				}
+				else{
+
+					boardsq.change_fill_color(sf::Color(150, 150, 150, 255), prev_king_pos.x, prev_king_pos.y);
+
+				}
 				this->update_state();
 				mated = false;
 
