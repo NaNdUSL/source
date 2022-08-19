@@ -32,6 +32,11 @@ private:
 	sf::Vector3i moving_piece;
 	std::stack<Saves> stack;
 
+	// Castling and pawns
+
+	std::vector<std::vector<int>> pawns;
+	std::vector<std::vector<int>> rooks_kings;
+
 public:
 
 	BoardNM(){
@@ -43,6 +48,8 @@ public:
 		this->moving_piece = sf::Vector3i(-1, -1, 0);
 		this->dir = 0;
 		this->turn = 1;
+		this->pawns = std::vector<std::vector<int>>(2, std::vector<int>(8, 0));
+		this->rooks_kings = std::vector<std::vector<int>>(2, std::vector<int>(3, 0));
 	}
 
 	BoardNM(std::vector<std::vector<int>> board, Pieces pieces, sf::Vector3i moving_piece, int dir, int turn){
@@ -52,6 +59,8 @@ public:
 		this->moving_piece = moving_piece;
 		this->dir = dir;
 		this->turn = turn;
+		this->pawns = std::vector<std::vector<int>>(2, std::vector<int>(8, 0));
+		this->rooks_kings = std::vector<std::vector<int>>(2, std::vector<int>(3, 0));
 	}
 
 	void set_board(std::vector<std::vector<int>> board){
@@ -139,6 +148,22 @@ public:
 
 		int number = this->board[i][j];
 		return number;
+	}
+
+	sf::Vector2i get_piece_pos(int piece){
+
+		for (int i = 0; i < 8; i++){
+
+			for (int j = 0; j < 8; j++){
+
+				if (this->board[i][j] == piece){
+
+					return sf::Vector2i(i, j);
+				}
+			}
+		}
+
+		return sf::Vector2i(-1, -1);
 	}
 
 	int get_piece_number(int i, int j, std::vector<std::vector<int>> board){
@@ -927,6 +952,10 @@ public:
 				if(this->board[prev_pos.x + this->dir][prev_pos.y] == EMPTY && this->board[new_pos.x][new_pos.y] == EMPTY){
 
 					if((this->dir == -1 && prev_pos.x == 6) || (this->dir == 1 && prev_pos.x == 1)){
+						// 2x - 1 = y
+						// x = (y + 1)/2
+						this->pawns[(((this->turn + 1) / 2) + 1) % 2][(std::abs(this->get_piece_number(prev_pos.x, prev_pos.y)) - 601) % 8] = 1;
+						std::cout << "which pawn: " << (((this->turn + 1) / 2) + 1) % 2 << ", " << (std::abs(this->get_piece_number(prev_pos.x, prev_pos.y)) - 601) % 8 << "\n";
 
 						return true;
 					}
@@ -937,8 +966,15 @@ public:
 
 			if(dir_vetor.x == this->dir){
 
+				std::cout << "can i take this one?: " << (((1 - this->turn) / 2) + 1) % 2 << ", " << (std::abs(this->get_piece_number(new_pos.x - this->dir, prev_pos.y)) - 600) % 8 << "\n";
+
 				if(this->board[new_pos.x][new_pos.y] != EMPTY && this->piece_side(prev_pos.x, prev_pos.y) != this->piece_side(new_pos.x, new_pos.y)){
 
+					return true;
+				}
+				else if (this->board[new_pos.x - this->dir][new_pos.y] != EMPTY && this->piece_side(prev_pos.x - this->dir, prev_pos.y) != this->piece_side(new_pos.x - this->dir, new_pos.y) && this->pawns[(((1 - this->turn) / 2) + 1) % 2][(std::abs(this->get_piece_number(new_pos.x - this->dir, prev_pos.y)) - 600) % 8] == 1){
+
+					this->pawns[(((1 - this->turn) / 2) + 1) % 2][(std::abs(this->get_piece_number(new_pos.x - this->dir, prev_pos.y)) - 600) % 8] = 2;
 					return true;
 				}
 			}
@@ -1108,22 +1144,27 @@ public:
 		return false;
 	}
 
-	int legal_castling_left(sf::Vector2i curr_king_pos, bool left_rook){
+	int legal_castling_left(sf::Vector2i curr_king_pos){
 
-    // Your king and rook have not moved!
+    	// Your king and rook have not moved!
 
-	
+		
 
-    // Your king is NOT in check!
-
-
-    // Your king does not pass through check!
+    	// Your king is NOT in check!
 
 
-    // No pieces between the king and rook!
+    	// Your king does not pass through check!
+
+
+    	// No pieces between the king and rook!
 
 		return 0;
 	}
+
+	// int legal_castling(sf::Vector2i curr_king_pos){
+
+
+	// }
 
 	bool legal_move(sf::Vector2i prev_pos, sf::Vector2i new_pos){
 
@@ -1286,6 +1327,22 @@ public:
 		return false;
 	}
 
+	sf::Vector2i en_passant(){
+
+		for (int i = 0; i < 2; i++){
+
+			for (int j = 0; j < 8; j++){
+
+				if (this->pawns[i][j] == 2){
+
+					return this->get_piece_pos(-((2 * i) - 1) * (601 + j));
+				}
+			}
+		}
+
+		return sf::Vector2i(-1, -1);
+	}
+
 
 // -----------------------------------------------------------------------------------------------------------------------
 
@@ -1313,6 +1370,13 @@ public:
 		if ((prev_x != new_x || prev_y != new_y) && this->legal_move(sf::Vector2i(prev_x, prev_y), sf::Vector2i(new_x, new_y))){
 
 			// kinda lame way to keep track of the previous king just to change the color of the square
+
+			sf::Vector2i en_passant_pawn = this->en_passant();
+
+			if (en_passant_pawn != sf::Vector2i(-1, -1)){
+
+				this->board[en_passant_pawn.x][en_passant_pawn.y] = 0;
+			}
 
 			sf::Vector2i prev_king_pos = this->get_curr_king();
 
@@ -1347,6 +1411,10 @@ public:
 					boardsq.change_fill_color(sf::Color(150, 150, 150, 255), prev_king_pos.x, prev_king_pos.y);
 				}
 
+				if (en_passant_pawn != sf::Vector2i(-1, -1)){
+
+					this->pawns[(((this->turn + 1) / 2) + 1) % 2][(std::abs(this->get_piece_number(en_passant_pawn.x, en_passant_pawn.y)) - 601) % 8] = -1;
+				}
 				this->update_state();
 				mated = false;
 

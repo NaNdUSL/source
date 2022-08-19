@@ -39,6 +39,7 @@ private:
 		this->holding = false;
 		this->pressing = false;
 		this->mated = false;
+
 		if(!this->texture.loadFromFile("Pieces.png")){
 
 			std::cout << "Problem loading textures\n";
@@ -177,9 +178,11 @@ public:
 
 				sf::Vector3i aux = this->boardnm.get_moving_piece();
 
-				std::cout << "pos: " << pos.x << ", " << pos.y << "\n";
+				std::cout << "turn: " << this->boardnm.get_turn() << "\n";
 
-				std::cout << "aux: " << aux.x << ", " << aux.y << ", " << aux.z << "\n";
+				// std::cout << "pos: " << pos.x << ", " << pos.y << "\n";
+
+				// std::cout << "aux: " << aux.x << ", " << aux.y << ", " << aux.z << "\n";
 
 				if (pos.x != -1 && pos.y != -1 && (pos.x != aux.x || pos.y != aux.y)){
 
