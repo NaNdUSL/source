@@ -185,7 +185,7 @@ public:
 
 					// this->boardsq.clean(this->squares_number, this->resolution, sf::Color::White, sf::Color(150, 150, 150, 255));
 
-					// this->boardsq.undo_prev_color(sf::Color::White, sf::Color(150, 150, 150, 255));
+					this->boardsq.undo_prev_color(sf::Color::White, sf::Color(150, 150, 150, 255));
 
 					this->boardsq.select_new_square(this->mouse_pos_view, this->resolution, this->squares_number, sf::Color(30, 50, 150, 255), sf::Color::White, sf::Color(150, 150, 150, 255));
 

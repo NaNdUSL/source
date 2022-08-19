@@ -1108,6 +1108,23 @@ public:
 		return false;
 	}
 
+	int legal_castling_left(sf::Vector2i curr_king_pos, bool left_rook){
+
+    // Your king and rook have not moved!
+
+	
+
+    // Your king is NOT in check!
+
+
+    // Your king does not pass through check!
+
+
+    // No pieces between the king and rook!
+
+		return 0;
+	}
+
 	bool legal_move(sf::Vector2i prev_pos, sf::Vector2i new_pos){
 
 		switch(std::abs(this->board[prev_pos.x][prev_pos.y]) / 100){
@@ -1272,56 +1289,6 @@ public:
 
 // -----------------------------------------------------------------------------------------------------------------------
 
-
-	// bool lazy_very_bad_check_mate(){
-
-	// 	// sf::Vector2i curr_king_pos = this->get_curr_king();
-
-	// 	for (int i = 0; i < 8; i++){
-
-	// 		for (int j = 0; j < 8; j++){
-
-	// 			if (this->piece_side(i, j) * this->get_turn() > 0){
-
-	// 				switch (std::abs(curr_board[i][j] / 100)){
-
-	// 					case ROOK:
-
-	// 					;
-	// 					break;
-
-	// 					case KNIGHT:
-
-	// 					result.append("C");
-	// 					break;
-
-	// 					case BISHOP:
-
-	// 					result.append("B");
-	// 					break;
-
-	// 					case QUEEN:
-
-	// 					result.append("Q");
-	// 					break;
-
-	// 					case KING:
-
-	// 					result.append("K");
-	// 					break;
-
-	// 					case PAWN:
-
-	// 					result.append("P");
-	// 					break;
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-
-	// 	return false;
-	// }
-
 	sf::Vector2i get_curr_king(){
 
 		for (int i = 0; i < 8; i++){
@@ -1345,6 +1312,8 @@ public:
 
 		if ((prev_x != new_x || prev_y != new_y) && this->legal_move(sf::Vector2i(prev_x, prev_y), sf::Vector2i(new_x, new_y))){
 
+			// kinda lame way to keep track of the previous king just to change the color of the square
+
 			sf::Vector2i prev_king_pos = this->get_curr_king();
 
 			int temp_piece = this->board[new_x][new_y];
@@ -1365,9 +1334,9 @@ public:
 				this->set_dir(this->get_dir() * (-1));
 				this->set_turn(this->get_turn() * (-1));
 
-				boardsq.undo_prev_color(sf::Color::White, sf::Color(150, 150, 150, 255));
+				// boardsq.undo_prev_color(sf::Color::White, sf::Color(150, 150, 150, 255));
 
-				boardsq.select_new_square(mouse_pos_view, resolution, squares_number, sf::Color(30, 100, 210, 255), sf::Color::White, sf::Color(150, 150, 150, 255));
+				boardsq.change_fill_color(sf::Color(30, 100, 210, 255), new_x, new_y);
 
 				if ((prev_king_pos.x + prev_king_pos.y) % 2 == 0){
 
@@ -1376,8 +1345,8 @@ public:
 				else{
 
 					boardsq.change_fill_color(sf::Color(150, 150, 150, 255), prev_king_pos.x, prev_king_pos.y);
-
 				}
+
 				this->update_state();
 				mated = false;
 
