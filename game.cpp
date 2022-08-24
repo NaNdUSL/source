@@ -281,6 +281,17 @@ public:
 				this->boardnm.display_board();
 			}
 		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::P)){
+
+			if (!this->pressing){
+
+				this->pressing = true;
+
+				std::cout << "clicked on P\n";
+
+				// this->boardnm.print_special_pieces();
+			}
+		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::L)){
 
 			if (!this->pressing){

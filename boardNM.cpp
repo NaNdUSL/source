@@ -30,12 +30,13 @@ private:
 	int turn;
 	Pieces pieces;
 	sf::Vector3i moving_piece;
+	sf::Vector3i en_passant_piece;
 	std::stack<Saves> stack;
 
 	// Castling and pawns
 
-	std::vector<std::vector<int>> pawns;
-	std::vector<std::vector<int>> rooks_kings;
+	// std::vector<std::vector<int>> pawns;
+	// std::vector<std::vector<int>> rooks_kings;
 
 public:
 
@@ -48,8 +49,9 @@ public:
 		this->moving_piece = sf::Vector3i(-1, -1, 0);
 		this->dir = 0;
 		this->turn = 1;
-		this->pawns = std::vector<std::vector<int>>(2, std::vector<int>(8, 0));
-		this->rooks_kings = std::vector<std::vector<int>>(2, std::vector<int>(3, 0));
+		this->en_passant_piece = sf::Vector3i(-1, -1, -1);
+		// this->pawns = std::vector<std::vector<int>>(2, std::vector<int>(8, 0));
+		// this->rooks_kings = std::vector<std::vector<int>>(2, std::vector<int>(3, 0));
 	}
 
 	BoardNM(std::vector<std::vector<int>> board, Pieces pieces, sf::Vector3i moving_piece, int dir, int turn){
@@ -59,8 +61,9 @@ public:
 		this->moving_piece = moving_piece;
 		this->dir = dir;
 		this->turn = turn;
-		this->pawns = std::vector<std::vector<int>>(2, std::vector<int>(8, 0));
-		this->rooks_kings = std::vector<std::vector<int>>(2, std::vector<int>(3, 0));
+		this->en_passant_piece = sf::Vector3i(-1, -1, -1);
+		// this->pawns = std::vector<std::vector<int>>(2, std::vector<int>(8, 0));
+		// this->rooks_kings = std::vector<std::vector<int>>(2, std::vector<int>(3, 0));
 	}
 
 	void set_board(std::vector<std::vector<int>> board){
@@ -156,7 +159,9 @@ public:
 
 			for (int j = 0; j < 8; j++){
 
+				std::cout << ">>>>>>>>>>>>>>>>>>>>>>> " << this->board[i][j] << "==" << piece << "\n";
 				if (this->board[i][j] == piece){
+
 
 					return sf::Vector2i(i, j);
 				}
@@ -564,6 +569,19 @@ public:
 		}
 	}
 
+	// void print_special_pieces(){
+
+	// 	for (int i = 0; i < 2; i++){
+
+	// 		for (int j = 0; j < 8; j++){
+
+	// 			std::cout << " || " << this->pawns[i][j];
+	// 		}
+
+	// 		std::cout << "\n";
+	// 	}
+	// }
+
 	void display_board(){
 
 		for (int i = 0; i < 8; i++){
@@ -641,9 +659,9 @@ public:
 					sprite.setScale(sf::Vector2f((resolution / squares_number) / this->pieces.get_texture_size().x, (resolution / squares_number) / this->pieces.get_texture_size().y));
 
 					sprite.setPosition(j * (resolution / squares_number), i * (resolution / squares_number));
-					
+
 					sf::Vector2u texture_size = this->pieces.get_texture_size();
-					
+
 					switch (std::abs(this->board[i][j]) / 100) {
 
 						case ROOK:
@@ -937,44 +955,42 @@ public:
 
 		sf::Vector2i dir_vetor = sf::Vector2i(new_pos.x - prev_pos.x, new_pos.y - prev_pos.y);
 
-		if(dir_vetor.y == 0){
+		if (dir_vetor.y == 0){
 
-			if(dir_vetor.x == this->dir){
+			if (dir_vetor.x == this->dir){
 
-				if(this->board[new_pos.x][new_pos.y] == EMPTY){
+				if (this->board[new_pos.x][new_pos.y] == EMPTY){
 
 					return true;
 				}
 			}
 
-			if(dir_vetor.x == this->dir * 2){
+			if (dir_vetor.x == this->dir * 2){
 
-				if(this->board[prev_pos.x + this->dir][prev_pos.y] == EMPTY && this->board[new_pos.x][new_pos.y] == EMPTY){
+				if (this->board[prev_pos.x + this->dir][prev_pos.y] == EMPTY && this->board[new_pos.x][new_pos.y] == EMPTY){
 
-					if((this->dir == -1 && prev_pos.x == 6) || (this->dir == 1 && prev_pos.x == 1)){
-						// 2x - 1 = y
-						// x = (y + 1)/2
-						this->pawns[(((this->turn + 1) / 2) + 1) % 2][(std::abs(this->get_piece_number(prev_pos.x, prev_pos.y)) - 601) % 8] = 1;
-						std::cout << "which pawn: " << (((this->turn + 1) / 2) + 1) % 2 << ", " << (std::abs(this->get_piece_number(prev_pos.x, prev_pos.y)) - 601) % 8 << "\n";
+					if ((this->dir == -1 && prev_pos.x == 6) || (this->dir == 1 && prev_pos.x == 1)){
+
+						this->en_passant_piece = sf::Vector3i(0, new_pos.x, new_pos.y);
 
 						return true;
 					}
 				}
 			}
 		}
-		else if(dir_vetor.y == -1 || dir_vetor.y == 1){
+		else if (dir_vetor.y == -1 || dir_vetor.y == 1){
 
-			if(dir_vetor.x == this->dir){
+			if (dir_vetor.x == this->dir){
 
-				std::cout << "can i take this one?: " << (((1 - this->turn) / 2) + 1) % 2 << ", " << (std::abs(this->get_piece_number(new_pos.x - this->dir, prev_pos.y)) - 600) % 8 << "\n";
 
-				if(this->board[new_pos.x][new_pos.y] != EMPTY && this->piece_side(prev_pos.x, prev_pos.y) != this->piece_side(new_pos.x, new_pos.y)){
+				if (this->board[new_pos.x][new_pos.y] != EMPTY && this->piece_side(prev_pos.x, prev_pos.y) != this->piece_side(new_pos.x, new_pos.y)){
 
 					return true;
 				}
-				else if (this->board[new_pos.x - this->dir][new_pos.y] != EMPTY && this->piece_side(prev_pos.x - this->dir, prev_pos.y) != this->piece_side(new_pos.x - this->dir, new_pos.y) && this->pawns[(((1 - this->turn) / 2) + 1) % 2][(std::abs(this->get_piece_number(new_pos.x - this->dir, prev_pos.y)) - 600) % 8] == 1){
+				else if (this->board[new_pos.x - this->dir][new_pos.y] != PAWN && this->piece_side(prev_pos.x, prev_pos.y) != this->piece_side(new_pos.x - this->dir, new_pos.y) && sf::Vector2i(this->en_passant_piece.y, this->en_passant_piece.z) == sf::Vector2i(new_pos.x - this->dir, new_pos.y)){
 
-					this->pawns[(((1 - this->turn) / 2) + 1) % 2][(std::abs(this->get_piece_number(new_pos.x - this->dir, prev_pos.y)) - 600) % 8] = 2;
+					this->en_passant_piece.x = 1;
+
 					return true;
 				}
 			}
@@ -1148,7 +1164,7 @@ public:
 
     	// Your king and rook have not moved!
 
-		
+
 
     	// Your king is NOT in check!
 
@@ -1327,22 +1343,6 @@ public:
 		return false;
 	}
 
-	sf::Vector2i en_passant(){
-
-		for (int i = 0; i < 2; i++){
-
-			for (int j = 0; j < 8; j++){
-
-				if (this->pawns[i][j] == 2){
-
-					return this->get_piece_pos(-((2 * i) - 1) * (601 + j));
-				}
-			}
-		}
-
-		return sf::Vector2i(-1, -1);
-	}
-
 
 // -----------------------------------------------------------------------------------------------------------------------
 
@@ -1352,7 +1352,6 @@ public:
 
 			for (int j = 0; j < 8; j++){
 
-				// std::cout << "info do rei: " << std::abs(this->get_board()[i][j] / 100) << " side->>>>> " << this->piece_side(i, j) * this->get_turn() << "\n";
 				if (std::abs(this->get_board()[i][j] / 100) == KING && this->piece_side(i, j) * this->get_turn() > 0){
 
 					return sf::Vector2i(i, j);
@@ -1365,18 +1364,9 @@ public:
 
 	void move_piece(float resolution, int squares_number, int num, int prev_x, int prev_y, int new_x, int new_y, sf::Vector2f mouse_pos_view, BoardSQ &boardsq, bool &mated){
 
-		// int res = this->board[new_x][new_y];
-
 		if ((prev_x != new_x || prev_y != new_y) && this->legal_move(sf::Vector2i(prev_x, prev_y), sf::Vector2i(new_x, new_y))){
 
 			// kinda lame way to keep track of the previous king just to change the color of the square
-
-			sf::Vector2i en_passant_pawn = this->en_passant();
-
-			if (en_passant_pawn != sf::Vector2i(-1, -1)){
-
-				this->board[en_passant_pawn.x][en_passant_pawn.y] = 0;
-			}
 
 			sf::Vector2i prev_king_pos = this->get_curr_king();
 
@@ -1385,8 +1375,6 @@ public:
 			this->board[prev_x][prev_y] = 0;
 
 			sf::Vector2i curr_king_pos = this->get_curr_king();
-
-			// std::cout << "deu asneira aqui? " << curr_king_pos.x << ", " << curr_king_pos.y << ", piece side" << this->piece_side(curr_king_pos.x, curr_king_pos.y) << "\n";
 
 			if (this->check(sf::Vector2i(-1, -1), sf::Vector2i(curr_king_pos.x, curr_king_pos.y), this->piece_side(curr_king_pos.x, curr_king_pos.y)) == sf::Vector2i(-1, -1)){
 
@@ -1411,10 +1399,11 @@ public:
 					boardsq.change_fill_color(sf::Color(150, 150, 150, 255), prev_king_pos.x, prev_king_pos.y);
 				}
 
-				if (en_passant_pawn != sf::Vector2i(-1, -1)){
+				if (this->en_passant_piece.x == 1){
 
-					this->pawns[(((this->turn + 1) / 2) + 1) % 2][(std::abs(this->get_piece_number(en_passant_pawn.x, en_passant_pawn.y)) - 601) % 8] = -1;
+					this->board[this->en_passant_piece.y][this->en_passant_piece.z] = 0;
 				}
+
 				this->update_state();
 				mated = false;
 
@@ -1423,6 +1412,7 @@ public:
 
 				this->board[new_x][new_y] = temp_piece;
 				this->board[prev_x][prev_y] = num;
+				this->en_passant_piece = sf::Vector3i(-1, -1, -1);
 			}
 		}
 	}
