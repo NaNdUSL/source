@@ -1,6 +1,7 @@
 #include "pieces.cpp"
 #include "boardSQ.cpp"
 #include <string.h>
+#include <map>
 
 #define EMPTY 0
 #define KING 1
@@ -17,6 +18,8 @@ public:
 	std::vector<std::vector<int>> board;
 	int dir;
 	int turn;
+	sf::Vector3i en_passant_piece;
+	sf::Vector3i K_R_moved;
 };
 
 // Board class
@@ -30,13 +33,13 @@ private:
 	int turn;
 	Pieces pieces;
 	sf::Vector3i moving_piece;
-	sf::Vector3i en_passant_piece;
 	std::stack<Saves> stack;
 
-	// Castling and pawns
+	// Castling and en passant
 
-	// std::vector<std::vector<int>> pawns;
-	// std::vector<std::vector<int>> rooks_kings;
+	sf::Vector3i en_passant_piece;
+	sf::Vector3i castles;
+	std::vector<std::map<int, int>> K_R_moved;
 
 public:
 
@@ -50,8 +53,8 @@ public:
 		this->dir = 0;
 		this->turn = 1;
 		this->en_passant_piece = sf::Vector3i(-1, -1, -1);
-		// this->pawns = std::vector<std::vector<int>>(2, std::vector<int>(8, 0));
-		// this->rooks_kings = std::vector<std::vector<int>>(2, std::vector<int>(3, 0));
+		this->K_R_moved = std::vector<std::map<int, int>>;
+		this->castles = sf::Vector3i(-1, -1, -1);
 	}
 
 	BoardNM(std::vector<std::vector<int>> board, Pieces pieces, sf::Vector3i moving_piece, int dir, int turn){
@@ -62,8 +65,8 @@ public:
 		this->dir = dir;
 		this->turn = turn;
 		this->en_passant_piece = sf::Vector3i(-1, -1, -1);
-		// this->pawns = std::vector<std::vector<int>>(2, std::vector<int>(8, 0));
-		// this->rooks_kings = std::vector<std::vector<int>>(2, std::vector<int>(3, 0));
+		this->K_R_moved = std::vector<std::map<int, int>>;
+		this->castles = sf::Vector3i(-1, -1, -1);
 	}
 
 	void set_board(std::vector<std::vector<int>> board){
@@ -463,7 +466,7 @@ public:
 			stack.pop();
 
 			// Write to the file
-			Boards << this->get_board_state(aux.board) << ";" << aux.turn << ";" << aux.dir << "\n";
+			Boards << this->get_board_state(aux.board) << ";" << aux.turn << ";" << aux.dir << ";" << aux.en_passant_piece.x << ";" << aux.en_passant_piece.y << ";" << aux.en_passant_piece.z << "\n";
 		}
 
 		// Close the file
@@ -494,7 +497,7 @@ public:
 
 			Saves temp = aux.top();
 			aux.pop();
-			std::cout << "board: " << this->get_board_state(temp.board) << "|||| turn:" << temp.turn << "|||| dir:" << temp.dir << "\n";
+			std::cout << "board: " << this->get_board_state(temp.board) << "|||| turn: " << temp.turn << "|||| dir: " << temp.dir << "|||| en passant: " << temp.en_passant_piece.x << ", " << temp.en_passant_piece.y << ", " << temp.en_passant_piece.z << "\n";
 		}
 	}
 
@@ -521,22 +524,22 @@ public:
 				aux.turn = std::stoi(ptr);
 				ptr = strtok(NULL, ";");
 				aux.dir = std::stoi(ptr);
+				ptr = strtok(NULL, ";");
+				aux.en_passant_piece.x = std::stoi(ptr);
+				ptr = strtok(NULL, ";");
+				aux.en_passant_piece.y = std::stoi(ptr);
+				ptr = strtok(NULL, ";");
+				aux.en_passant_piece.z = std::stoi(ptr);
 				aux_stack.push(aux);
 			}
 
 			Myfile.close();
-			// std::cout << "aux_stack\n";
-			// this->print_stack(aux_stack);
 			this->set_stack(this->invert_stack(aux_stack));
-			// std::cout << "\n";
-			// std::cout << "this_stack\n";
-			// this->print_stack(this->stack);
-			// std::cout << "\n";
 			Saves recent = this->stack.top();
-			// this->stack.pop();
 			this->set_board(recent.board);
 			this->turn = recent.turn;
 			this->dir = recent.dir;
+			this->en_passant_piece = recent.en_passant_piece;
 		}
 		else std::cout << "Unable to open file"; 
 	}
@@ -548,6 +551,7 @@ public:
 		saves.board = aux;
 		saves.turn = this->turn;
 		saves.dir = this->dir;
+		saves.en_passant_piece = this->en_passant_piece;
 		this->stack.push(saves);
 		std::cout << "update_state--------------------------------------------------\n";
 	}
@@ -563,6 +567,7 @@ public:
 			this->set_board(prev_save.board);
 			this->set_turn(prev_save.turn);
 			this->set_dir(prev_save.dir);
+			this->en_passant_piece = prev_save.en_passant_piece;
 			board.clean(squares_number, resolution, sf::Color::White, sf::Color(150, 150, 150, 255));
 
 			std::cout << "undo ---------------------------------------------------------\n";
@@ -1116,17 +1121,17 @@ public:
 		// std::cout << new_pos.x << ", " << new_pos.y << ": "  << this->check(new_pos) << "\n";
 		if (this->check(prev_pos, new_pos, this->piece_side(prev_pos.x, prev_pos.y)) == sf::Vector2i(-1, -1)){
 
-			if(prev_pos.x - 1 == new_pos.x && prev_pos.y - 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+			if (prev_pos.x - 1 == new_pos.x && prev_pos.y - 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
 
 				return true;
 			}
 
-			if(prev_pos.x - 1 == new_pos.x && prev_pos.y == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+			if (prev_pos.x - 1 == new_pos.x && prev_pos.y == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
 
 				return true;
 			}
 
-			if(prev_pos.x - 1 == new_pos.x && prev_pos.y + 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+			if (prev_pos.x - 1 == new_pos.x && prev_pos.y + 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
 
 				return true;
 			}
@@ -1136,22 +1141,27 @@ public:
 				return true;
 			}
 
-			if(prev_pos.x == new_pos.x && prev_pos.y + 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+			if (prev_pos.x == new_pos.x && prev_pos.y + 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
 
 				return true;
 			}
 
-			if(prev_pos.x + 1 == new_pos.x && prev_pos.y - 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+			if (prev_pos.x + 1 == new_pos.x && prev_pos.y - 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
 
 				return true;
 			}
 
-			if(prev_pos.x + 1 == new_pos.x && prev_pos.y == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+			if (prev_pos.x + 1 == new_pos.x && prev_pos.y == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
 
 				return true;
 			}
 
-			if(prev_pos.x + 1 == new_pos.x && prev_pos.y + 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+			if (prev_pos.x + 1 == new_pos.x && prev_pos.y + 1 == new_pos.y && this->piece_side(new_pos.x, new_pos.y) != this->piece_side(prev_pos.x, prev_pos.y)){
+
+				return true;
+			}
+
+			if (this->legal_castling(new_pos)){
 
 				return true;
 			}
@@ -1160,27 +1170,66 @@ public:
 		return false;
 	}
 
-	int legal_castling_left(sf::Vector2i curr_king_pos){
+	bool castling(sf::Vector2i curr_king_pos, sf::Vector2i curr_rook, int L_R){
 
     	// Your king and rook have not moved!
+		// 2x - 1 = y
+		// x = (y + 1) / 2
 
+		if (this->K_R_moved[(this->piece_side(curr_king_pos.x, curr_king_pos.y) + 1) / 2][0] == 1 && this->K_R_moved[(this->piece_side(curr_king_pos.x, curr_king_pos.y) + 1) / 2][L_R] == 1){
 
+			return false;
+		}
 
-    	// Your king is NOT in check!
+		// Your king is NOT in check! (this was already checked when this function is called)
 
+		// if (this->check(sf::Vector2i(-1, -1), sf::Vector2i(curr_king_pos.x, curr_king_pos.y), this->piece_side(curr_king_pos.x, curr_king_pos.y)) != sf::Vector2i(-1, -1)){
 
-    	// Your king does not pass through check!
+		// 	return false;
+		// }
 
+		// No pieces between the king and rook!
 
-    	// No pieces between the king and rook!
+		sf::Vector2i dir_vetor = this->get_vector_dir(curr_king_pos, curr_rook);
 
-		return 0;
+		for (int i = dir_vetor.y; sf::Vector2i(curr_king_pos.x, curr_king_pos.y + i) != curr_rook; i += dir_vetor.y){
+
+			if(this->board[curr_king_pos.x][curr_king_pos.y + i] != EMPTY){
+
+				return false;
+			}
+		}
+
+		// Your king does not pass through check!
+
+		for (int i = dir_vetor.y; std::abs(i) < 3; i += dir_vetor.y){
+
+			if (this->check(sf::Vector2i(-1, -1), sf::Vector2i(curr_king_pos.x, curr_king_pos.y + i), this->piece_side(curr_king_pos.x, curr_king_pos.y)) != sf::Vector2i(-1, -1)){
+
+				return false;
+			}
+		}
+
+		this->castles = sf::Vector3i(1, curr_rook.x, curr_rook.y);
+
+		return true;
 	}
 
-	// int legal_castling(sf::Vector2i curr_king_pos){
+	bool legal_castling(sf::Vector2i new_pos){
 
+		sf::Vector2i curr_king_pos = this->get_curr_king();
 
-	// }
+		if (new_pos == sf::Vector2i(curr_king_pos.x, curr_king_pos.y - 2) && std::abs(this->board[curr_king_pos.x][0]) / 100 == ROOK){
+
+			return this->castling(curr_king_pos, sf::Vector2i(curr_king_pos.x, 0), 1);
+		}
+		else if (new_pos == sf::Vector2i(curr_king_pos.x, curr_king_pos.y + 2) && std::abs(this->board[curr_king_pos.x][7]) / 100 == ROOK){
+
+			return this->castling(curr_king_pos, sf::Vector2i(curr_king_pos.x, 7), 2);
+		}
+
+		return false;
+	}
 
 	bool legal_move(sf::Vector2i prev_pos, sf::Vector2i new_pos){
 
@@ -1403,6 +1452,20 @@ public:
 
 					this->board[this->en_passant_piece.y][this->en_passant_piece.z] = 0;
 				}
+
+				// sentido contrario do vetor colorcar lá a torre
+
+				if (this->castles){
+
+					sf::Vector2i dir_vetor = this->get_vector_dir(sf::Vector2i(new_x, new_y), sf::Vector2i(prev_x, prev_y));
+
+
+				}
+
+				// if ((std::abs(this->board[new_x][new_y]) / 100 == ROOK && ) || std::abs(this->board[new_x][new_y]) / 100 == KING){
+
+
+				// }
 
 				this->update_state();
 				mated = false;
