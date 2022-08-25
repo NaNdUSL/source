@@ -38,8 +38,8 @@ private:
 	// Castling and en passant
 
 	sf::Vector3i en_passant_piece;
-	sf::Vector3i castles;
-	std::vector<std::map<int, int>> K_R_moved;
+	bool castles;
+	std::map<int, int> K_R_moved;
 
 public:
 
@@ -53,8 +53,8 @@ public:
 		this->dir = 0;
 		this->turn = 1;
 		this->en_passant_piece = sf::Vector3i(-1, -1, -1);
-		this->K_R_moved = std::vector<std::map<int, int>>;
-		this->castles = sf::Vector3i(-1, -1, -1);
+		// this->K_R_moved = std::map<int, int>;
+		this->castles = false;
 	}
 
 	BoardNM(std::vector<std::vector<int>> board, Pieces pieces, sf::Vector3i moving_piece, int dir, int turn){
@@ -65,8 +65,8 @@ public:
 		this->dir = dir;
 		this->turn = turn;
 		this->en_passant_piece = sf::Vector3i(-1, -1, -1);
-		this->K_R_moved = std::vector<std::map<int, int>>;
-		this->castles = sf::Vector3i(-1, -1, -1);
+		// this->K_R_moved = std::map<int, int>;
+		this->castles = false;
 	}
 
 	void set_board(std::vector<std::vector<int>> board){
@@ -207,6 +207,8 @@ public:
 		int bishop = 1;
 		int rook = 1;
 		int knight = 1;
+		int king = 1;
+		int queen = 1;
 
 		for (int i = 0; i < input.length(); i++){
 
@@ -221,7 +223,8 @@ public:
 				switch (input[i]){
 
 					case 'R':
-					aux.push_back((500 + rook++) * is_black);
+					aux.push_back((500 + rook) * is_black);
+					this->K_R_moved.insert(std::pair<int, int>((500 + rook++) * is_black, 0));
 					break;
 
 					case 'C':
@@ -233,11 +236,12 @@ public:
 					break;
 
 					case 'Q':
-					aux.push_back(200 * is_black);
+					aux.push_back((200 + queen++) * is_black);
 					break;
 
 					case 'K':
-					aux.push_back(100 * is_black);
+					aux.push_back((100 + king) * is_black);
+					this->K_R_moved.insert(std::pair<int, int>((100 + king++) * is_black, 0));
 					break;
 
 					case 'P':
@@ -286,6 +290,8 @@ public:
 		int bishop = 1;
 		int rook = 1;
 		int knight = 1;
+		int king = 1;
+		int queen = 1;
 
 		for (int i = 0; i < input.length(); i++){
 
@@ -300,7 +306,8 @@ public:
 				switch (input[i]){
 
 					case 'R':
-					aux.push_back((500 + rook++) * is_black);
+					aux.push_back((500 + rook) * is_black);
+					this->K_R_moved.insert(std::pair<int, int>((500 + rook++) * is_black, 0));
 					break;
 
 					case 'C':
@@ -312,11 +319,12 @@ public:
 					break;
 
 					case 'Q':
-					aux.push_back(200 * is_black);
+					aux.push_back((200 + queen++) * is_black);
 					break;
 
 					case 'K':
-					aux.push_back(100 * is_black);
+					aux.push_back((100 + king) * is_black);
+					this->K_R_moved.insert(std::pair<int, int>((100 + king++) * is_black, 0));
 					break;
 
 					case 'P':
@@ -1176,10 +1184,12 @@ public:
 		// 2x - 1 = y
 		// x = (y + 1) / 2
 
-		if (this->K_R_moved[(this->piece_side(curr_king_pos.x, curr_king_pos.y) + 1) / 2][0] == 1 && this->K_R_moved[(this->piece_side(curr_king_pos.x, curr_king_pos.y) + 1) / 2][L_R] == 1){
+		if (this->K_R_moved[this->board[curr_king_pos.x][curr_king_pos.y]] == 1 || this->K_R_moved[this->board[curr_rook.x][curr_rook.y]] == 1){
 
 			return false;
 		}
+
+		std::cout << "Your king and rook have not moved!\n";
 
 		// Your king is NOT in check! (this was already checked when this function is called)
 
@@ -1200,6 +1210,7 @@ public:
 			}
 		}
 
+		std::cout << "No pieces between the king and rook!\n";
 		// Your king does not pass through check!
 
 		for (int i = dir_vetor.y; std::abs(i) < 3; i += dir_vetor.y){
@@ -1209,8 +1220,9 @@ public:
 				return false;
 			}
 		}
+		std::cout << "Your king does not pass through check!\n";
 
-		this->castles = sf::Vector3i(1, curr_rook.x, curr_rook.y);
+		this->castles = true;
 
 		return true;
 	}
@@ -1457,15 +1469,40 @@ public:
 
 				if (this->castles){
 
-					sf::Vector2i dir_vetor = this->get_vector_dir(sf::Vector2i(new_x, new_y), sf::Vector2i(prev_x, prev_y));
+					this->castles = false;
+					int temp_rook;
 
+					sf::Vector2i dir_vetor = this->get_vector_dir(sf::Vector2i(prev_x, prev_y), sf::Vector2i(new_x, new_y));
+					std::cout << "castles\n";
 
+					if (dir_vetor.y == -1){
+
+						std::cout << "castles -1\n";
+						this->K_R_moved[this->board[new_x][0]] = 1;
+						temp_rook = this->board[new_x][0];
+						this->board[new_x][new_y - dir_vetor.y] = temp_rook;
+						this->board[new_x][0] = 0;
+
+					}
+					else if (dir_vetor.y == 1){
+
+						std::cout << "castles 1\n";
+						this->K_R_moved[this->board[new_x][7]] = 1;
+						temp_rook = this->board[new_x][7];
+						this->board[new_x][new_y - dir_vetor.y] = temp_rook;
+						this->board[new_x][7] = 0;
+					}
+
+					int x = (resolution / squares_number) * (new_y - dir_vetor.y);
+					int y = (resolution / squares_number) * new_x;
+
+					this->pieces.set_piece_pos(temp_rook, x, y);
 				}
 
-				// if ((std::abs(this->board[new_x][new_y]) / 100 == ROOK && ) || std::abs(this->board[new_x][new_y]) / 100 == KING){
+				if (std::abs(this->board[new_x][new_y]) / 100 == ROOK || std::abs(this->board[new_x][new_y]) / 100 == KING){
 
-
-				// }
+					this->K_R_moved[this->board[new_x][new_y]] = 1;
+				}
 
 				this->update_state();
 				mated = false;
