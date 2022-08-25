@@ -19,7 +19,7 @@ public:
 	int dir;
 	int turn;
 	sf::Vector3i en_passant_piece;
-	sf::Vector3i K_R_moved;
+	std::map<int, int> K_R_moved;
 };
 
 // Board class
@@ -474,7 +474,16 @@ public:
 			stack.pop();
 
 			// Write to the file
-			Boards << this->get_board_state(aux.board) << ";" << aux.turn << ";" << aux.dir << ";" << aux.en_passant_piece.x << ";" << aux.en_passant_piece.y << ";" << aux.en_passant_piece.z << "\n";
+			Boards << this->get_board_state(aux.board) << ";" << aux.turn << ";" << aux.dir << ";" << aux.en_passant_piece.x << ";" << aux.en_passant_piece.y << ";" << aux.en_passant_piece.z;
+
+			std::map<int, int>::iterator it;
+
+			for (it = aux.K_R_moved.begin(); it != aux.K_R_moved.end(); it++){
+
+				Boards << ";" << it->first << ',' << it->second;
+			}
+
+			Boards << "\n";
 		}
 
 		// Close the file
@@ -520,24 +529,32 @@ public:
 
 			while(getline(Myfile, line)){
 
-				std::cout << line << "\n";
+				// std::cout << line << "\n";
 
-				char* ptr = strtok(const_cast<char*>(line.c_str()), ";");
-
+				std::stringstream linestream(line);
 				Saves aux;
-				const char *s = ptr;
-				std::string str(s);
-				aux.board = this->get_board_from_string(s);
-				ptr = strtok(NULL, ";");
-				aux.turn = std::stoi(ptr);
-				ptr = strtok(NULL, ";");
-				aux.dir = std::stoi(ptr);
-				ptr = strtok(NULL, ";");
-				aux.en_passant_piece.x = std::stoi(ptr);
-				ptr = strtok(NULL, ";");
-				aux.en_passant_piece.y = std::stoi(ptr);
-				ptr = strtok(NULL, ";");
-				aux.en_passant_piece.z = std::stoi(ptr);
+				std::string         data;
+
+				std::getline(linestream, data, ';');
+				aux.board = this->get_board_from_string(data);
+				std::getline(linestream, data, ';');
+				aux.turn = std::stoi(data);
+				std::getline(linestream, data, ';');
+				aux.dir = std::stoi(data);
+				std::getline(linestream, data, ';');
+				aux.en_passant_piece.x = std::stoi(data);
+				std::getline(linestream, data, ';');
+				aux.en_passant_piece.y = std::stoi(data);
+				std::getline(linestream, data, ';');
+				aux.en_passant_piece.z = std::stoi(data);
+
+				while (std::getline(linestream, data, ';')){
+
+					int piece = std::stoi(data);
+					std::getline(linestream, data, ',');
+					aux.K_R_moved.insert(std::pair(piece, std::stoi(data)));
+				}
+
 				aux_stack.push(aux);
 			}
 
@@ -548,6 +565,7 @@ public:
 			this->turn = recent.turn;
 			this->dir = recent.dir;
 			this->en_passant_piece = recent.en_passant_piece;
+			this->K_R_moved = recent.K_R_moved;
 		}
 		else std::cout << "Unable to open file"; 
 	}
@@ -560,6 +578,7 @@ public:
 		saves.turn = this->turn;
 		saves.dir = this->dir;
 		saves.en_passant_piece = this->en_passant_piece;
+		saves.K_R_moved = this->K_R_moved;
 		this->stack.push(saves);
 		std::cout << "update_state--------------------------------------------------\n";
 	}
@@ -576,6 +595,7 @@ public:
 			this->set_turn(prev_save.turn);
 			this->set_dir(prev_save.dir);
 			this->en_passant_piece = prev_save.en_passant_piece;
+			this->K_R_moved = prev_save.K_R_moved;
 			board.clean(squares_number, resolution, sf::Color::White, sf::Color(150, 150, 150, 255));
 
 			std::cout << "undo ---------------------------------------------------------\n";
