@@ -166,6 +166,10 @@ public:
 
 				this->boardsq.change_fill_color(sf::Color(255, 30, 30, 255), curr_king_pos.x, curr_king_pos.y);
 			}
+			else if (this->boardnm.stalemate()){
+
+				this->boardsq.change_fill_color(sf::Color(30, 255, 30, 255), curr_king_pos.x, curr_king_pos.y);
+			}
 		}
 
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && this->mouse_pos_view.x >= 0.0f && this->mouse_pos_view.x <= resolution && this->mouse_pos_view.y >= 0.0f && this->mouse_pos_view.y <= resolution){
