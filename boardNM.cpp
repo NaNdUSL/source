@@ -35,11 +35,12 @@ private:
 	sf::Vector3i moving_piece;
 	std::stack<Saves> stack;
 
-	// Castling and en passant
+	// Castling, en passant and promote
 
 	sf::Vector3i en_passant_piece;
 	bool castles;
 	std::map<int, int> K_R_moved;
+	bool promote_pawn;
 
 public:
 
@@ -55,6 +56,7 @@ public:
 		this->en_passant_piece = sf::Vector3i(-1, -1, -1);
 		// this->K_R_moved = std::map<int, int>;
 		this->castles = false;
+		this->promote_pawn = false;
 	}
 
 	BoardNM(std::vector<std::vector<int>> board, Pieces pieces, sf::Vector3i moving_piece, int dir, int turn){
@@ -67,6 +69,7 @@ public:
 		this->en_passant_piece = sf::Vector3i(-1, -1, -1);
 		// this->K_R_moved = std::map<int, int>;
 		this->castles = false;
+		this->promote_pawn = false;
 	}
 
 	void set_board(std::vector<std::vector<int>> board){
@@ -602,19 +605,6 @@ public:
 		}
 	}
 
-	// void print_special_pieces(){
-
-	// 	for (int i = 0; i < 2; i++){
-
-	// 		for (int j = 0; j < 8; j++){
-
-	// 			std::cout << " || " << this->pawns[i][j];
-	// 		}
-
-	// 		std::cout << "\n";
-	// 	}
-	// }
-
 	void display_board(){
 
 		for (int i = 0; i < 8; i++){
@@ -671,10 +661,27 @@ public:
 		std::cout << "\n\n\n";
 	}
 
+	int get_num_pieces_of(int piece){
+
+		int count = 0;
+
+		for (int i = 0; i < 8; i++){
+
+			for (int j = 0; j < 8; j++){
+
+				if (std::abs(this->board[i][j]) / 100 == piece){
+
+					count++;
+				}
+			}
+		}
+
+		return count;
+	}
+
 	void load_pieces(int squares_number, float resolution){
 
 		int color_piece = 0;
-		int color_sprite = 0;
 
 		for (int i = 0; i < 8; i++){
 
@@ -685,7 +692,6 @@ public:
 					if (this->board[i][j] < 0){
 
 						color_piece = 1;
-						color_sprite = 2;
 					}
 
 					sf::Sprite sprite;
@@ -994,6 +1000,11 @@ public:
 
 				if (this->board[new_pos.x][new_pos.y] == EMPTY){
 
+					if (new_pos.x == 0 || new_pos.x == 7){
+
+						this->promote_pawn = true;
+					}
+
 					return true;
 				}
 			}
@@ -1014,7 +1025,6 @@ public:
 		else if (dir_vetor.y == -1 || dir_vetor.y == 1){
 
 			if (dir_vetor.x == this->dir){
-
 
 				if (this->board[new_pos.x][new_pos.y] != EMPTY && this->piece_side(prev_pos.x, prev_pos.y) != this->piece_side(new_pos.x, new_pos.y)){
 
@@ -1209,7 +1219,7 @@ public:
 			return false;
 		}
 
-		std::cout << "Your king and rook have not moved!\n";
+		// std::cout << "Your king and rook have not moved!\n";
 
 		// Your king is NOT in check! (this was already checked when this function is called)
 
@@ -1230,7 +1240,7 @@ public:
 			}
 		}
 
-		std::cout << "No pieces between the king and rook!\n";
+		// std::cout << "No pieces between the king and rook!\n";
 		// Your king does not pass through check!
 
 		for (int i = dir_vetor.y; std::abs(i) < 3; i += dir_vetor.y){
@@ -1240,7 +1250,7 @@ public:
 				return false;
 			}
 		}
-		std::cout << "Your king does not pass through check!\n";
+		// std::cout << "Your king does not pass through check!\n";
 
 		this->castles = true;
 
@@ -1463,6 +1473,58 @@ public:
 				int y = (resolution / squares_number) * new_x;
 
 				this->pieces.set_piece_pos(num, x, y);
+
+				if (this->promote_pawn){
+
+					this->promote_pawn = false;
+					int option;
+					int temp;
+
+					// gonna leave it at terminal input for now
+
+					std::cout << "Pieces: 1.Queen; 2.Bishop; 3.Rook; 4.Knight\n";
+					std::cin >> option;
+					std::cout << "\n";
+
+					int color_piece = (1 - this->get_turn()) / 2;
+					sf::Sprite sprite;
+
+					sprite.setScale(sf::Vector2f((resolution / squares_number) / this->pieces.get_texture_size().x, (resolution / squares_number) / this->pieces.get_texture_size().y));
+
+					sprite.setPosition(new_y * (resolution / squares_number), new_x * (resolution / squares_number));
+
+					sf::Vector2u texture_size = this->pieces.get_texture_size();
+
+					switch(option){
+
+						case 1:
+						temp = ((QUEEN * 100) + this->get_num_pieces_of(QUEEN) + 1) * this->get_turn();
+						sprite.setTextureRect(sf::IntRect(texture_size.x, texture_size.y * color_piece, texture_size.x, texture_size.y));
+						break;
+
+						case 2:
+						temp = ((BISHOP * 100) + this->get_num_pieces_of(BISHOP) + 1) * this->get_turn();
+						sprite.setTextureRect(sf::IntRect(texture_size.x * 2, texture_size.y * color_piece, texture_size.x, texture_size.y));
+						break;
+
+						case 3:
+						temp = ((ROOK * 100) + this->get_num_pieces_of(ROOK) + 1) * this->get_turn();
+						sprite.setTextureRect(sf::IntRect(texture_size.x * 4, texture_size.y * color_piece, texture_size.x, texture_size.y));
+						break;
+
+						case 4:
+						temp = ((KNIGHT * 100) + this->get_num_pieces_of(KNIGHT) + 1) * this->get_turn();
+						sprite.setTextureRect(sf::IntRect(texture_size.x * 3, texture_size.y * color_piece, texture_size.x, texture_size.y));
+						break;
+					}
+
+					std::map<int, sf::Sprite>::iterator piece = this->pieces.get_pieces().find(temp);
+					this->board[new_x][new_y] = temp;
+					this->pieces.delete_piece(num);
+					this->pieces.insert_elem(this->board[new_x][new_y], sprite);
+				}
+
+				this->display_board();
 
 				this->set_dir(this->get_dir() * (-1));
 				this->set_turn(this->get_turn() * (-1));
