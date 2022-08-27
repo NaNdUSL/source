@@ -682,6 +682,7 @@ public:
 	void load_pieces(int squares_number, float resolution){
 
 		int color_piece = 0;
+		std::map<int, sf::Sprite> aux_map;
 
 		for (int i = 0; i < 8; i++){
 
@@ -736,17 +737,19 @@ public:
 					}
 
 					color_piece = 0;
-					std::map<int, sf::Sprite>::iterator piece = this->pieces.get_pieces().find(this->board[i][j]);
+					// std::map<int, sf::Sprite>::iterator piece = this->pieces.get_pieces().find(this->board[i][j]);
 
-					if (piece != this->pieces.get_pieces().end()){
+					// if (piece != this->pieces.get_pieces().end()){
 
-						this->pieces.delete_piece(this->board[i][j]);
-					}
+					// 	this->pieces.delete_piece(this->board[i][j]);
+					// }
 
-					this->pieces.insert_elem(this->board[i][j], sprite);
+					aux_map.insert({this->board[i][j], sprite});
 				}
 			}
 		}
+
+		this->pieces.set_pieces(aux_map);
 	}
 
 	sf::Vector2i get_piece_index(sf::Vector2f mouse_coords, float resolution, int squares_number){
@@ -769,6 +772,11 @@ public:
 
 		if(this->board[i][j]) return this->board[i][j] / std::abs(this->board[i][j]);
 		else return 0;
+	}
+
+	int piece_side(int piece){
+
+		return piece / std::abs(piece);
 	}
 
 	int piece_side(int i, int j, std::vector<std::vector<int>> board){
@@ -1709,6 +1717,11 @@ public:
 		return true;
 	}
 
+	// void prom_pawn(){
+
+
+	// }
+
 	bool check_mate(){
 
 		sf::Vector2i curr_king_pos = this->get_curr_king();
@@ -1833,9 +1846,8 @@ public:
 						break;
 					}
 
-					std::map<int, sf::Sprite>::iterator piece = this->pieces.get_pieces().find(temp);
-					this->board[new_x][new_y] = temp;
 					this->pieces.delete_piece(num);
+					this->board[new_x][new_y] = temp;
 					this->pieces.insert_elem(this->board[new_x][new_y], sprite);
 				}
 
@@ -1899,6 +1911,11 @@ public:
 				if (std::abs(this->board[new_x][new_y]) / 100 == ROOK || std::abs(this->board[new_x][new_y]) / 100 == KING){
 
 					this->K_R_moved[this->board[new_x][new_y]] = 1;
+				}
+
+				if (temp_piece != EMPTY && this->piece_side(temp_piece) == -this->get_turn()){
+
+					this->pieces.delete_piece(temp_piece);
 				}
 
 				this->update_state();
