@@ -61,7 +61,7 @@ int main(int argc, char const *argv[]){
 	std::cin >> player;
 	std::cout << "\n";
 
-	std::cout << "white turn: 1, black turn: 0\n";
+	std::cout << "white turn: 1, black turn: -1\n";
 	std::cin >> turn;
 	std::cout << "\n";
 

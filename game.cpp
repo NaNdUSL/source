@@ -82,19 +82,35 @@ public:
 		if (!white){
 
 			this->boardnm.fill_board(line);
+
+			if (turn == 1){
+
+				this->boardnm.set_dir(1);
+			}
+			else if (turn == -1){
+
+				this->boardnm.set_dir(-1);
+			}
 		}
 		else{
 
 			std::string new_line = this->reverse_board(line, line.length());
 			this->boardnm.fill_board(new_line);
+
+			if (turn == 1){
+
+				this->boardnm.set_dir(-1);
+			}
+			else if (turn == -1){
+
+				this->boardnm.set_dir(1);
+			}
 		}
-		this->boardnm.set_turn(1);
-		this->boardnm.set_dir(-2 * white + 1);
+		this->boardnm.set_turn(turn);
 		// std::cout << line << "sup\n";
 		this->boardnm.load_pieces(this->squares_number, this->resolution);
 		this->boardnm.update_state();
 		this->boardnm.display_board();
-		this->boardnm.set_turn(turn);
 		// std::cout << "crash\n";
 		// this->boardnm.get_board_state();
 	}
@@ -161,6 +177,7 @@ public:
 
 			this->mated = true;
 
+			// std::cout << "stalemate: " << this->boardnm.stalemate() << std::endl;
 			if ((this->boardnm.get_moving_piece().x != curr_king_pos.x || this->boardnm.get_moving_piece().y != curr_king_pos.y) && this->boardnm.check(sf::Vector2i(-1, -1), sf::Vector2i(curr_king_pos.x, curr_king_pos.y), this->boardnm.piece_side(curr_king_pos.x, curr_king_pos.y)) != sf::Vector2i(-1, -1)){
 
 				this->boardsq.change_fill_color(sf::Color(155, 155, 0, 255), curr_king_pos.x, curr_king_pos.y);
@@ -178,6 +195,7 @@ public:
 				this->end = true;
 			}
 		}
+
 
 		if (!this->end){
 
@@ -219,9 +237,9 @@ public:
 
 								this->boardnm.move_piece(this->resolution, this->squares_number, aux.z, aux.x, aux.y, pos.x, pos.y, this->mouse_pos_view, this->boardsq, this->mated);
 
-								std::cout << "prev: " << this->boardnm.get_board()[aux.x][aux.y] << "-> " << aux.x << ", " << aux.y << "\n";
+								// std::cout << "prev: " << this->boardnm.get_board()[aux.x][aux.y] << "-> " << aux.x << ", " << aux.y << "\n";
 
-								std::cout << "new: " << this->boardnm.get_board()[pos.x][pos.y] << "-> " << pos.x << ", " << pos.y << "\n";
+								// std::cout << "new: " << this->boardnm.get_board()[pos.x][pos.y] << "-> " << pos.x << ", " << pos.y << "\n";
 
 								// this->boardsq.undo_prev_color(this->mouse_pos_view, this->resolution, this->squares_number, sf::Color::White, sf::Color(150, 150, 150, 255));
 

@@ -1759,13 +1759,6 @@ public:
 
 		sf::Vector2i curr_king_pos = this->get_curr_king();
 
-		// If only 2 kings
-
-		if (!this->only_two_kings()){
-
-			return false;
-		}
-
 		// If king not in check
 
 		if (this->check(sf::Vector2i(-1, -1), sf::Vector2i(curr_king_pos.x, curr_king_pos.y), this->piece_side(curr_king_pos.x, curr_king_pos.y)) != sf::Vector2i(-1, -1)){
