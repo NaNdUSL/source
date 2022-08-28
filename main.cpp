@@ -23,6 +23,7 @@ int main(int argc, char const *argv[]){
 
 	int player;
 	int board;
+	int turn;
 
 	std::fstream Myfile("boardstates.txt");
 
@@ -60,7 +61,11 @@ int main(int argc, char const *argv[]){
 	std::cin >> player;
 	std::cout << "\n";
 
-	Game game(player, board);
+	std::cout << "white turn: 1, black turn: 0\n";
+	std::cin >> turn;
+	std::cout << "\n";
+
+	Game game(player, board, turn);
 
 	while(game.running()){
 

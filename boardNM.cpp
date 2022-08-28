@@ -1717,10 +1717,23 @@ public:
 		return true;
 	}
 
-	// void prom_pawn(){
+	bool only_two_kings(){
 
+		int count;
 
-	// }
+		for (int i = 0; i < 8; i++){
+
+			for (int j = 0; j < 8; j++){
+
+				if (std::abs(this->get_board()[i][j] / 100) != KING && std::abs(this->get_board()[i][j] / 100) != EMPTY){
+
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
 
 	bool check_mate(){
 
@@ -1745,6 +1758,13 @@ public:
 	bool stalemate(){
 
 		sf::Vector2i curr_king_pos = this->get_curr_king();
+
+		// If only 2 kings
+
+		if (!this->only_two_kings()){
+
+			return false;
+		}
 
 		// If king not in check
 
@@ -1772,6 +1792,22 @@ public:
 			for (int j = 0; j < 8; j++){
 
 				if (std::abs(this->get_board()[i][j] / 100) == KING && this->piece_side(i, j) * this->get_turn() > 0){
+
+					return sf::Vector2i(i, j);
+				}
+			}
+		}
+
+		return sf::Vector2i(-1, -1);
+	}
+
+	sf::Vector2i get_king(int turn){
+
+		for (int i = 0; i < 8; i++){
+
+			for (int j = 0; j < 8; j++){
+
+				if (std::abs(this->get_board()[i][j] / 100) == KING && this->piece_side(i, j) * turn > 0){
 
 					return sf::Vector2i(i, j);
 				}
