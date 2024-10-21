@@ -1,2 +1,2 @@
 # chess
-A chess game with the objective of applying some SFML and some smart bots.
+Playing around with C++ and the [SFML](https://www.sfml-dev.org/) library to create a chess game.
