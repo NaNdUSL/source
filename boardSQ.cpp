@@ -217,31 +217,3 @@ public:
 		this->set_selected(sf::Vector2i(-1, -1));
 	}
 };
-
-/*
-Wolves asleep amidst the trees
-Bats all swaying in the breeze
-But one soul lies anxious, wide awake
-Fearing all manner of ghouls, hags and wraiths
-For your dolly polly sleep has flown
-Don't dare let her tremble alone
-For the Witcher
-Heartless cold
-Paid in coin of gold
-He comes, he'll go, leave naught behind
-But heartache and woe
-Deep, deep woe
-Birds are silent for the night
-Cows turned in as daylight dies
-But one soul lies anxious wide awake
-Fearing all manner of ghouls, hags and wraiths
-My dear dolly polly shut your eyes
-Lie still, lie silent utter no cries
-As the Witcher
-Brave and bold
-Paid in coin of gold
-He'll chop and slice you
-Gut and dice you
-Eat you up whole
-Eat you whole
-*/
